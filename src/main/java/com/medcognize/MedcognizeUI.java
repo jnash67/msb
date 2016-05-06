@@ -3,22 +3,13 @@ package com.medcognize;
 import com.google.common.eventbus.Subscribe;
 import com.medcognize.data.DataProvider;
 import com.medcognize.data.dummy.DummyDataProvider;
-import com.medcognize.domain.FamilyMember;
-import com.medcognize.domain.Fsa;
-import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Plan;
-import com.medcognize.domain.PlanLimit;
-import com.medcognize.domain.Provider;
 import com.medcognize.domain.User;
-import com.medcognize.domain.basic.Address;
-import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.event.MedcognizeEvent.BrowserResizeEvent;
 import com.medcognize.event.MedcognizeEvent.CloseOpenWindowsEvent;
 import com.medcognize.event.MedcognizeEvent.UserLoggedOutEvent;
 import com.medcognize.event.MedcognizeEvent.UserLoginEvent;
 import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.util.DbUtil;
-import com.medcognize.util.SpringUtil;
 import com.medcognize.view.DashboardMenu;
 import com.medcognize.view.dashboard.DashboardView;
 import com.medcognize.view.homepage.HomepageView;
@@ -48,7 +39,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.util.Locale;
 
 @SpringUI
@@ -63,39 +53,10 @@ public class MedcognizeUI extends UI {
     public static final String US_DATE_FORMAT = "MM-dd-yyyy";
     public static final Locale LOCALE = Locale.US;
 
-    // initialization of Medcognize DisplayFriendly domain
-    static {
-        DisplayFriendly.friendlyNameMap.put(User.class, "User");
-        DisplayFriendly.friendlyNameMap.put(Plan.class, "Plan");
-        DisplayFriendly.friendlyNameMap.put(Provider.class, "Provider");
-        DisplayFriendly.friendlyNameMap.put(FamilyMember.class, "Family Member");
-        DisplayFriendly.friendlyNameMap.put(MedicalExpense.class, "Medical Expense");
-        DisplayFriendly.friendlyNameMap.put(Fsa.class, "FSA");
-        DisplayFriendly.friendlyNameMap.put(Address.class, "Address");
-        DisplayFriendly.friendlyNameMap.put(PlanLimit.class, "Plan Limit");
-
-        DisplayFriendly.friendlyEnumParentMap.put(Provider.ProviderType.class, Provider.class);
-        DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.MedicalExpenseType.class, MedicalExpense.class);
-        DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.PrescriptionTierType.class, MedicalExpense.class);
-        DisplayFriendly.friendlyEnumParentMap.put(Plan.PlanType.class, Plan.class);
-
-        DisplayFriendly.friendlyEnumMap.put(Provider.ProviderType.class, "providerTypeStringMap");
-        DisplayFriendly.friendlyEnumMap.put(MedicalExpense.MedicalExpenseType.class, "medicalExpenseTypeStringMap");
-        DisplayFriendly.friendlyEnumMap.put(MedicalExpense.PrescriptionTierType.class, "prescriptionTierStringMap");
-        DisplayFriendly.friendlyEnumMap.put(Plan.PlanType.class, "planTypeStringMap");
-    }
-
-    // don't autowire the Guava-based eventbus. If we want to move to spring events,
-    // use reactor.
-    private final MedcognizeEventBus medcognizeEventbus = new MedcognizeEventBus();
-    public static MedcognizeEventBus getMedcognizeEventbus() {
-        return ((MedcognizeUI) getCurrent()).medcognizeEventbus;
-    }
-
-    private final UserService repo;
-    private final MedcognizeNavigator nav;
-
     private final DataProvider dataProvider = new DummyDataProvider();
+    private final UserRepository repo;
+    private final MedcognizeEventBus medcognizeEventbus;
+    private final MedcognizeNavigator nav;
     private User user = null;
 
     /*
@@ -106,19 +67,27 @@ public class MedcognizeUI extends UI {
     private AbstractOrderedLayout dashboardMenuPlusComponentToRight;
     private DashboardMenu dashboardMenu;
 
+    public static boolean isDebugMode() {
+        // in development, run the VM with -Dmedcognize.debug.mode=true
+        // in development run the VM with -Dspring.profiles.active=dev
+        String prop = System.getProperty("spring.profiles.active");
+        return null != prop && prop.equals("dev");
+    }
+
     @Autowired
     SpringViewProvider viewProvider;
 
     // @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    public MedcognizeUI(UserService repo, MedcognizeNavigator nav) {
+    public MedcognizeUI(UserRepository repo, MedcognizeEventBus bus, MedcognizeNavigator nav) {
         this.repo = repo;
+        this.medcognizeEventbus = bus;
         this.nav = nav;
     }
 
     @Override
     protected void init(final VaadinRequest request) {
-        if (SpringUtil.isDebugMode()) {
+        if (isDebugMode()) {
             log.warn("-------------RUNNING IN DEBUG MODE--------------");
         }
         DbUtil.dbChecks(repo);
@@ -245,10 +214,9 @@ public class MedcognizeUI extends UI {
 
     @Subscribe
     public void userLogin(final UserLoginEvent event) {
-        System.out.println("userLogin event received by subscriber");
-        User u = event.getUser();
-        this.user = u;
-        nav.navigateTo(DashboardView.NAME);
+        User user = event.getUser();
+        setUser(user);
+        getNavigator().navigateTo(DashboardView.NAME);
     }
 
     @Subscribe
@@ -256,10 +224,10 @@ public class MedcognizeUI extends UI {
         // When the user logs out, current VaadinSession gets closed and the
         // page gets reloaded on the login screen. Do notice the this doesn't
         // invalidate the current HttpSession.
-        System.out.println("userLogout event received by subscriber");
         this.user = null;
         VaadinSession.getCurrent().close();
         Page.getCurrent().reload();
+        nav.navigateTo(HomepageView.NAME);
     }
 
     @Subscribe
@@ -276,12 +244,20 @@ public class MedcognizeUI extends UI {
         return ((MedcognizeUI) getCurrent()).dataProvider;
     }
 
+    public static MedcognizeEventBus getMedcognizeEventbus() {
+        return ((MedcognizeUI) getCurrent()).medcognizeEventbus;
+    }
+
     public boolean isLoggedIn() {
         return null != this.user;
     }
 
     public User getUser() {
         return this.user;
+    }
+
+    public void setUser(final User u) {
+        this.user = u;
     }
 
 }

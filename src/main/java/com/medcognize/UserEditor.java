@@ -27,7 +27,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @UIScope
 public class UserEditor extends VerticalLayout {
 
-	private final UserService repository;
+	private final UserRepository repository;
 
 	/**
 	 * The currently edited user
@@ -45,7 +45,7 @@ public class UserEditor extends VerticalLayout {
 	CssLayout actions = new CssLayout(save, cancel, delete);
 
 	@Autowired
-	public UserEditor(UserService repository) {
+	public UserEditor(UserRepository repository) {
 		this.repository = repository;
 
 		addComponents(firstName, lastName, actions);
@@ -57,9 +57,8 @@ public class UserEditor extends VerticalLayout {
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		// wire action buttons to save, delete and reset
-		// have to rethink user creation and deletion through UserService
-	//	save.addClickListener(e -> repository.save(user));
-	//	delete.addClickListener(e -> repository.delete(user));
+		save.addClickListener(e -> repository.save(user));
+		delete.addClickListener(e -> repository.delete(user));
 		cancel.addClickListener(e -> editUser(user));
 		setVisible(false);
 	}
@@ -73,7 +72,7 @@ public class UserEditor extends VerticalLayout {
 		final boolean persisted = c.getId() != null;
 		if (persisted) {
 			// Find fresh entity for editing
-			user = repository.getUserById(c.getId());
+			user = repository.findOne(c.getId());
 		}
 		else {
 			user = c;

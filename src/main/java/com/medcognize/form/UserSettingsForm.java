@@ -13,6 +13,8 @@ import com.vaadin.ui.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+;
+
 public class UserSettingsForm extends DisplayFriendlyForm<User> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFieldFactory.class);
 
@@ -35,8 +37,8 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
             if (DisplayFriendly.class.isAssignableFrom(dataType)) {
                 if (Plan.class.isAssignableFrom(dataType)) {
                     // v. important we use the plans of the user we're editing
-                    NativeSelect field = new NativeSelect("", u.getRepo().getAll(u, Plan.class));
-                    Plan ap = u.getRepo().getActivePlan(u);
+                    NativeSelect field = new NativeSelect("", u.getAll(Plan.class));
+                    Plan ap = u.getActivePlan();
                     if (null != ap) {
                         field.setValue(ap);
                     }

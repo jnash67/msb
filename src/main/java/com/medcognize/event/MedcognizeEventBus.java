@@ -5,13 +5,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.medcognize.MedcognizeUI;
-import com.vaadin.spring.annotation.SpringComponent;
+import org.springframework.stereotype.Component;
 
 /**
  * A simple wrapper for Guava event bus. Defines static convenience methods for
  * relevant actions.
  */
-@SpringComponent
+@Component
 public class MedcognizeEventBus implements SubscriberExceptionHandler {
 
     private final EventBus eventBus = new EventBus(this);

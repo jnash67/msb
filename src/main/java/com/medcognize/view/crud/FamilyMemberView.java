@@ -1,28 +1,26 @@
 package com.medcognize.view.crud;
 
-import com.medcognize.domain.FamilyMember;
+import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.User;
+import com.medcognize.domain.FamilyMember;
 import com.medcognize.form.FamilyMemberForm;
-import com.medcognize.util.DbUtil;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.spring.annotation.SpringView;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-@Slf4j
-@SpringView(name = FamilyMemberView.NAME)
 public class FamilyMemberView extends CrudView<FamilyMember> {
-    public static final String NAME = "family";
+    private static final Logger LOGGER = LoggerFactory.getLogger(FamilyMemberView.class);
 
     public FamilyMemberView() {
-        super(FamilyMember.class, "Family Members", new FamilyMemberTable(FamilyMemberForm.class, null));
-        User owner = DbUtil.getLoggedInUser();
+        super(FamilyMember.class, FamilyMemberForm.class, null, "Family Members");
+        User owner = ((MedcognizeUI) MedcognizeUI.getCurrent()).getUser();
         if (null == owner) {
-            log.error("owner should not be null here");
+            LOGGER.error("owner should not be null here");
             return;
         }
-        Collection<FamilyMember> members = owner.getRepo().getAll(owner, FamilyMember.class);
+        Collection<FamilyMember> members = owner.getAll(FamilyMember.class);
         setData(members, owner);
     }
 

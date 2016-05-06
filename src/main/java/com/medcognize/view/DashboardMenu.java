@@ -3,13 +3,18 @@ package com.medcognize.view;
 import com.google.common.eventbus.Subscribe;
 import com.medcognize.MedcognizeUI;
 import com.medcognize.component.ProfilePreferencesWindow;
+import com.medcognize.domain.Transaction;
 import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.util.DbUtil;
+import com.vaadin.event.dd.DragAndDropEvent;
+import com.vaadin.event.dd.DropHandler;
+import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractSelect.AcceptItem;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -17,14 +22,15 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.DragAndDropWrapper;
+import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.Collection;
@@ -43,8 +49,6 @@ public final class DashboardMenu extends CustomComponent {
     private Label notificationsBadge;
     private Label reportsBadge;
     private MenuItem settingsItem;
-    private Window calculatorWindow;
-    private User u;
 
     public DashboardMenu() {
         setPrimaryStyleName("valo-menu");
@@ -54,7 +58,7 @@ public final class DashboardMenu extends CustomComponent {
         // There's only one DashboardMenu per UI so this doesn't need to be
         // unregistered from the UI-scoped DashboardEventBus.
         MedcognizeEventBus.register(this);
-        this.u = DbUtil.getLoggedInUser();
+
         setCompositionRoot(buildContent());
     }
 
@@ -76,7 +80,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("Medcognize <strong>Dashboard</strong>",
+        Label logo = new Label("QuickTickets <strong>Dashboard</strong>",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -96,13 +100,6 @@ public final class DashboardMenu extends CustomComponent {
         settingsItem = settings.addItem("", new ThemeResource(
                 "img/profile-pic-300px.jpg"), null);
         updateUserName(null);
-        settingsItem.addItem("Calculator", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                showCalculator();
-            }
-        });
-
         settingsItem.addItem("Edit Profile", new Command() {
             @Override
             public void menuSelected(final MenuItem selectedItem) {
@@ -147,58 +144,52 @@ public final class DashboardMenu extends CustomComponent {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
 
-        for (final DashboardViewType view : DashboardViewType.values()) {
+        for (final MedcognizeViewType view : MedcognizeViewType.values()) {
             Component menuItemComponent = new ValoMenuItemButton(view);
 
-//            if (view == DashboardViewType.REPORTS) {
-//                // Add drop target to reports button
-//                DragAndDropWrapper reports = new DragAndDropWrapper(
-//                        menuItemComponent);
-//                reports.setSizeUndefined();
-//                reports.setDragStartMode(DragStartMode.NONE);
-//                reports.setDropHandler(new DropHandler() {
-//
-//                    @Override
-//                    public void drop(final DragAndDropEvent event) {
-//                        UI.getCurrent()
-//                                .getNavigator()
-//                                .navigateTo(
-//                                        DashboardViewType.REPORTS.getViewName());
-//                        Table table = (Table) event.getTransferable()
-//                                .getSourceComponent();
-//                        MedcognizeEventBus.post(new MedcognizeEvent.TransactionReportEvent(
-//                                (Collection<Transaction>) table.getValue()));
-//                    }
-//
-//                    @Override
-//                    public AcceptCriterion getAcceptCriterion() {
-//                        return AcceptItem.ALL;
-//                    }
-//
-//                });
-//                menuItemComponent = reports;
-//            }
+            if (view == MedcognizeViewType.REPORTS) {
+                // Add drop target to reports button
+                DragAndDropWrapper reports = new DragAndDropWrapper(
+                        menuItemComponent);
+                reports.setSizeUndefined();
+                reports.setDragStartMode(DragStartMode.NONE);
+                reports.setDropHandler(new DropHandler() {
 
-            if (view == DashboardViewType.DASHBOARD) {
+                    @Override
+                    public void drop(final DragAndDropEvent event) {
+                        UI.getCurrent()
+                                .getNavigator()
+                                .navigateTo(
+                                        MedcognizeViewType.REPORTS.getViewName());
+                        Table table = (Table) event.getTransferable()
+                                .getSourceComponent();
+                        MedcognizeEventBus.post(new MedcognizeEvent.TransactionReportEvent(
+                                (Collection<Transaction>) table.getValue()));
+                    }
+
+                    @Override
+                    public AcceptCriterion getAcceptCriterion() {
+                        return AcceptItem.ALL;
+                    }
+
+                });
+                menuItemComponent = reports;
+            }
+
+            if (view == MedcognizeViewType.DASHBOARD) {
                 notificationsBadge = new Label();
                 notificationsBadge.setId(NOTIFICATIONS_BADGE_ID);
                 menuItemComponent = buildBadgeWrapper(menuItemComponent,
                         notificationsBadge);
             }
-//            if (view == DashboardViewType.REPORTS) {
-//                reportsBadge = new Label();
-//                reportsBadge.setId(REPORTS_BADGE_ID);
-//                menuItemComponent = buildBadgeWrapper(menuItemComponent,
-//                        reportsBadge);
-//            }
-
-            if (view == DashboardViewType.ADMIN) {
-                if (u.isAdmin()) {
-                    menuItemsLayout.addComponent(menuItemComponent);
-                }
-            } else {
-                menuItemsLayout.addComponent(menuItemComponent);
+            if (view == MedcognizeViewType.REPORTS) {
+                reportsBadge = new Label();
+                reportsBadge.setId(REPORTS_BADGE_ID);
+                menuItemComponent = buildBadgeWrapper(menuItemComponent,
+                        reportsBadge);
             }
+
+            menuItemsLayout.addComponent(menuItemComponent);
         }
         return menuItemsLayout;
 
@@ -255,9 +246,9 @@ public final class DashboardMenu extends CustomComponent {
 
         private static final String STYLE_SELECTED = "selected";
 
-        private final DashboardViewType view;
+        private final MedcognizeViewType view;
 
-        public ValoMenuItemButton(final DashboardViewType view) {
+        public ValoMenuItemButton(final MedcognizeViewType view) {
             this.view = view;
             setPrimaryStyleName("valo-menu-item");
             setIcon(view.getIcon());
@@ -278,29 +269,6 @@ public final class DashboardMenu extends CustomComponent {
             removeStyleName(STYLE_SELECTED);
             if (event.getView() == view) {
                 addStyleName(STYLE_SELECTED);
-            }
-        }
-    }
-
-    public void showCalculator() {
-        UI ui = MedcognizeUI.getCurrent();
-        if (null == calculatorWindow) {
-            calculatorWindow = new ComponentWindow("Calculator", true, false);
-            ((ComponentWindow) calculatorWindow).showCancelButton(false);
-            ((ComponentWindow) calculatorWindow).showSubmitButton(false);
-            calculatorWindow.setContent(new Calc());
-            ((Calc) ((VerticalLayout) calculatorWindow.getContent()).getComponent(0)).getCompositionRoot().setMargin
-                    (true);
-            ui.addWindow(calculatorWindow);
-            calculatorWindow.center();
-            calculatorWindow.focus();
-        } else {
-            Collection<Window> ws = ui.getWindows();
-            if (!ws.contains(calculatorWindow)) {
-                ui.addWindow(calculatorWindow);
-                calculatorWindow.focus();
-            } else {
-                calculatorWindow.close();
             }
         }
     }

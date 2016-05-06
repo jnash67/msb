@@ -1,8 +1,8 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
-import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
+import com.medcognize.domain.basic.DisplayFriendlyCollectionOwner;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.view.ComponentView;
 import com.vaadin.data.util.BeanContainer;
@@ -29,10 +29,10 @@ public abstract class CrudView<T extends DisplayFriendly> extends VerticalLayout
 	// the list of propertyIds passed in should be ordered
 	// In the constructor we should deal with data issues only
 	// in the enter() method we should deal with appearance
-//	public CrudView(final Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
-//					ArrayList<String> tablePids, String header) {
-//		this(entityClazz, header, new CrudTable<>(entityClazz, formClazz, tablePids));
-//	}
+	public CrudView(final Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
+					ArrayList<String> tablePids, String header) {
+		this(entityClazz, header, new CrudTable<>(entityClazz, formClazz, tablePids));
+	}
 
 	public CrudView(final Class<T> entityClazz, String header, CrudTable<T> table) {
 		super();
@@ -72,7 +72,7 @@ public abstract class CrudView<T extends DisplayFriendly> extends VerticalLayout
 		table.setImmediate(true);
 	}
 
-	public void setData(Collection<T> items, User collectionOwner) {
+	public void setData(Collection<T> items, DisplayFriendlyCollectionOwner collectionOwner) {
 		table.setData(items, collectionOwner);
 	}
 

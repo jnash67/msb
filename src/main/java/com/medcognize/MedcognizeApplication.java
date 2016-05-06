@@ -15,10 +15,11 @@ public class MedcognizeApplication {
     }
 
     @Bean
-    public CommandLineRunner loadData(UserService repo) {
+    public CommandLineRunner loadData(UserRepository repo) {
         return (args) -> {
             String profile = System.getProperty("spring.profiles.active");
             log.warn("spring.profiles.active --> " + profile + " (if null then profile is default)");
         };
     }
+
 }

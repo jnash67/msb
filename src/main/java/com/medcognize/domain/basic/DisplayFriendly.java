@@ -3,13 +3,20 @@ package com.medcognize.domain.basic;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.medcognize.domain.FamilyMember;
+import com.medcognize.domain.Fsa;
+import com.medcognize.domain.MedicalExpense;
+import com.medcognize.domain.Plan;
+import com.medcognize.domain.PlanLimit;
+import com.medcognize.domain.Provider;
+import com.medcognize.domain.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.PropertyAccessorFactory;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,14 +34,17 @@ public abstract class DisplayFriendly implements Serializable {
     }
 
     public static final HashBiMap<Class<? extends DisplayFriendly>, String> friendlyNameMap;
-    public static final Map<Class<? extends Enum>, String> friendlyEnumMap;
-    public static final Map<Class<? extends Enum>, Class<? extends DisplayFriendly>> friendlyEnumParentMap;
 
     static {
-        // these need to be initialized with the actual domain of the application
         friendlyNameMap = HashBiMap.create();
-        friendlyEnumMap = new HashMap<>();
-        friendlyEnumParentMap = new HashMap<>();
+        friendlyNameMap.put(User.class, "User");
+        friendlyNameMap.put(Plan.class, "Plan");
+        friendlyNameMap.put(Provider.class, "Provider");
+        friendlyNameMap.put(FamilyMember.class, "Family Member");
+        friendlyNameMap.put(MedicalExpense.class, "Medical Expense");
+        friendlyNameMap.put(Fsa.class, "FSA");
+        friendlyNameMap.put(Address.class, "Address");
+        friendlyNameMap.put(PlanLimit.class, "Plan Limit");
     }
 
     public static final Splitter.MapSplitter mp = Splitter.on(",").trimResults().withKeyValueSeparator(":");
@@ -49,42 +59,52 @@ public abstract class DisplayFriendly implements Serializable {
     }
 
     public static <E extends Enum<E>> boolean isDisplayFriendlyEnum(Class<E> clazz) {
-        if (friendlyEnumMap.keySet().contains(clazz)) {
+        if (Provider.ProviderType.class.isAssignableFrom(clazz)) {
+            return true;
+        }
+        if (MedicalExpense.MedicalExpenseType.class.isAssignableFrom(clazz)) {
+            return true;
+        }
+        if (MedicalExpense.PrescriptionTierType.class.isAssignableFrom(clazz)) {
+            return true;
+        }
+        if (Plan.PlanType.class.isAssignableFrom(clazz)) {
             return true;
         }
         return false;
     }
 
     public static String getEnumCaption(Enum e) {
-        if (isDisplayFriendlyEnum(e.getClass())) {
-            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(e.getClass());
-            String fieldMap = friendlyEnumMap.get(e.getClass());
-            try {
-                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
-                return stringMap.get(e.toString());
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (NoSuchFieldException e1) {
-                e1.printStackTrace();
-            }
+        if (e instanceof Provider.ProviderType) {
+            return Provider.providerTypeStringMap.get(e.toString());
+        }
+        if (e instanceof MedicalExpense.MedicalExpenseType) {
+            return MedicalExpense.medicalExpenseTypeStringMap.get(e.toString());
+        }
+        if (e instanceof MedicalExpense.PrescriptionTierType) {
+            return MedicalExpense.prescriptionTierStringMap.get(e.toString());
+        }
+        if (e instanceof Plan.PlanType) {
+            return Plan.planTypeStringMap.get(e.toString());
         }
         return null;
     }
 
     @SuppressWarnings("UnusedDeclaration")
     public static Enum getEnumFromCaption(Class<? extends Enum> enumClazz, String caption) {
-        if (isDisplayFriendlyEnum(enumClazz)) {
-            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(enumClazz);
-            String fieldMap = friendlyEnumMap.get(enumClazz);
-            try {
-                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
-                String enumStringVal = stringMap.inverse().get(caption);
-                return Enum.valueOf(enumClazz, enumStringVal);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (NoSuchFieldException e1) {
-                e1.printStackTrace();
-            }
+        if (Provider.ProviderType.class.equals(enumClazz)) {
+            return Provider.ProviderType.valueOf(Provider.providerTypeStringMap.inverse().get(caption));
+        }
+        if (MedicalExpense.MedicalExpenseType.class.equals(enumClazz)) {
+            return MedicalExpense.MedicalExpenseType.valueOf(MedicalExpense.medicalExpenseTypeStringMap.inverse().get
+                    (caption));
+        }
+        if (MedicalExpense.PrescriptionTierType.class.equals(enumClazz)) {
+            return MedicalExpense.PrescriptionTierType.valueOf(MedicalExpense.prescriptionTierStringMap.inverse().get
+                    (caption));
+        }
+        if (Plan.PlanType.class.equals(enumClazz)) {
+            return Plan.PlanType.valueOf(Plan.planTypeStringMap.inverse().get(caption));
         }
         return null;
     }
@@ -160,8 +180,12 @@ public abstract class DisplayFriendly implements Serializable {
         Collection<String> pids = propertyIdList(copyFrom.getClass());
         Object propVal;
         for (String pid : pids) {
-            propVal = PropertyAccessorFactory.forBeanPropertyAccess(copyFrom).getPropertyValue(pid);
-            PropertyAccessorFactory.forBeanPropertyAccess(copyTo).setPropertyValue(pid, propVal);
+            try {
+                propVal = PropertyUtils.getProperty(copyFrom, pid);
+                PropertyUtils.setProperty(copyTo, pid, propVal);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

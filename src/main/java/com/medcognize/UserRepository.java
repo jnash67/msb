@@ -3,17 +3,11 @@ package com.medcognize;
 import com.medcognize.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/*
-Here we define all the easy queries that come for free with Spring Boot.  UserService however
-needs to make those available since it is the only one with an instance of UserRepository
-and UserService is Autowired throughout (or otherwise passed).  So there should only be two
-references to UserRepository in the code, one here and one in UserService.
- */
-@Repository
+@Component
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	long countByUsername(String username);

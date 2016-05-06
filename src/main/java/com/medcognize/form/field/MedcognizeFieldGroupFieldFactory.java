@@ -66,11 +66,11 @@ public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFact
         if (DisplayFriendly.class.isAssignableFrom(dataType)) {
             NativeSelect field;
             if (Provider.class.isAssignableFrom(dataType)) {
-                field = new NativeSelect("", DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), Provider.class));
+                field = new NativeSelect("", DbUtil.getLoggedInUser().getAll(Provider.class));
             } else if (FamilyMember.class.isAssignableFrom(dataType)) {
-                field = new NativeSelect("", DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), FamilyMember.class));
+                field = new NativeSelect("", DbUtil.getLoggedInUser().getAll(FamilyMember.class));
             } else if (Plan.class.isAssignableFrom(dataType)) {
-                field = new NativeSelect("", DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(),Plan.class));
+                field = new NativeSelect("", DbUtil.getLoggedInUser().getAll(Plan.class));
             } else {
                 field = new NativeSelect();
             }

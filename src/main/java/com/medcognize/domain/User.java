@@ -1,11 +1,12 @@
 package com.medcognize.domain;
 
 import com.google.common.collect.BiMap;
-import com.medcognize.UserService;
+import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
+import com.medcognize.domain.basic.DisplayFriendlyCollectionManager;
+import com.medcognize.domain.basic.DisplayFriendlyCollectionOwner;
 import com.medcognize.domain.basic.EmailAddress;
 import com.medcognize.util.PasswordHash;
-import com.vaadin.spring.annotation.VaadinSessionScope;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,13 +18,10 @@ import org.hibernate.validator.constraints.Email;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,18 +30,12 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Slf4j
-@VaadinSessionScope
-public class User extends DisplayFriendlyAbstractEntity {
+public class User extends DisplayFriendlyAbstractEntity implements DisplayFriendlyCollectionOwner {
 
 	private static final String captionString = "username:Username, password:Password, firstName:First Name, " +
 	 		"lastName:Last Name, admin:Admin";
 	@SuppressWarnings("UnusedDeclaration")
 	public static final BiMap<String, String> captionMap = createBiMap(captionString);
-
-	@Transient
-	// This bean must have a no-args constructor so we can't declare this final.  We have to make sure
-	// the UserService is set when Hibernate creates a User bean from the DB (typically when logging in).
-	private UserService repo;
 
 	@Column(unique=true)
 	@Email
@@ -63,60 +55,28 @@ public class User extends DisplayFriendlyAbstractEntity {
 	@Setter(AccessLevel.NONE)
 	private String password =  "";
 
-	/*
-	Having FetchType.LAZY with Spring Boot and Hibernate is a problem.  It tends to run into LazyInitializationExceptions
-	because you often access the collections after the User has been loaded and the DB transaction loading
-	the user has already been closed.  Trying to get all the data access to happen under an
-	@Transactional annotation in the repo is tricky because you tend to access them at different times.
-
-	Adding a servlet filter is tricky in Spring Boot because most examples are using web.xml and we are doing
-	jar deployment in the embedded Spring Boot tomcat server.  Also, it forces you to get way too involved
-	with underlying Spring stuff which defeats the point of using Spring Boot.
-
-	The final option is to use FetchType.EAGER which loads all the data upfront which can be a problem if there's
-	a lot of data.  Shouldn't be an issue for a while for this User class.
-
-	Tried for a few days to get FetchType.LAZY working with little success. So ended up going with EAGER.  One
-	eventual solution would be to move Plans into a table not controlled by User and have Plans control MedicalExpenses.
-	Currently User controls everything which makes things simpler.
-
-	Some resources I consulted:
-	See: http://stackoverflow.com/questions/11746499/solve-failed-to-lazily-initialize-a-collection-of-role-exception
-	http://stackoverflow.com/questions/4306463/how-to-test-whether-lazy-loaded-jpa-collection-is-initialized
-	http://stackoverflow.com/questions/19825946/how-to-add-a-filter-class-in-spring-boot
-	http://stackoverflow.com/questions/14390823/getting-no-bean-named-sessionfactory-error-when-using-opensessioninviewfilter
-	*/
-
-	/*
-	Note: CascadeType determines what will happen if THIS entity is REMOVED, PERSISTED, REFRESHED, DETACHED or
-	MERGED.  So if we REMOVE this User,	all it's children will also be removed from their respective tables.  However,
-	if we just remove one of the children from the collection, no cascading happens. orphanRemoval ensures the children
-	removed from the collection are also removed from the DB.  If we PERSIST this entity, all it's children will be
-	persisted as well, so adding children to the table does result in their being persisted.
-	 */
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "user_id")
-	private List<FamilyMember> familyMembers = new ArrayList<FamilyMember>();
+	private List<FamilyMember> familyMembers;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "user_id")
-	private List<Plan> plans  = new ArrayList<Plan>();
+	private List<Plan> plans;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "user_id")
-	private List<MedicalExpense> medicalExpenses  = new ArrayList<MedicalExpense>();
+	private List<MedicalExpense> medicalExpenses;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "user_id")
-	private List<Provider> providers = new ArrayList<Provider>();
+	private List<Provider> providers;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "user_id")
-	private List<Fsa> fsas = new ArrayList<Fsa>();
+	private List<Fsa> fsas;
 
 	// enables registration
-	public User(final UserService repo, final EmailAddress email, final String pwd) {
-		this.repo = repo;
+	public User(final EmailAddress email, final String pwd) {
 		this.username = email.toString();
 		try {
 			this.password = PasswordHash.createHash(pwd);
@@ -164,5 +124,75 @@ public class User extends DisplayFriendlyAbstractEntity {
 
 	public boolean isEnabled() {
 		return this.enabled;
+	}
+
+	@Override
+	public void add(DisplayFriendly ownedItem) {
+		DisplayFriendlyCollectionManager.add(this, ownedItem);
+	}
+
+	@Override
+	public void remove(DisplayFriendly ownedItem) {
+		DisplayFriendlyCollectionManager.remove(this, ownedItem);
+	}
+
+	@Override
+	public <T extends DisplayFriendly> List<T> getAll(Class<T> clazz) {
+		return DisplayFriendlyCollectionManager.getAll(this, clazz);
+	}
+
+	public void merge(User copyFrom) {
+		DisplayFriendlyCollectionManager.merge(this, copyFrom);
+	}
+
+	public Plan getActivePlan() {
+		return DisplayFriendlyCollectionManager.getActivePlan(this);
+	}
+
+	public void setActivePlan(Plan ap) {
+		DisplayFriendlyCollectionManager.setActivePlan(this, ap);
+	}
+
+	public void deleteMedicalExpensesForPlan(Plan ap) {
+		DisplayFriendlyCollectionManager.deleteMedicalExpensesForPlan(this, ap);
+	}
+
+	public List<MedicalExpense> getMedicalExpensesForPlan(Plan ap) {
+		return DisplayFriendlyCollectionManager.getMedicalExpensesForPlan(this, ap);
+	}
+
+	public List<FamilyMember> getFamilyMembersWithPlanExpenses(Plan ap) {
+		return DisplayFriendlyCollectionManager.getFamilyMembersWithPlanExpenses(this, ap);
+	}
+
+	// Create relevant defaults for the required user entities
+	public void createDefaultInitialSettings() {
+		FamilyMember fm;
+		Plan p;
+
+		fm = new FamilyMember();
+		String email = this.getUsername();
+		String firstName = this.getFirstName();
+		if (null == firstName) {
+			firstName = "";
+		}
+		if ("".equals(firstName)) {
+			// now create the first family member and the plan for the user
+			firstName = email.substring(0, email.indexOf("@"));
+		}
+		fm.setFamilyMemberName(firstName);
+		// this saves fm and then u
+		this.add(fm);
+
+		p = new Plan();
+		String planName = firstName + "'s Plan";
+		if (planName.length() > 50) {
+			p.setPlanName(planName.substring(0, 50));
+		} else {
+			p.setPlanName(planName);
+		}
+		// this saves p and then u
+		p.setActivePlan(true);
+		this.add(p);
 	}
 }

@@ -15,7 +15,7 @@ import java.io.Serializable;
 // two family members are equal if they have the same name
 @EqualsAndHashCode(callSuper = false, of = {"familyMemberName"})
 @Entity
-public class FamilyMember extends DisplayFriendlyAbstractEntity {
+public class FamilyMember extends DisplayFriendlyAbstractEntity implements Serializable {
 
     private static final String captionString = "familyMemberName:Name";
     @SuppressWarnings("UnusedDeclaration")

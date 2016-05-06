@@ -1,14 +1,12 @@
 package com.medcognize.view.homepage;
 
-import com.medcognize.UserService;
+import com.medcognize.MedcognizeUI;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.EmailAddress;
 import com.medcognize.domain.validator.vaadin.ExistingUsernameValidator;
 import com.medcognize.domain.validator.vaadin.PasswordRequirementsValidator;
-import com.medcognize.event.MedcognizeEvent;
-import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.form.field.errorful.ErrorfulHorizontalLayout;
-import com.medcognize.util.SpringUtil;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.ShortcutAction;
@@ -38,9 +36,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class RegisterView extends VerticalLayout implements View {
     public static final String NAME = "register";
+    private MedcognizeUI ref = (MedcognizeUI) MedcognizeUI.getCurrent();
 
     @Autowired
-    UserService repo;
+    UserRepository repo;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -59,8 +58,8 @@ public class RegisterView extends VerticalLayout implements View {
 
         Notification notification = new Notification("Welcome to Medcognize");
         notification.setDescription("<span>Please enter a valid email address and a " +
-                "password to create an account.  The password must be at least 8 characters long and contain at " +
-                "least one number.</span>");
+                        "password to create an account.  The password must be at least 8 characters long and contain at " +
+                        "least one number.</span>");
         notification.setHtmlContentAllowed(true);
         notification.setStyleName("whitebackground tray dark small login-help closable");
         notification.setPosition(Position.BOTTOM_CENTER);
@@ -92,18 +91,6 @@ public class RegisterView extends VerticalLayout implements View {
         passwordField.setNullRepresentation("");
         passwordField.addValidator(new PasswordRequirementsValidator());
         passwordField.setInvalidAllowed(true);
-
-        if (SpringUtil.isDebugMode()) {
-            String un;
-            //username.setValue("test@test.com");
-            int y = 67;
-            do {
-                un = "jnash" + y + "@yahoo.com";
-                y = y + 1;
-            } while (repo.existsByUsername(un));
-            usernameField.setValue(un);
-            passwordField.setValue("Passwor1");
-        }
 
         final VerticalLayout buttonLayout = new VerticalLayout();
         final VerticalLayout smallTextLayout = new VerticalLayout();
@@ -167,7 +154,8 @@ public class RegisterView extends VerticalLayout implements View {
                 String password = passwordField.getValue();
                 User u;
                 try {
-                    u = repo.createNewRegularUser(new EmailAddress(username), password);
+                    u = new User(new EmailAddress(username), password);
+                    repo.saveAndFlush(u);
                     // send registration emails
 //                    try {
 //                        EmailUtil.sendWelcomeEmail(username);
@@ -176,9 +164,10 @@ public class RegisterView extends VerticalLayout implements View {
 //                        e.printStackTrace();
 //                    }
 
-                    MedcognizeEventBus.post(new MedcognizeEvent.UserLoginEvent(u));
+                    ref.setUser(u);
                     passwordField.setValue(null);
                     register.removeShortcutListener(enter);
+
                 } catch (Exception e) {
                     log.error(e.toString());
                     e.printStackTrace();

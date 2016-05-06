@@ -108,7 +108,7 @@ public class Plan extends DisplayFriendlyAbstractEntity implements Serializable 
     }
 
     public static String ensureUniqueName(String initialName) {
-        Collection<Plan> pls = DbUtil.getLoggedInUser().getPlans();
+        Collection<Plan> pls = DbUtil.getLoggedInUser().getAll(Plan.class);
         String name = initialName;
         int v = 2;
         while (!existsName(name, pls)) {

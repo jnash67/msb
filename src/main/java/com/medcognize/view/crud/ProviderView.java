@@ -1,24 +1,18 @@
 package com.medcognize.view.crud;
 
-import com.medcognize.UserService;
-import com.medcognize.domain.Provider;
+import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.User;
+import com.medcognize.domain.Provider;
 import com.medcognize.form.ProviderForm;
-import com.medcognize.util.DbUtil;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.spring.annotation.SpringView;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Slf4j
-@SpringView(name = ProviderView.NAME)
 public class ProviderView extends CrudView<Provider> {
-	public static final String NAME = "provider";
-
-	private final UserService repo;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProviderView.class);
 
 	static final ArrayList<String> pids = new ArrayList<String>() {
 		{
@@ -28,16 +22,14 @@ public class ProviderView extends CrudView<Provider> {
 		}
 	};
 
-	@Autowired
-	public ProviderView(UserService repo) {
-		super(Provider.class, "Providers", new ProviderTable(ProviderForm.class, pids));
-		this.repo = repo;
-		User owner = DbUtil.getLoggedInUser();
+	public ProviderView() {
+		super(Provider.class, ProviderForm.class, pids, "Providers");
+		User owner = ((MedcognizeUI) MedcognizeUI.getCurrent()).getUser();
 		if (null == owner) {
-			log.error("owner should not be null here");
+			LOGGER.error("owner should not be null here");
 			return;
 		}
-		Collection<Provider> providers = repo.getAll(owner, Provider.class);
+		Collection<Provider> providers = owner.getAll(Provider.class);
 		setData(providers, owner);
 	}
 

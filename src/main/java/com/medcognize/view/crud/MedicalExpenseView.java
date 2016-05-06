@@ -1,21 +1,18 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
-import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Provider;
 import com.medcognize.domain.User;
+import com.medcognize.domain.MedicalExpense;
 import com.medcognize.form.MedicalExpenseForm;
-import com.medcognize.form.ProviderForm;
 import com.medcognize.form.wizard.MedicalExpenseWizard;
-import com.medcognize.util.DbUtil;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.data.util.converter.StringToDoubleConverter;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Window;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -23,11 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Slf4j
-@SpringView(name = MedicalExpenseView.NAME)
 public class MedicalExpenseView extends CrudView<MedicalExpense> {
-    public static final String NAME = "expense";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MedicalExpenseView.class);
     static final ArrayList<String> pids = new ArrayList<String>() {
         {
             add("date");
@@ -41,13 +35,13 @@ public class MedicalExpenseView extends CrudView<MedicalExpense> {
     };
 
     public MedicalExpenseView() {
-        super(MedicalExpense.class, "Medical Expenses", new MedicalExpenseTable(MedicalExpenseForm.class, pids));
-        User u = DbUtil.getLoggedInUser();
+        super(MedicalExpense.class, MedicalExpenseForm.class, pids, "Medical Expenses");
+        User u = ((MedcognizeUI) MedcognizeUI.getCurrent()).getUser();
         if (null == u) {
-            log.error("owner should not be null here");
+            LOGGER.error("owner should not be null here");
             return;
         }
-        Collection<MedicalExpense> expenses = u.getRepo().getAll(u, MedicalExpense.class);
+        Collection<MedicalExpense> expenses = u.getAll(MedicalExpense.class);
         setData(expenses, u);
     }
 

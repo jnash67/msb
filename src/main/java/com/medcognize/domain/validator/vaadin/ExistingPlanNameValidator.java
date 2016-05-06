@@ -27,7 +27,7 @@ public class ExistingPlanNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<Plan> pls = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(),Plan.class);
+        Collection<Plan> pls = DbUtil.getLoggedInUser().getAll(Plan.class);
         for (Plan p: pls) {
             if (value.equals(p.getPlanName())) {
                 return false;

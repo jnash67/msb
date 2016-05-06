@@ -6,6 +6,7 @@ import com.medcognize.component.MovieDetailsWindow;
 import com.medcognize.domain.Transaction;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
+import com.medcognize.view.MedcognizeViewType;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Container.Filterable;
 import com.vaadin.data.Item;
@@ -35,6 +36,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.viritin.FilterableListContainer;
@@ -281,10 +283,10 @@ public final class TransactionsView extends VerticalLayout implements View {
     }
 
     void createNewReportFromSelection() {
-//        UI.getCurrent().getNavigator()
-//                .navigateTo(DashboardViewType.REPORTS.getViewName());
-//        MedcognizeEventBus.post(new MedcognizeEvent.TransactionReportEvent(
-//                (Collection<Transaction>) table.getValue()));
+        UI.getCurrent().getNavigator()
+                .navigateTo(MedcognizeViewType.REPORTS.getViewName());
+        MedcognizeEventBus.post(new MedcognizeEvent.TransactionReportEvent(
+                (Collection<Transaction>) table.getValue()));
     }
 
     @Override

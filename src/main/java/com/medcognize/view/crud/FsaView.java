@@ -1,27 +1,21 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
-import com.medcognize.domain.Fsa;
-import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.User;
+import com.medcognize.domain.Fsa;
 import com.medcognize.form.FsaForm;
-import com.medcognize.form.MedicalExpenseForm;
-import com.medcognize.util.DbUtil;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.spring.annotation.SpringView;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Slf4j
-@SpringView(name = FsaView.NAME)
 public class FsaView extends CrudView<Fsa> {
-    public static final String NAME = "fsa";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlanView.class);
     static final ArrayList<String> pids = new ArrayList<String>() {
         {
             add("fsaName");
@@ -32,13 +26,13 @@ public class FsaView extends CrudView<Fsa> {
     };
 
     public FsaView() {
-        super(Fsa.class, "Flexible Spending Account (FSA)", new FsaTable(FsaForm.class, pids));
-        User owner = DbUtil.getLoggedInUser();
+        super(Fsa.class, FsaForm.class, pids, "Flexible Spending Account (FSA)");
+        User owner = ((MedcognizeUI) MedcognizeUI.getCurrent()).getUser();
         if (null == owner) {
-            log.error("owner should not be null here");
+            LOGGER.error("owner should not be null here");
             return;
         }
-        Collection<Fsa> fsas = owner.getRepo().getAll(owner, Fsa.class);
+        Collection<Fsa> fsas = owner.getAll(Fsa.class);
         setData(fsas, owner);
     }
 

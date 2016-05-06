@@ -48,7 +48,7 @@ public class ChartTestTab extends Panel {
         User u = DbUtil.getLoggedInUser();
         //FlotChartWidget cw = new FlotChartWidget("Chart");
         //HighchartWidget hw = new HighchartWidget("Pie");
-        PlanCostsChartWidget  dw = new PlanCostsChartWidget(u, "Test");
+        PlanCostsChartWidget  dw = new PlanCostsChartWidget(u, "Test", null);
         DCharts chart = createChart2();
         DCharts chart2 = dw.getChart();
         DCharts chart3 = createChart3();
