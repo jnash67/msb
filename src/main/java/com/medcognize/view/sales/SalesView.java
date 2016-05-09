@@ -3,8 +3,6 @@ package com.medcognize.view.sales;
 import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.Movie;
 import com.medcognize.domain.MovieRevenue;
-import com.vaadin.addon.charts.model.style.SolidColor;
-import com.vaadin.addon.timeline.Timeline;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -31,7 +29,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("serial")
@@ -39,17 +36,8 @@ import java.util.List;
 public class SalesView extends VerticalLayout implements View {
     public static final String NAME = "sales";
 
-    private final Timeline timeline;
     private ComboBox movieSelect;
 
-    private static final SolidColor[] COLORS = new SolidColor[] {
-            new SolidColor(52, 154, 255), new SolidColor(242, 81, 57),
-            new SolidColor(255, 201, 35), new SolidColor(83, 220, 164) };
-    private static final SolidColor[] COLORS_ALPHA = new SolidColor[] {
-            new SolidColor(52, 154, 255, 0.3),
-            new SolidColor(242, 81, 57, 0.3),
-            new SolidColor(255, 201, 35, 0.3),
-            new SolidColor(83, 220, 164, 0.3) };
     private int colorIndex = -1;
 
     public SalesView() {
@@ -57,10 +45,6 @@ public class SalesView extends VerticalLayout implements View {
         addStyleName("sales");
 
         addComponent(buildHeader());
-
-        timeline = buildTimeline();
-        addComponent(timeline);
-        setExpandRatio(timeline, 1);
 
         initMovieSelect();
         // Add first 4 by default
@@ -72,9 +56,7 @@ public class SalesView extends VerticalLayout implements View {
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -2);
-        if (timeline.getGraphDatasources().size() > 0) {
-            timeline.setVisibleDateRange(calendar.getTime(), new Date());
-        }
+
     }
 
     private void initMovieSelect() {
@@ -133,7 +115,7 @@ public class SalesView extends VerticalLayout implements View {
         clear.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                timeline.removeAllGraphDataSources();
+
                 initMovieSelect();
                 clear.setEnabled(false);
             }
@@ -151,17 +133,6 @@ public class SalesView extends VerticalLayout implements View {
         return toolbar;
     }
 
-    private Timeline buildTimeline() {
-        Timeline result = new Timeline();
-        result.setDateSelectVisible(false);
-        result.setChartModesVisible(false);
-        result.setGraphShadowsEnabled(false);
-        result.setZoomLevelsVisible(false);
-        result.setSizeFull();
-        result.setNoDataSourceCaption("<span class=\"v-label h2 light\">Add a data set from the dropdown above</span>");
-        return result;
-    }
-
     private void addDataSet(final Movie movie) {
         movieSelect.removeItem(movie);
         movieSelect.setValue(null);
@@ -174,18 +145,6 @@ public class SalesView extends VerticalLayout implements View {
 
         dailyRevenueContainer.sort(new Object[] { "timestamp" },
                 new boolean[] { true });
-
-        timeline.addGraphDataSource(dailyRevenueContainer, "timestamp",
-                "revenue");
-        colorIndex = (colorIndex >= COLORS.length - 1 ? 0 : ++colorIndex);
-        timeline.setGraphOutlineColor(dailyRevenueContainer, COLORS[colorIndex]);
-        timeline.setBrowserOutlineColor(dailyRevenueContainer,
-                COLORS[colorIndex]);
-        timeline.setBrowserFillColor(dailyRevenueContainer,
-                COLORS_ALPHA[colorIndex]);
-        timeline.setGraphCaption(dailyRevenueContainer, movie.getTitle());
-        timeline.setEventCaptionPropertyId("date");
-        timeline.setVerticalAxisLegendUnit(dailyRevenueContainer, "$");
     }
 
     @Override

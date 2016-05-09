@@ -34,19 +34,19 @@
     for more information and instructions. -->
     <!-- <set-configuration-property name="devModeRedirectEnabled" value="true" /> -->
 
-    <!-- WidgetSetOptimizer
-	<generate-with class="com.medcognize.OptimizedConnectorBundleLoaderFactory">
-		<when-type-assignable
-			class="com.vaadin.client.metadata.ConnectorBundleLoader" />
-	</generate-with>
-    -->
+    <!-- WidgetSetOptimizer -->
+    <generate-with class="com.medcognize.OptimizedConnectorBundleLoaderFactory">
+        <when-type-assignable
+                class="com.vaadin.client.metadata.ConnectorBundleLoader" />
+    </generate-with>
+
     <inherits name="org.vaadin.risto.stepper.widgetset.StepperWidgetset" />
 
-    <inherits name="org.vaadin.addon.daterangefield.DateRangeFieldWidgetSet" />
+    
 
     <inherits name="org.dussan.vaadin.dcharts.DchartsWidgetset" />
 
-    <inherits name="com.vaadin.addon.timeline.gwt.TimelineWidgetSet" />
+    
 
-    <inherits name="com.vaadin.addon.charts.Widgetset" />
+    
 </module>

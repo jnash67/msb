@@ -28,7 +28,7 @@ public class ExistingFamilyNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<FamilyMember> fms = DbUtil.getLoggedInUser().getAll(FamilyMember.class);
+        Collection<FamilyMember> fms = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), FamilyMember.class);
         for (FamilyMember fm : fms) {
             if (value.equals(fm.getFamilyMemberName())) {
                 return false;

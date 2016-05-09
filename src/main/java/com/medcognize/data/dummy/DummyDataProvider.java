@@ -396,18 +396,17 @@ public class DummyDataProvider implements DataProvider {
 
     @Override
     public User authenticate(String userName, String password) {
-        User user = new User();
-        user.setFirstName(DummyDataGenerator.randomFirstName());
-        user.setLastName(DummyDataGenerator.randomLastName());
-        user.setAdmin(true);
-        String email = user.getFirstName().toLowerCase() + "."
-                + user.getLastName().toLowerCase() + "@"
+        // User user = new User();
+        String firstName = DummyDataGenerator.randomFirstName();
+        String lastName = DummyDataGenerator.randomLastName();
+        String email = firstName.toLowerCase() + "."
+                + lastName.toLowerCase() + "@"
                 + DummyDataGenerator.randomCompanyName().toLowerCase() + ".com";
-        user.setUsername(email.replaceAll(" ", ""));
+        // user.setUsername(email.replaceAll(" ", ""));
 //        user.setLocation(DummyDataGenerator.randomWord(5, true));
 //        user.setBio("Quis aute iure reprehenderit in voluptate velit esse."
 //                + "Cras mattis iudicium purus sit amet fermentum.");
-        return user;
+        return null;
     }
 
     @Override

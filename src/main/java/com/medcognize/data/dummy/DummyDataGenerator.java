@@ -1,8 +1,6 @@
 package com.medcognize.data.dummy;
 
 import com.medcognize.domain.DashboardNotification;
-import com.vaadin.addon.charts.model.style.Color;
-import com.vaadin.addon.charts.model.style.SolidColor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -153,8 +151,6 @@ public abstract class DummyDataGenerator {
         return values;
     }
 
-    public static Color[] chartColors = new Color[] {
-            new SolidColor("#3090F0"), new SolidColor("#18DDBB"),
-            new SolidColor("#98DF58"), new SolidColor("#F9DD51"),
-            new SolidColor("#F09042"), new SolidColor("#EC6464") };
+    public static String[] chartColors = new String[] {
+            "#3090F0", "#18DDBB", "#98DF58", "#F9DD51", "#F09042", "#EC6464" };
 }

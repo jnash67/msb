@@ -1,12 +1,10 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.domain.basic.DisplayFriendlyCollectionOwner;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
-import com.medcognize.util.IcoMoon;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.Action;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
@@ -17,7 +15,8 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.ArrayList;
 
-public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
+public abstract class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CrudTable.class);
     protected final Action ACTION_ADD = new Action("Add");
     protected final Action ACTION_DELETE = new Action("Delete");
@@ -66,7 +65,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
             public Object generateCell(Table source, final Object itemId, Object columnId) {
                 HorizontalLayout cell = new HorizontalLayout();
                 Button removeButton = new Button();
-                removeButton.setIcon(IcoMoon.CANCEL);
+                removeButton.setIcon(FontAwesome.TIMES_CIRCLE);
                 //removeButton.addStyleName("icon-cancel");
                 removeButton.setDescription("Delete");
                 removeButton.addClickListener(new Button.ClickListener() {
@@ -76,7 +75,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                     }
                 });
                 Button editButton = new Button();
-                editButton.setIcon(IcoMoon.EDIT);
+                editButton.setIcon(FontAwesome.EDIT);
                 // editButton.addStyleName("icon-edit");
                 editButton.setDescription("Edit");
                 editButton.addClickListener(new Button.ClickListener() {
@@ -99,12 +98,6 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
                             // Confirmed to continue
-                            if (DisplayFriendlyCollectionOwner.class.isAssignableFrom(entityClazz)) {
-                                LOGGER.warn("You probably want to override method deleteItem for " + entityClazz
-                                        .getSimpleName() + " to properly handle the deletion of items it is the owner" +
-                                        " of. " +
-                                        "It is a DisplayFriendlyCollectionOwner.");
-                            }
                             deleteAction(target);
                         }
                     }
@@ -112,17 +105,9 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
         w.setClosable(false);
     }
 
-    protected void deleteAction(final Object target) {
-        BeanItem<T> bi = getData().getItem(target);
-        removeItem(target);
-        if (null == collectionOwner) {
-            LOGGER.warn("If no collection owner, this method should be overridden which UserEditView " + "does, " +
-                    "and it is the only entity with no owner");
-        } else {
-            collectionOwner.remove(bi.getBean());
-        }
-        refreshItems();
-    }
+    // Am not making deleting generic because it depends on the collection we are removing.  Originally
+    // did this via reflection but got too cumbersome.
+    abstract protected void deleteAction(final Object target);
 
     protected Window getNewItemFormAndShow(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
         DisplayFriendlyForm<T> form = CrudUtil.getNewItemForm(entityClazz, formClazzToUse);

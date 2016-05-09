@@ -5,7 +5,6 @@ import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.User;
 import com.medcognize.util.DChartsUtil;
-import com.medcognize.view.dashboard.DashboardView;
 import com.vaadin.data.Property;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
@@ -57,8 +56,8 @@ public class PlanCostsChartWidget extends PanelWidget {
     Object[] monthsAxis = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     // Object[] monthInitsAxis = {"J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"};
 
-    public PlanCostsChartWidget(final User u, final String caption, final DashboardView view) {
-        super(view);
+    public PlanCostsChartWidget(final User u, final String caption) {
+        super();
         this.caption = caption;
         this.planToChart = u.getRepo().getActivePlan(u);
         this.user = u;

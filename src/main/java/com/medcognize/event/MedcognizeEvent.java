@@ -3,7 +3,7 @@ package com.medcognize.event;
 
 import com.medcognize.domain.Transaction;
 import com.medcognize.domain.User;
-import com.medcognize.view.MedcognizeViewType;
+import com.medcognize.view.DashboardViewType;
 
 import java.util.Collection;
 
@@ -61,13 +61,13 @@ public abstract class MedcognizeEvent {
     }
 
     public static final class PostViewChangeEvent {
-        private final MedcognizeViewType view;
+        private final DashboardViewType view;
 
-        public PostViewChangeEvent(final MedcognizeViewType view) {
+        public PostViewChangeEvent(final DashboardViewType view) {
             this.view = view;
         }
 
-        public MedcognizeViewType getView() {
+        public DashboardViewType getView() {
             return view;
         }
     }

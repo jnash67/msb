@@ -1,7 +1,7 @@
 package com.medcognize.view.crud;
 
+import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.domain.basic.DisplayFriendlyCollectionOwner;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
 import com.vaadin.data.util.BeanContainer;
@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T> implements Action.Handler {
+public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T> implements Action.Handler {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditTable.class);
     protected final Action ACTION_EDIT = new Action("Edit");
 
-    protected DisplayFriendlyCollectionOwner collectionOwner;
+    protected User collectionOwner;
     protected final Class<? extends DisplayFriendlyForm<T>> defaultFormClazz;
     protected boolean editOnSingleClick = true;
     protected boolean contextMenuEnabled = false;
@@ -52,7 +52,7 @@ public class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T
         this.defaultFormClazz = formClazz;
     }
 
-    public void setData(Collection<T> items, DisplayFriendlyCollectionOwner collectionOwner) {
+    public void setData(Collection<T> items, User collectionOwner) {
         super.setData(items);
         this.collectionOwner = collectionOwner;
         // the view can only be editable if we have a collection and a formClazz
@@ -141,15 +141,7 @@ public class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T
         return CrudUtil.showForm(form, ca, title);
     }
 
-    protected void saveItem(final BeanItem<T> bi, final boolean isNew) {
-        if (null == collectionOwner) {
-            LOGGER.warn("If no collection owner, this method should be overridden which UserEditView " + "does, " +
-                    "and it is the only entity with no owner");
-        } else {
-            // this persists the bean and the owner and handles if the bean already exists
-            collectionOwner.add(bi.getBean());
-        }
-    }
+    abstract protected void saveItem(final BeanItem<T> bi, final boolean isNew);
 
     protected BeanContainer<Long, T> getContainer() {
         return getData();

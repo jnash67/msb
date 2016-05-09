@@ -38,8 +38,8 @@ public class PlanLimitsStatus implements Serializable {
     public PlanLimitsStatus(User u, Plan p) {
         this.plan = p;
         this.user = u;
-        expenses = u.getMedicalExpensesForPlan(p);
-        familyMembers = u.getFamilyMembersWithPlanExpenses(p);
+        expenses = u.getRepo().getMedicalExpensesForPlan(u,p);
+        familyMembers = u.getRepo().getFamilyMembersWithPlanExpenses(u, p);
         for (FamilyMember fm : familyMembers) {
             inDeductibleIndividualLimitMap.put(fm, (double) 0);
             oonDeductibleIndividualLimitMap.put(fm, (double) 0);

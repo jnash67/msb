@@ -1,10 +1,11 @@
 package com.medcognize.view.homepage;
 
 import com.medcognize.MedcognizeUI;
-import com.medcognize.UserRepository;
+import com.medcognize.UserService;
 import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
+import com.medcognize.util.SpringUtil;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
@@ -32,10 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LoginView extends VerticalLayout implements View {
     public static final String NAME = "login";
 
-    private UserRepository repo;
+    private UserService repo;
 
     @Autowired
-    public LoginView(UserRepository repo) {
+    public LoginView(UserService repo) {
         this.repo = repo;
     }
 
@@ -121,7 +122,7 @@ public class LoginView extends VerticalLayout implements View {
         passwordField.setNullRepresentation("");
         passwordField.setInvalidAllowed(true);
 
-        if (MedcognizeUI.isDebugMode()) {
+        if (SpringUtil.isDebugMode()) {
             //username.setValue("test@test.com");
             usernameField.setValue("admin@admin.com");
             passwordField.setValue("Passwor4");
@@ -143,7 +144,7 @@ public class LoginView extends VerticalLayout implements View {
                 if(e) {
                     String passwordHash = repo.findPasswordForUsername(username);
                     if (User.validateUserPassword(passwordHash, passwordField.getValue())) {
-                        User u = repo.findByUsername(username);
+                        User u = repo.getUserByUsername(username);
                         MedcognizeEventBus.post(new MedcognizeEvent.UserLoginEvent(u));
                     }
                 }

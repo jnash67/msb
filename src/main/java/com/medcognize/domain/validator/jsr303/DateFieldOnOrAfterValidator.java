@@ -1,7 +1,8 @@
 package com.medcognize.domain.validator.jsr303;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -21,8 +22,9 @@ public class DateFieldOnOrAfterValidator implements ConstraintValidator<DateFiel
     @Override
     public boolean isValid(final Object bean, final ConstraintValidatorContext context) {
         try {
-            final Object firstObj = BeanUtils.getProperty(bean, firstFieldName);
-            final Object secondObj = BeanUtils.getProperty(bean, secondFieldName);
+            // see also BeanWrapperImpl
+            final Object firstObj = PropertyAccessorFactory.forBeanPropertyAccess(bean).getPropertyValue(firstFieldName);
+            final Object secondObj = PropertyAccessorFactory.forBeanPropertyAccess(bean).getPropertyValue(secondFieldName);
             if ((null == firstObj) || (null == secondObj)) {
                 return false;
             }

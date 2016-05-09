@@ -1,32 +1,30 @@
 package com.medcognize.domain.validator.vaadin;
 
-import com.medcognize.util.Password;
 import com.vaadin.data.validator.AbstractValidator;
 
 //
 // Validator for validating the passwords
 //
-public class PasswordRequirementsValidator extends AbstractValidator<Password> {
+public class PasswordRequirementsValidator extends AbstractValidator<String> {
 
     public PasswordRequirementsValidator() {
         super("The password must be at least 8 characters long and contain at least one number");
     }
 
     @Override
-    protected boolean isValidValue(Password password) {
+    protected boolean isValidValue(String password) {
         //
         // Password must be at least 8 characters long and contain at least
         // one number
         //
-        String value = password.getValue();
-        if (value != null && (value.length() < 8 || !value.matches(".*\\d.*"))) {
+        if (password != null && (password.length() < 8 || !password.matches(".*\\d.*"))) {
             return false;
         }
         return true;
     }
 
     @Override
-    public Class<Password> getType() {
-        return Password.class;
+    public Class<String> getType() {
+        return String.class;
     }
 }

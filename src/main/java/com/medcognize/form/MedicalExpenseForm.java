@@ -99,7 +99,8 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         planField.setNullSelectionAllowed(false);
         if (null == planField.getValue()) {
             // set to active plan
-            Plan ap = DbUtil.getLoggedInUser().getActivePlan();
+            User u = DbUtil.getLoggedInUser();
+            Plan ap = u.getRepo().getActivePlan(u);
             if (planField.getItemIds().size() > 0) {
                 planField.setValue(ap);
             } else {
@@ -168,10 +169,10 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                     @Override
                     public void run() {
                         User u = DbUtil.getLoggedInUser();
-                        u.add(bi.getBean());
+                        u.getFamilyMembers().add(bi.getBean());
                         Container c = familyMemberField.getContainerDataSource();
                         c.removeAllItems();
-                        List<FamilyMember> fms = u.getAll(FamilyMember.class);
+                        List<FamilyMember> fms = u.getRepo().getAll(u, FamilyMember.class);
                         for (FamilyMember fm : fms) {
                             c.addItem(fm);
                         }
@@ -203,10 +204,10 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                     @Override
                     public void run() {
                         User u = DbUtil.getLoggedInUser();
-                        u.add(bi.getBean());
+                        u.getProviders().add(bi.getBean());
                         Container c = providerField.getContainerDataSource();
                         c.removeAllItems();
-                        List<Provider> prs = u.getAll(Provider.class);
+                        List<Provider> prs = u.getRepo().getAll(u, Provider.class);
                         for (Provider pr : prs) {
                             c.addItem(pr);
                         }

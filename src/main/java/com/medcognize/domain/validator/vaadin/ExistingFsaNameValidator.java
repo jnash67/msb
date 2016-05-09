@@ -31,7 +31,7 @@ public class ExistingFsaNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<Fsa> fsas = DbUtil.getLoggedInUser().getAll(Fsa.class);
+        Collection<Fsa> fsas = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), Fsa.class);
         for (Fsa f : fsas) {
             if (value.equals(f.getFsaName())) {
                 return false;

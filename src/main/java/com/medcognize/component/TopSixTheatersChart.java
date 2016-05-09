@@ -1,29 +1,28 @@
 package com.medcognize.component;
 
 import com.medcognize.MedcognizeUI;
-import com.medcognize.data.dummy.DummyDataGenerator;
 import com.medcognize.domain.Movie;
-import com.vaadin.addon.charts.Chart;
-import com.vaadin.addon.charts.model.ChartType;
-import com.vaadin.addon.charts.model.Credits;
-import com.vaadin.addon.charts.model.DataSeries;
-import com.vaadin.addon.charts.model.DataSeriesItem;
-import com.vaadin.addon.charts.model.PlotOptionsPie;
+import org.dussan.vaadin.dcharts.DCharts;
+import org.dussan.vaadin.dcharts.data.DataSeries;
+import org.dussan.vaadin.dcharts.metadata.renderers.SeriesRenderers;
+import org.dussan.vaadin.dcharts.options.Options;
+import org.dussan.vaadin.dcharts.options.SeriesDefaults;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 @SuppressWarnings("serial")
-public class TopSixTheatersChart extends Chart {
+public class TopSixTheatersChart extends DCharts {
 
     public TopSixTheatersChart() {
-        super(ChartType.PIE);
+        SeriesDefaults seriesDefaults = new SeriesDefaults()
+                .setRenderer(SeriesRenderers.PIE);
+        Options options = new Options()
+                .setSeriesDefaults(seriesDefaults);
 
         setCaption("Popular Movies");
-        getConfiguration().setTitle("");
-        getConfiguration().getChart().setType(ChartType.PIE);
-        getConfiguration().getChart().setAnimation(false);
+        getOptions().setTitle("");
         setWidth("100%");
         setHeight("90%");
 
@@ -33,21 +32,10 @@ public class TopSixTheatersChart extends Chart {
                 .getMovies());
         for (int i = 0; i < 6; i++) {
             Movie movie = movies.get(i);
-            DataSeriesItem item = new DataSeriesItem(movie.getTitle(),
+            series.add(movie.getTitle(),
                     movie.getScore());
-            series.add(item);
-            item.setColor(DummyDataGenerator.chartColors[5 - i]);
         }
-        getConfiguration().setSeries(series);
-
-        PlotOptionsPie opts = new PlotOptionsPie();
-        opts.setBorderWidth(0);
-        opts.setShadow(false);
-        opts.setAnimation(false);
-        getConfiguration().setPlotOptions(opts);
-
-        Credits c = new Credits("");
-        getConfiguration().setCredits(c);
+        setDataSeries(series);
     }
 
 }

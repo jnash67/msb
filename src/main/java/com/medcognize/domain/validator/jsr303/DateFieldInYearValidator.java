@@ -1,7 +1,8 @@
 package com.medcognize.domain.validator.jsr303;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -21,14 +22,15 @@ public class DateFieldInYearValidator implements ConstraintValidator<DateFieldIn
     @Override
     public boolean isValid(final Object bean, final ConstraintValidatorContext context) {
         try {
-            final Object firstObj = BeanUtils.getProperty(bean, firstFieldName);
-            final Object secondObj = BeanUtils.getProperty(bean, secondFieldName);
+            // see also BeanWrapperImpl
+            final Object firstObj = PropertyAccessorFactory.forBeanPropertyAccess(bean).getPropertyValue(firstFieldName);
+            final Object secondObj = PropertyAccessorFactory.forBeanPropertyAccess(bean).getPropertyValue(secondFieldName);
             if ((null == firstObj) || (null == secondObj)) {
                 return false;
             }
             int y;
-	        //noinspection ConstantConditions
-	        if (secondObj instanceof Integer) {
+            //noinspection ConstantConditions
+            if (secondObj instanceof Integer) {
                 y = (Integer) secondObj;
             } else {
                 if (secondObj.getClass().isAssignableFrom(int.class)) {
@@ -37,8 +39,8 @@ public class DateFieldInYearValidator implements ConstraintValidator<DateFieldIn
                     return false;
                 }
             }
-	        //noinspection ConstantConditions
-	        if (firstObj instanceof Date) {
+            //noinspection ConstantConditions
+            if (firstObj instanceof Date) {
                 DateTime dt = new DateTime(firstObj);
                 if (dt.getYear() == y) {
                     return true;

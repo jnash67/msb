@@ -1,6 +1,6 @@
 package com.medcognize.domain.validator.vaadin;
 
-import com.medcognize.UserRepository;
+import com.medcognize.UserService;
 import com.medcognize.util.DbUtil;
 import com.vaadin.data.validator.AbstractValidator;
 
@@ -9,9 +9,9 @@ public class ExistingUsernameValidator extends AbstractValidator<String> {
     // when editing, we don't want to invalidate the user submitting the
     // previously existing value
     private final String optionalExcept;
-    private final UserRepository repo;
+    private final UserService repo;
 
-    public ExistingUsernameValidator(UserRepository repo, String optionalExcept) {
+    public ExistingUsernameValidator(UserService repo, String optionalExcept) {
         super("An account already exists with that email address");
         this.repo = repo;
         this.optionalExcept = optionalExcept;
@@ -24,7 +24,7 @@ public class ExistingUsernameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        return !DbUtil.existsUser(repo, value);
+        return !repo.existsByUsername(value);
     }
 
     @Override

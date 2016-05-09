@@ -1,22 +1,6 @@
 package com.medcognize.component;
 
 import com.medcognize.data.dummy.DummyDataGenerator;
-import com.vaadin.addon.charts.Chart;
-import com.vaadin.addon.charts.model.ChartType;
-import com.vaadin.addon.charts.model.Configuration;
-import com.vaadin.addon.charts.model.Credits;
-import com.vaadin.addon.charts.model.DashStyle;
-import com.vaadin.addon.charts.model.DataSeries;
-import com.vaadin.addon.charts.model.DataSeriesItem;
-import com.vaadin.addon.charts.model.Labels;
-import com.vaadin.addon.charts.model.Legend;
-import com.vaadin.addon.charts.model.Marker;
-import com.vaadin.addon.charts.model.PlotOptionsLine;
-import com.vaadin.addon.charts.model.Title;
-import com.vaadin.addon.charts.model.XAxis;
-import com.vaadin.addon.charts.model.YAxis;
-import com.vaadin.addon.charts.model.style.Color;
-import com.vaadin.addon.charts.model.style.SolidColor;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -24,6 +8,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.commons.lang3.ArrayUtils;
+import org.dussan.vaadin.dcharts.DCharts;
+import org.dussan.vaadin.dcharts.data.DataSeries;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +18,7 @@ import java.util.List;
 public class SparklineChart extends VerticalLayout {
 
     public SparklineChart(final String name, final String unit,
-            final String prefix, final Color color, final int howManyPoints,
+            final String prefix, final String color, final int howManyPoints,
             final int min, final int max) {
         setSizeUndefined();
         addStyleName("spark");
@@ -65,56 +51,18 @@ public class SparklineChart extends VerticalLayout {
 
     }
 
-    private Component buildSparkline(final int[] values, final Color color) {
-        Chart spark = new Chart();
-        spark.getConfiguration().setTitle("");
-        spark.getConfiguration().getChart().setType(ChartType.LINE);
-        spark.getConfiguration().getChart().setAnimation(false);
+    private Component buildSparkline(final int[] values, final String color) {
+        DCharts spark = new DCharts();
+        spark.getOptions().setTitle("");
         spark.setWidth("120px");
         spark.setHeight("40px");
 
         DataSeries series = new DataSeries();
+        DataSeries items= series.newSeries();
         for (int i = 0; i < values.length; i++) {
-            DataSeriesItem item = new DataSeriesItem("", values[i]);
-            series.add(item);
+            items.add("", values[i]);
         }
-        spark.getConfiguration().setSeries(series);
-        spark.getConfiguration().getTooltip().setEnabled(false);
-
-        Configuration conf = series.getConfiguration();
-        Legend legend = new Legend();
-        legend.setEnabled(false);
-        conf.setLegend(legend);
-
-        Credits c = new Credits("");
-        spark.getConfiguration().setCredits(c);
-
-        PlotOptionsLine opts = new PlotOptionsLine();
-        opts.setAllowPointSelect(false);
-        opts.setColor(color);
-        opts.setDataLabels(new Labels(false));
-        opts.setLineWidth(1);
-        opts.setShadow(false);
-        opts.setDashStyle(DashStyle.SOLID);
-        opts.setMarker(new Marker(false));
-        opts.setEnableMouseTracking(false);
-        opts.setAnimation(false);
-        spark.getConfiguration().setPlotOptions(opts);
-
-        XAxis xAxis = spark.getConfiguration().getxAxis();
-        YAxis yAxis = spark.getConfiguration().getyAxis();
-
-        SolidColor transparent = new SolidColor(0, 0, 0, 0);
-
-        xAxis.setLabels(new Labels(false));
-        xAxis.setTickWidth(0);
-        xAxis.setLineWidth(0);
-
-        yAxis.setTitle(new Title(""));
-        yAxis.setAlternateGridColor(transparent);
-        yAxis.setLabels(new Labels(false));
-        yAxis.setLineWidth(0);
-        yAxis.setGridLineWidth(0);
+        spark.setDataSeries(series);
 
         return spark;
     }

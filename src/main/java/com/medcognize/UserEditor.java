@@ -27,7 +27,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @UIScope
 public class UserEditor extends VerticalLayout {
 
-	private final UserRepository repository;
+	private final UserService repository;
 
 	/**
 	 * The currently edited user
@@ -45,7 +45,7 @@ public class UserEditor extends VerticalLayout {
 	CssLayout actions = new CssLayout(save, cancel, delete);
 
 	@Autowired
-	public UserEditor(UserRepository repository) {
+	public UserEditor(UserService repository) {
 		this.repository = repository;
 
 		addComponents(firstName, lastName, actions);
@@ -57,9 +57,15 @@ public class UserEditor extends VerticalLayout {
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		// wire action buttons to save, delete and reset
-		save.addClickListener(e -> repository.save(user));
-		delete.addClickListener(e -> repository.delete(user));
-		cancel.addClickListener(e -> editUser(user));
+		// have to rethink user creation and deletion through UserService
+	//	save.addClickListener(e -> repository.save(user));
+	//	delete.addClickListener(e -> repository.delete(user));
+		cancel.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(Button.ClickEvent e) {
+				UserEditor.this.editUser(user);
+			}
+		});
 		setVisible(false);
 	}
 
@@ -72,7 +78,7 @@ public class UserEditor extends VerticalLayout {
 		final boolean persisted = c.getId() != null;
 		if (persisted) {
 			// Find fresh entity for editing
-			user = repository.findOne(c.getId());
+			user = repository.getUserById(c.getId());
 		}
 		else {
 			user = c;
@@ -92,11 +98,21 @@ public class UserEditor extends VerticalLayout {
 		firstName.selectAll();
 	}
 
-	public void setChangeHandler(ChangeHandler h) {
+	public void setChangeHandler(final ChangeHandler h) {
 		// ChangeHandler is notified when either save or delete
 		// is clicked
-		save.addClickListener(e -> h.onChange());
-		delete.addClickListener(e -> h.onChange());
+		save.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(Button.ClickEvent e) {
+				h.onChange();
+			}
+		});
+		delete.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(Button.ClickEvent e) {
+				h.onChange();
+			}
+		});
 	}
 
 }
