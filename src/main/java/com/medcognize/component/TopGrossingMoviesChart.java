@@ -13,7 +13,7 @@ public class TopGrossingMoviesChart extends DCharts {
 
     public TopGrossingMoviesChart() {
         setCaption("Top Grossing Movies");
-        getOptions().setTitle("");
+        // getOptions().setTitle("");
         setSizeFull();
 
         List<Movie> movies = new ArrayList<Movie>(MedcognizeUI.getDataProvider()

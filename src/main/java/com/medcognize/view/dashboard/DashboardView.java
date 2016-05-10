@@ -2,14 +2,16 @@ package com.medcognize.view.dashboard;
 
 import com.google.common.eventbus.Subscribe;
 import com.medcognize.MedcognizeUI;
-import com.medcognize.component.SparklineChart;
-import com.medcognize.component.TopGrossingMoviesChart;
-import com.medcognize.component.TopSixTheatersChart;
-import com.medcognize.component.TopTenMoviesTable;
-import com.medcognize.data.dummy.DummyDataGenerator;
 import com.medcognize.domain.DashboardNotification;
+import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
+import com.medcognize.form.MedicalExpenseForm;
+import com.medcognize.view.crud.MedicalExpenseTable;
+import com.medcognize.view.dashboard.widget.FlotChartWidget;
+import com.medcognize.view.dashboard.widget.NotesWidget;
+import com.medcognize.view.dashboard.widget.TableWidget;
+import com.medcognize.view.dashboard.widget.ToDoWidget;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -26,18 +28,14 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 @SuppressWarnings("serial")
 @SpringView(name = DashboardView.NAME)
@@ -54,6 +52,7 @@ public final class DashboardView extends Panel implements View,
     private CssLayout dashboardPanels;
     private final VerticalLayout root;
     private Window notificationsWindow;
+    ToDoWidget todo;
 
     public DashboardView() {
         addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -69,8 +68,6 @@ public final class DashboardView extends Panel implements View,
 
         root.addComponent(buildHeader());
 
-        root.addComponent(buildSparklines());
-
         Component content = buildContent();
         root.addComponent(content);
         root.setExpandRatio(content, 1);
@@ -83,31 +80,6 @@ public final class DashboardView extends Panel implements View,
                 MedcognizeEventBus.post(new MedcognizeEvent.CloseOpenWindowsEvent());
             }
         });
-    }
-
-    private Component buildSparklines() {
-        CssLayout sparks = new CssLayout();
-        sparks.addStyleName("sparks");
-        sparks.setWidth("100%");
-        Responsive.makeResponsive(sparks);
-
-        SparklineChart s = new SparklineChart("Traffic", "K", "",
-                DummyDataGenerator.chartColors[0], 22, 20, 80);
-        sparks.addComponent(s);
-
-        s = new SparklineChart("Revenue / Day", "M", "$",
-                DummyDataGenerator.chartColors[2], 8, 89, 150);
-        sparks.addComponent(s);
-
-        s = new SparklineChart("Checkout Time", "s", "",
-                DummyDataGenerator.chartColors[3], 10, 30, 120);
-        sparks.addComponent(s);
-
-        s = new SparklineChart("Theater Fill Rate", "%", "",
-                DummyDataGenerator.chartColors[5], 50, 34, 100);
-        sparks.addComponent(s);
-
-        return sparks;
     }
 
     private Component buildHeader() {
@@ -165,99 +137,44 @@ public final class DashboardView extends Panel implements View,
         dashboardPanels = new CssLayout();
         dashboardPanels.addStyleName("dashboard-panels");
         Responsive.makeResponsive(dashboardPanels);
-
-        dashboardPanels.addComponent(buildTopGrossingMovies());
+        todo = new ToDoWidget("To Do", null, root, dashboardPanels);
+        dashboardPanels.addComponent(todo);
         dashboardPanels.addComponent(buildNotes());
-        dashboardPanels.addComponent(buildTop10TitlesByRevenue());
-        dashboardPanels.addComponent(buildPopularMovies());
+        dashboardPanels.addComponent(buildExpenseTableWidget());
+        dashboardPanels.addComponent(buildChart());
 
         return dashboardPanels;
     }
 
-    private Component buildTopGrossingMovies() {
-        TopGrossingMoviesChart topGrossingMoviesChart = new TopGrossingMoviesChart();
-        topGrossingMoviesChart.setSizeFull();
-        return createContentWrapper(topGrossingMoviesChart);
-    }
-
     private Component buildNotes() {
-        TextArea notes = new TextArea("Notes");
-        notes.setValue("Remember to:\n· Zoom in and out in the Sales view\n· Filter the transactions and drag a set of them to the Reports tab\n· Create a new report\n· Change the schedule of the movie theater");
-        notes.setSizeFull();
-        notes.addStyleName(ValoTheme.TEXTAREA_BORDERLESS);
-        Component panel = createContentWrapper(notes);
-        panel.addStyleName("notes");
-        return panel;
+        String msg = "Remember:\nPlans are for a maximum of one year.  For a new year, " +
+                "create a new plan.\n" + "Expenses are assigned to a plan and the expense date must be within the " +
+                "plan " +
+                "period.";
+        NotesWidget notes = new NotesWidget("Notes", msg, root, dashboardPanels);
+        notes.getContent().setReadOnly(true);
+        return notes;
     }
 
-    private Component buildTop10TitlesByRevenue() {
-        Component contentWrapper = createContentWrapper(new TopTenMoviesTable());
-        contentWrapper.addStyleName("top10-revenue");
-        return contentWrapper;
+    private Component buildExpenseTableWidget() {
+        ArrayList<String> pids = new ArrayList<String>() {
+            {
+                add("date");
+                add("familyMember");
+                add("costAccordingToProvider");
+            }
+        };
+        TableWidget expenseTableWidget = new TableWidget("Recent Expenses", root, dashboardPanels);
+        // DisplayFriendlyTable<MedicalExpense> table = new DisplayFriendlyTable<>(MedicalExpense.class, pids);
+        MedicalExpenseTable met = new MedicalExpenseTable(MedicalExpenseForm.class, pids);
+        expenseTableWidget.setTable(met);
+        expenseTableWidget.addStyleName("top10-revenue");
+        return expenseTableWidget;
     }
 
-    private Component buildPopularMovies() {
-        return createContentWrapper(new TopSixTheatersChart());
-    }
-
-    private Component createContentWrapper(final Component content) {
-        final CssLayout slot = new CssLayout();
-        slot.setWidth("100%");
-        slot.addStyleName("dashboard-panel-slot");
-
-        CssLayout card = new CssLayout();
-        card.setWidth("100%");
-        card.addStyleName(ValoTheme.LAYOUT_CARD);
-
-        HorizontalLayout toolbar = new HorizontalLayout();
-        toolbar.addStyleName("dashboard-panel-toolbar");
-        toolbar.setWidth("100%");
-
-        Label caption = new Label(content.getCaption());
-        caption.addStyleName(ValoTheme.LABEL_H4);
-        caption.addStyleName(ValoTheme.LABEL_COLORED);
-        caption.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        content.setCaption(null);
-
-        MenuBar tools = new MenuBar();
-        tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
-        MenuItem max = tools.addItem("", FontAwesome.EXPAND, new Command() {
-
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                if (!slot.getStyleName().contains("max")) {
-                    selectedItem.setIcon(FontAwesome.COMPRESS);
-                    toggleMaximized(slot, true);
-                } else {
-                    slot.removeStyleName("max");
-                    selectedItem.setIcon(FontAwesome.EXPAND);
-                    toggleMaximized(slot, false);
-                }
-            }
-        });
-        max.setStyleName("icon-only");
-        MenuItem root = tools.addItem("", FontAwesome.COG, null);
-        root.addItem("Configure", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                Notification.show("Not implemented in this demo");
-            }
-        });
-        root.addSeparator();
-        root.addItem("Close", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                Notification.show("Not implemented in this demo");
-            }
-        });
-
-        toolbar.addComponents(caption, tools);
-        toolbar.setExpandRatio(caption, 1);
-        toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
-
-        card.addComponents(toolbar, content);
-        slot.addComponent(card);
-        return slot;
+    private Component buildChart() {
+        FlotChartWidget fcw = new FlotChartWidget("Chart",root, dashboardPanels);
+        return fcw;
     }
 
     private void openNotificationsPopup(final ClickEvent event) {
@@ -334,30 +251,40 @@ public final class DashboardView extends Panel implements View,
     @Override
     public void enter(final ViewChangeEvent event) {
         notificationsButton.updateNotificationsCount(null);
+        setToDos();
+    }
+
+    protected void setToDos() {
+        User u = ((MedcognizeUI) MedcognizeUI.getCurrent()).getUser();
+        int numPlans = u.getPlans().size();
+        int numFamilyMembers = u.getFamilyMembers().size();
+        int numProviders = u.getProviders().size();
+        if (numPlans == 0 && numFamilyMembers == 0 && numProviders == 0) {
+            todo.addToDo("You should have at least one plan, one family member, and one health care provider");
+        } else if (numPlans == 0 && numFamilyMembers == 0) {
+            todo.addToDo("You should have at least one plan and one family member");
+        } else if (numPlans == 0 && numProviders == 0) {
+            todo.addToDo("You should have at least one plan and one provider");
+        } else if (numFamilyMembers == 0 && numProviders == 0) {
+            todo.addToDo("You should have at least one family member and one provider");
+        } else if (numFamilyMembers == 0) {
+            todo.addToDo("You should have at least one family member");
+        } else if (numProviders == 0) {
+            todo.addToDo("You should have at least one provider");
+        } else if (numPlans == 0) {
+            todo.addToDo("You should have at least one plan");
+        }
+
+        if ((null == u.getFirstName()) || ("".equals(u.getFirstName()))) {
+            todo.addToDo("Set your real name.  Go to the little cog icon at bottom left.");
+        }
+
+        todo.addToDo("Submit your expenses to your plan and your FSA");
     }
 
     @Override
     public void dashboardNameEdited(final String name) {
         titleLabel.setValue(name);
-    }
-
-    private void toggleMaximized(final Component panel, final boolean maximized) {
-        for (Iterator<Component> it = root.iterator(); it.hasNext();) {
-            it.next().setVisible(!maximized);
-        }
-        dashboardPanels.setVisible(true);
-
-        for (Iterator<Component> it = dashboardPanels.iterator(); it.hasNext();) {
-            Component c = it.next();
-            c.setVisible(!maximized);
-        }
-
-        if (maximized) {
-            panel.setVisible(true);
-            panel.addStyleName("max");
-        } else {
-            panel.removeStyleName("max");
-        }
     }
 
     public static final class NotificationsButton extends Button {

@@ -22,7 +22,7 @@ public class TopSixTheatersChart extends DCharts {
                 .setSeriesDefaults(seriesDefaults);
 
         setCaption("Popular Movies");
-        getOptions().setTitle("");
+        // getOptions().setTitle("");
         setWidth("100%");
         setHeight("90%");
 

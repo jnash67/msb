@@ -53,7 +53,7 @@ public class SparklineChart extends VerticalLayout {
 
     private Component buildSparkline(final int[] values, final String color) {
         DCharts spark = new DCharts();
-        spark.getOptions().setTitle("");
+        // spark.getOptions().setTitle("");
         spark.setWidth("120px");
         spark.setHeight("40px");
 

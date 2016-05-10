@@ -7,6 +7,7 @@ import com.medcognize.domain.User;
 import com.medcognize.util.DChartsUtil;
 import com.vaadin.data.Property;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import org.dussan.vaadin.dcharts.DCharts;
@@ -39,9 +40,9 @@ import java.util.List;
 
 /*
 For a single metric which you can't change, this let's you see that metric (i.e. costs)
-for various Plans. The problem is that two Selects / NativeSelects / ComboBoxes don't seem to work in the PanelWidget.
+for various Plans. The problem is that two Selects / NativeSelects / ComboBoxes don't seem to work in the ContentWidget.
  */
-public class PlanCostsChartWidget extends PanelWidget {
+public class PlanCostsChartWidget extends ContentWidget {
 
     DCharts chart;
     final String caption;
@@ -56,8 +57,8 @@ public class PlanCostsChartWidget extends PanelWidget {
     Object[] monthsAxis = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     // Object[] monthInitsAxis = {"J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"};
 
-    public PlanCostsChartWidget(final User u, final String caption) {
-        super();
+    public PlanCostsChartWidget(final User u, final String caption, final VerticalLayout root, final CssLayout dashboardPanels) {
+        super(root, dashboardPanels);
         this.caption = caption;
         this.planToChart = u.getRepo().getActivePlan(u);
         this.user = u;
@@ -91,7 +92,7 @@ public class PlanCostsChartWidget extends PanelWidget {
         combined.setSpacing(true);
 
         createLayout();
-        createContent(combined);
+        setContent(combined);
     }
 
     private void createChart() {
