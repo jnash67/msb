@@ -50,9 +50,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.util.Locale;
 // Don't need @Widgetset annotation if using vwscdn-maven-plugin
+// @Widgetset("com.medcognize.MedcognizeWidgetSet")
 @SpringUI
 @Theme("dashboard")
-@Widgetset("com.medcognize.MedcognizeWidgetSet")
 @Title("Medcognize")
 @PreserveOnRefresh
 public class MedcognizeUI extends UI {
@@ -192,8 +192,10 @@ public class MedcognizeUI extends UI {
     }
 
     /**
-     * Updates the correct content for this UI based on the current user status.
-     * If the user is logged in with appropriate privileges, main view is shown.
+     * Updates the correct content for this UI based on the current user status.
+
+     * If the user is logged in with appropriate privileges, main view is shown.
+
      * Otherwise login view is shown.
      */
     private void updateContent() {

@@ -4,9 +4,12 @@ package com.medcognize;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
+// Enable additional servlet filters for wscdn and cloud hosted fontawesome
+@ServletComponentScan({"com.vaadin.wscdn", "org.peimari.dawn"})
 public class MedcognizeApplication {
     @java.lang.SuppressWarnings("all")
     @javax.annotation.Generated("lombok")

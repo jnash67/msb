@@ -127,16 +127,16 @@ public class DummyDataProvider implements DataProvider {
                         System.out.println(baseDirectory);
                         System.out.println(baseDirectory);
                         URL url = DummyDataProvider.class.getResource("movies-fallback.txt");
-                        File f = new File(url.toURI());
-                        json = readJsonFromFile(f);
+                        //File f = new File(url.toURI());
+                        json = readJsonFromUrl(url.toExternalForm());
 //                    json = readJsonFromFile(new File(baseDirectory
 //                            + "/movies-fallback.txt"));
                     }
                 } else {
                     System.out.println(baseDirectory);
                     URL url = DummyDataProvider.class.getResource("movies-fallback.txt");
-                    File f = new File(url.toURI());
-                    json = readJsonFromFile(f);
+                    //File f = new File(url.toURI());
+                    json = readJsonFromUrl(url.toExternalForm());
 //                    json = readJsonFromFile(new File(baseDirectory
 //                            + "/movies-fallback.txt"));
                 }
