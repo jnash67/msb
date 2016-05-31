@@ -4,6 +4,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 /*
  * Copyright 2012 the original author or authors.
@@ -26,6 +27,10 @@ public class DisplayFriendlyAbstractEntity extends DisplayFriendly {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    // implements optimistic locking
+    @Version
+    private Integer version;
 
     /**
      * Returns the identifier of the entity.
