@@ -27,6 +27,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SuppressWarnings("serial")
 @SpringView(name = LoginView.NAME)
@@ -34,6 +35,9 @@ public class LoginView extends VerticalLayout implements View {
     public static final String NAME = "login";
 
     private UserService repo;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public LoginView(UserService repo) {
@@ -143,7 +147,7 @@ public class LoginView extends VerticalLayout implements View {
                 boolean e = repo.existsByUsername(username);
                 if(e) {
                     String passwordHash = repo.findPasswordForUsername(username);
-                    if (User.validateUserPassword(passwordHash, passwordField.getValue())) {
+                    if (passwordEncoder.matches(passwordField.getValue(), passwordHash)) {
                         User u = repo.getUserByUsername(username);
                         MedcognizeEventBus.post(new MedcognizeEvent.UserLoginEvent(u));
                     }

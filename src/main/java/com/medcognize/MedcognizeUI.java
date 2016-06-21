@@ -20,6 +20,7 @@ import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.SpringUtil;
 import com.medcognize.view.DashboardMenu;
+import com.medcognize.view.ErrorView;
 import com.medcognize.view.dashboard.DashboardView;
 import com.medcognize.view.homepage.HomepageView;
 import com.medcognize.view.homepage.LoginView;
@@ -47,6 +48,8 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+
 import javax.annotation.PostConstruct;
 import java.util.Locale;
 // Don't need @Widgetset annotation if using vwscdn-maven-plugin
@@ -57,6 +60,16 @@ import java.util.Locale;
 @PreserveOnRefresh
 @Slf4j
 public class MedcognizeUI extends UI {
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    SpringViewProvider viewProvider;
+
+    @Autowired
+    ErrorView errorView;
+
     public static final String US_DATE_FORMAT = "MM-dd-yyyy";
     public static final Locale LOCALE = Locale.US;
 
@@ -99,8 +112,6 @@ public class MedcognizeUI extends UI {
     private CssLayout navigationComponent = new CssLayout();
     private AbstractOrderedLayout dashboardMenuPlusComponentToRight;
     private DashboardMenu dashboardMenu;
-    @Autowired
-    SpringViewProvider viewProvider;
 
     // @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired

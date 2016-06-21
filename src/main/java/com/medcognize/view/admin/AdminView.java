@@ -26,6 +26,7 @@ public class AdminView extends TabSheet implements View {
         }
         // addTab(new TestTab(), "Test");
         // addTab(new ChartTestTab(),"Chart");
+        addTab(null, "Reset Database");
         addTab(new AnyUserZipCsvUploadTab(repo), "Zip Upload");
         addTab(new ZipCsvDownloadTab(), "Zip Download");
         addTab(new ManualCsvUploadTab(), "Manual CSV Upload");

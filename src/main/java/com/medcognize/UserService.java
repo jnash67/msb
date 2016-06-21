@@ -1,15 +1,13 @@
 package com.medcognize;
 
-import com.medcognize.domain.FamilyMember;
-import com.medcognize.domain.Fsa;
-import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Plan;
-import com.medcognize.domain.Provider;
-import com.medcognize.domain.User;
+import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.basic.EmailAddress;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -19,9 +17,19 @@ import java.util.List;
 @Service
 @Transactional
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
-    UserRepository repo;
+    private UserRepository repo;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user=repo.findByUsername(username);
+        if(null == user){
+            throw new UsernameNotFoundException("No user present with username: "+username);
+        }else{
+            return user;
+        }
+    }
 
     // EXPOSE basic UserRepository methods here
     // NOTE: Whenever we return a User, we need to be sure we call setRepo for the User to make

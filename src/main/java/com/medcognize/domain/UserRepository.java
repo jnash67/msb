@@ -1,4 +1,4 @@
-package com.medcognize;
+package com.medcognize.domain;
 
 import com.medcognize.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

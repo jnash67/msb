@@ -22,7 +22,6 @@ import java.io.Serializable;
 public class Provider extends DisplayFriendlyAbstractEntity implements Serializable {
 	private static final String captionString = "providerName:Name, providerInPlan:In Plan, providerType:Provider Type, providerId:Provider Id, address1:Address 1, address2:Address 2, city:City, state:State, zip:Zip, phoneNumber:Phone Number, website:Website";
 
-
 	public static enum ProviderType {
 		PRIMARY, SPECIALIST, PHARMACY, HOSPITAL, OTHER;
 	}
