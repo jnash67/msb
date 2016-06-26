@@ -1,8 +1,6 @@
 package com.medcognize;
 
 import com.medcognize.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
@@ -13,6 +11,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -27,7 +26,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @UIScope
 public class UserEditor extends VerticalLayout {
 
-	private final UserService repository;
+	private final UserRepository repository;
 
 	/**
 	 * The currently edited user
@@ -45,7 +44,7 @@ public class UserEditor extends VerticalLayout {
 	CssLayout actions = new CssLayout(save, cancel, delete);
 
 	@Autowired
-	public UserEditor(UserService repository) {
+	public UserEditor(UserRepository repository) {
 		this.repository = repository;
 
 		addComponents(firstName, lastName, actions);
@@ -78,7 +77,7 @@ public class UserEditor extends VerticalLayout {
 		final boolean persisted = c.getId() != null;
 		if (persisted) {
 			// Find fresh entity for editing
-			user = repository.getUserById(c.getId());
+			user = repository.findById(c.getId());
 		}
 		else {
 			user = c;

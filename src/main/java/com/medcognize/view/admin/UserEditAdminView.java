@@ -1,6 +1,6 @@
 package com.medcognize.view.admin;
 
-import com.medcognize.UserService;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.form.AdminUserSettingsForm;
 import com.medcognize.util.DbUtil;
@@ -22,14 +22,14 @@ public class UserEditAdminView extends CrudView<User> {
         }
     };
 
-    public UserEditAdminView(UserService repo) {
+    public UserEditAdminView(UserRepository repo) {
         super(User.class, "Users", new UserCrudTable(repo, User.class, AdminUserSettingsForm.class, pids));
         User owner = DbUtil.getLoggedInUser();
         if (null == owner) {
             log.error("owner should not be null here");
             return;
         }
-        Collection<User> users = repo.getAllUsers();
+        Collection<User> users = repo.findAll();
         setData(users, null);
         // we extend a View here to get the functionality but we don't use it as a view
         // therefore enter won't be called automatically so we must do it manually

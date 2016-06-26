@@ -2,12 +2,11 @@ package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Provider;
 import com.medcognize.domain.User;
 import com.medcognize.form.MedicalExpenseForm;
-import com.medcognize.form.ProviderForm;
 import com.medcognize.form.wizard.MedicalExpenseWizard;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.data.util.converter.StringToDoubleConverter;
 import com.vaadin.navigator.ViewChangeListener;
@@ -46,7 +45,7 @@ public class MedicalExpenseView extends CrudView<MedicalExpense> {
             log.error("owner should not be null here");
             return;
         }
-        Collection<MedicalExpense> expenses = u.getRepo().getAll(u, MedicalExpense.class);
+        Collection<MedicalExpense> expenses = UserUtil.getAll(u, MedicalExpense.class);
         setData(expenses, u);
     }
 

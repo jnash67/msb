@@ -1,30 +1,20 @@
 package com.medcognize.form;
 
-import com.medcognize.domain.User;
+import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.domain.FamilyMember;
-import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Plan;
-import com.medcognize.domain.Provider;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
 import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
 import com.medcognize.form.field.errorful.ErrorfulGridLayout;
 import com.medcognize.form.field.errorful.ErrorfulHorizontalLayout;
 import com.medcognize.util.CrudUtil;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.medcognize.view.crud.CommitAction;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.NativeButton;
-import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.daterangefield.DateUtil;
@@ -100,7 +90,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         if (null == planField.getValue()) {
             // set to active plan
             User u = DbUtil.getLoggedInUser();
-            Plan ap = u.getRepo().getActivePlan(u);
+            Plan ap = UserUtil.getActivePlan(u);
             if (planField.getItemIds().size() > 0) {
                 planField.setValue(ap);
             } else {
@@ -172,7 +162,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                         u.getFamilyMembers().add(bi.getBean());
                         Container c = familyMemberField.getContainerDataSource();
                         c.removeAllItems();
-                        List<FamilyMember> fms = u.getRepo().getAll(u, FamilyMember.class);
+                        List<FamilyMember> fms = UserUtil.getAll(u, FamilyMember.class);
                         for (FamilyMember fm : fms) {
                             c.addItem(fm);
                         }
@@ -207,7 +197,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                         u.getProviders().add(bi.getBean());
                         Container c = providerField.getContainerDataSource();
                         c.removeAllItems();
-                        List<Provider> prs = u.getRepo().getAll(u, Provider.class);
+                        List<Provider> prs = UserUtil.getAll(u, Provider.class);
                         for (Provider pr : prs) {
                             c.addItem(pr);
                         }

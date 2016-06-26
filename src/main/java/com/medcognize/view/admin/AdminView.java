@@ -1,6 +1,6 @@
 package com.medcognize.view.admin;
 
-import com.medcognize.UserService;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.util.DbUtil;
 import com.vaadin.navigator.View;
@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class AdminView extends TabSheet implements View {
     public static final String NAME = "admin";
-    private UserService repo;
+    private UserRepository repo;
 
     @Autowired
-    public AdminView(UserService repo) {
+    public AdminView(UserRepository repo) {
         this.repo = repo;
         User owner = DbUtil.getLoggedInUser();
         if (null == owner) {

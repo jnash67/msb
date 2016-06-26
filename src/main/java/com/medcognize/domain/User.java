@@ -1,26 +1,21 @@
 package com.medcognize.domain;
 
 import com.google.common.collect.BiMap;
-import com.medcognize.UserService;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
-import com.medcognize.domain.basic.EmailAddress;
-import com.medcognize.util.PasswordHash;
 import com.vaadin.spring.annotation.VaadinSessionScope;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Email;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -30,21 +25,23 @@ import java.util.List;
 @Entity
 @VaadinSessionScope
 @Slf4j
-public class User extends DisplayFriendlyAbstractEntity {
+public class User extends DisplayFriendlyAbstractEntity implements UserDetails {
 	private static final String captionString = "username:Username, password:Password, firstName:First Name, lastName:Last Name, admin:Admin";
 	@SuppressWarnings("UnusedDeclaration")
 	public static final BiMap<String, String> captionMap = createBiMap(captionString);
-	// This bean must have a no-args constructor so we can't declare this final.  We have to make sure
-	// the UserService is set when Hibernate creates a User bean from the DB (typically when logging in).
-	@Transient
-	private UserService repo;
+
 	@Column(unique = true)
 	@Email
 	private String username = "";
+
+	// For UserDetails
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> userRoles;
 	private boolean accountNonExpired = false;
 	private boolean accountNonLocked = false;
 	private boolean credentialsNonExpired = false;
 	private boolean enabled = false;
+
 	private boolean admin = false;
 	private String firstName = "";
 	private String lastName = "";
@@ -96,57 +93,45 @@ public class User extends DisplayFriendlyAbstractEntity {
 	@JoinColumn(name = "user_id")
 	private List<Fsa> fsas = new ArrayList<Fsa>();
 
-	// enables registration
-	public User(final UserService repo, final EmailAddress email, final String pwd) {
-		this.repo = repo;
-		this.username = email.toString();
-		try {
-			this.password = PasswordHash.createHash(pwd);
-		} catch (NoSuchAlgorithmException e) {
-			log.error("NoSuchAlgorithmException in constructor: " + e);
-		} catch (InvalidKeySpecException e) {
-			log.error("InvalidKeySpecException in constructor: " + e);
-		}
-	}
-
-	public static boolean validateUserPassword(String existingHash, String passwordToTry) {
-		boolean v = false;
-		try {
-			v = PasswordHash.validatePassword(passwordToTry, existingHash);
-		} catch (NoSuchAlgorithmException e) {
-			log.error("NoSuchAlgorithmException in validate: " + e);
-		} catch (InvalidKeySpecException e) {
-			log.error("InvalidKeySpecException in validate: " + e);
-		}
-		return v;
-	}
-
 	@Override
 	public String toString() {
 		return getUsername();
-	}
-
-	public String getUsername() {
-		return this.username;
 	}
 
 	public String getPassword() {
 		return this.password;
 	}
 
+	// FOR IMPLEMENTATION OF UserDetails
+
+	@Override
+	public String getUsername() {
+		return this.username;
+	}
+
+	@Override
 	public boolean isAccountNonExpired() {
 		return this.accountNonExpired;
 	}
 
+	@Override
 	public boolean isAccountNonLocked() {
 		return this.accountNonLocked;
 	}
 
+	@Override
 	public boolean isCredentialsNonExpired() {
 		return this.credentialsNonExpired;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return this.enabled;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		String roles = StringUtils.collectionToCommaDelimitedString(userRoles);
+		return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
 	}
 }

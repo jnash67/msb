@@ -6,14 +6,11 @@ import com.medcognize.view.ComponentWindow;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 
 @SpringView(name = HomepageView.NAME)
 public class HomepageView extends HomepageDesign implements View {
+
     public static final String NAME = "home";
     private MedcognizeUI ref = (MedcognizeUI) MedcognizeUI.getCurrent();
 

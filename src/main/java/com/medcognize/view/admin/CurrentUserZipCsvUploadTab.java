@@ -1,6 +1,6 @@
 package com.medcognize.view.admin;
 
-import com.medcognize.UserService;
+import com.medcognize.UserDetailsServiceImpl;
 import com.medcognize.domain.User;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.export.MedcognizeExportFileFormat;
@@ -11,13 +11,14 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 @Slf4j
 public class CurrentUserZipCsvUploadTab extends VerticalLayout implements Upload.Receiver, Upload.SucceededListener {
 	@Autowired
-	UserService repo;
+	UserDetailsServiceImpl repo;
 	//File file;
 	String filename;
 	ByteArrayOutputStream fos;

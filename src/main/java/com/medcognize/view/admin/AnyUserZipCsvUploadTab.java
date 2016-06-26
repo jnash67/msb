@@ -1,8 +1,9 @@
 package com.medcognize.view.admin;
 
-import com.medcognize.UserService;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.EmailAddress;
+import com.medcognize.util.UserUtil;
 import com.medcognize.util.export.CsvUtil;
 import com.medcognize.util.export.MedcognizeExportFileFormat;
 import com.medcognize.util.export.SerializableZipFile;
@@ -13,6 +14,7 @@ import com.vaadin.ui.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -20,13 +22,13 @@ import java.util.List;
 @SuppressWarnings("UnusedDeclaration")
 @Slf4j
 public class AnyUserZipCsvUploadTab extends VerticalLayout implements Upload.Receiver, Upload.SucceededListener {
-    UserService repo;
+    UserRepository repo;
     String filename = "";
     ByteArrayOutputStream fos;
     Upload upload = new Upload();
     PasswordField passwordField = new PasswordField("Password");
 
-    public AnyUserZipCsvUploadTab(UserService repo) {
+    public AnyUserZipCsvUploadTab(UserRepository repo) {
         this.repo = repo;
         setSpacing(true);
         setMargin(true);
@@ -101,7 +103,7 @@ public class AnyUserZipCsvUploadTab extends VerticalLayout implements Upload.Rec
                 return;
             }
             User csvUser = users.get(0);
-            User csvUserWithListManager = repo.createNewRegularUser(new EmailAddress(csvUser.getUsername()), passwordField.getValue());
+            User csvUserWithListManager = UserUtil.createNewRegularUser(repo, new EmailAddress(csvUser.getUsername()), passwordField.getValue());
             if (null != csvUserWithListManager) {
                 log.warn("File successfully uploaded");
             }

@@ -2,6 +2,7 @@ package com.medcognize.domain.validator.vaadin;
 
 import com.medcognize.domain.Plan;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.validator.AbstractValidator;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class ExistingPlanNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<Plan> pls = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(),Plan.class);
+        Collection<Plan> pls = UserUtil.getAll(DbUtil.getLoggedInUser(), Plan.class);
         for (Plan p: pls) {
             if (value.equals(p.getPlanName())) {
                 return false;

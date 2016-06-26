@@ -1,6 +1,6 @@
 package com.medcognize.view.admin;
 
-import com.medcognize.UserService;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.view.crud.CrudTable;
@@ -13,12 +13,12 @@ import java.util.ArrayList;
 
 public class UserCrudTable extends CrudTable<User> {
 
-    private UserService repo;
+    private UserRepository repo;
 
     private DisplayFriendlyForm<User> uf = null;
 
     @Autowired
-    public UserCrudTable(UserService repo, Class<User> entityClazz, Class<? extends DisplayFriendlyForm<User>> formClazz,
+    public UserCrudTable(UserRepository repo, Class<User> entityClazz, Class<? extends DisplayFriendlyForm<User>> formClazz,
                          ArrayList<String> orderedPidList) {
         super(entityClazz, formClazz, orderedPidList);
         this.repo = repo;
@@ -34,7 +34,7 @@ public class UserCrudTable extends CrudTable<User> {
                             // Confirmed to continue
                             BeanItem<User> bi = getData().getItem(target);
                             removeItem(target);
-                            repo.deleteUser(bi.getBean());
+                            repo.delete(bi.getBean());
                             refreshItems();
                         }
                     }

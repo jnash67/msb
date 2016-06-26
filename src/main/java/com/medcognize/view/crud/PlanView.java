@@ -1,6 +1,7 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.PlanLimitsStatus;
 import com.medcognize.domain.User;
@@ -10,6 +11,7 @@ import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.form.PlanForm;
 import com.medcognize.form.field.errorful.ErrorfulFormLayout;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.medcognize.view.ComponentWindow;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
@@ -17,20 +19,13 @@ import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.event.Action;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addon.daterangefield.DateUtil;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.risto.stepper.IntStepper;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +35,7 @@ import java.util.Date;
 @Slf4j
 @SpringView(name = PlanView.NAME)
 public class PlanView extends CrudView<Plan> {
+
     public static final String NAME = "plan";
     static final ArrayList<String> pids = new ArrayList<String>() {
         {
@@ -50,10 +46,14 @@ public class PlanView extends CrudView<Plan> {
         }
     };
 
+    private UserRepository repo;
 
     static class PlanCrudTable extends CrudTable<Plan> {
-        public PlanCrudTable(Class<Plan> entityClazz, Class<? extends DisplayFriendlyForm<Plan>> formClazz, ArrayList<String> orderedPidList) {
+        private UserRepository repo;
+
+        public PlanCrudTable(UserRepository repo, Class<Plan> entityClazz, Class<? extends DisplayFriendlyForm<Plan>> formClazz, ArrayList<String> orderedPidList) {
             super(entityClazz, formClazz, orderedPidList);
+            this.repo = repo;
         }
 
         protected final Action ACTION_LIMITS = new Action("See Limits Usage");
@@ -62,7 +62,7 @@ public class PlanView extends CrudView<Plan> {
         protected void deleteItem(final Object target) {
             BeanItem<Plan> bi = getData().getItem(target);
             Plan p = bi.getBean();
-            int count = collectionOwner.getRepo().getAll(collectionOwner, Plan.class).size();
+            int count = UserUtil.getAll(collectionOwner, Plan.class).size();
             if (1 == count) {
                 if (!p.isActivePlan()) {
                     log.warn("This should not happen. The last plan left should always be the active plan");
@@ -77,7 +77,7 @@ public class PlanView extends CrudView<Plan> {
             int num = 0;
             try {
                 User u = (User) collectionOwner;
-                num = (u.getRepo().getMedicalExpensesForPlan(u, p)).size();
+                num = (UserUtil.getMedicalExpensesForPlan(u, p)).size();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -107,7 +107,7 @@ public class PlanView extends CrudView<Plan> {
             BeanItem<Plan> bi = getData().getItem(target);
             Plan p = bi.getBean();
             User u = (User) collectionOwner;
-            u.getRepo().deleteMedicalExpensesForPlan(u, p);
+            UserUtil.deleteMedicalExpensesForPlan(repo, u, p);
             removeItem(target);
             collectionOwner.getPlans().remove(p);
             refreshItems();
@@ -155,21 +155,22 @@ public class PlanView extends CrudView<Plan> {
 
     final User u;
 
-    public PlanView() {
-        super(Plan.class, "Plans", new PlanCrudTable(Plan.class, PlanForm.class, pids));
+    @Autowired
+    public PlanView(UserRepository repo) {
+        super(Plan.class, "Plans", new PlanCrudTable(repo, Plan.class, PlanForm.class, pids));
         u = DbUtil.getLoggedInUser();
         if (null == u) {
             log.error("owner should not be null here");
             return;
         }
-        Collection<Plan> plans = u.getRepo().getAll(u, Plan.class);
+        Collection<Plan> plans = UserUtil.getAll(u, Plan.class);
         // we want this added before the other column that gets generated when we call setData
         table.addGeneratedColumn("Active Plan", new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 Plan p = getContainer().getItem(itemId).getBean();
                 CheckBox cb;
-                if (u.getRepo().getActivePlan(u).equals(p)) {
+                if (UserUtil.getActivePlan(u).equals(p)) {
                     cb = new CheckBox("", true);
                     cb.setReadOnly(true);
                     return cb;
@@ -217,11 +218,11 @@ public class PlanView extends CrudView<Plan> {
                 }
                 @SuppressWarnings("unchecked")
                 Plan p = ((BeanItem<Plan>) table.getItem(s)).getBean();
-                if (p.equals(u.getRepo().getActivePlan(u))) {
+                if (p.equals(UserUtil.getActivePlan(u))) {
                     Notification.show("Selected plan is already the active plan", Notification.Type.HUMANIZED_MESSAGE);
                     return;
                 }
-                u.getRepo().setActivePlan(u, p);
+                UserUtil.setActivePlan(repo, u, p);
                 table.refreshItems();
             }
         });

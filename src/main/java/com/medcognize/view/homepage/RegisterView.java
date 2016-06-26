@@ -1,6 +1,6 @@
 package com.medcognize.view.homepage;
 
-import com.medcognize.UserService;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.EmailAddress;
 import com.medcognize.domain.validator.vaadin.ExistingUsernameValidator;
@@ -9,6 +9,7 @@ import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.form.field.errorful.ErrorfulHorizontalLayout;
 import com.medcognize.util.SpringUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.event.ShortcutAction;
@@ -19,15 +20,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 @SpringView(name = RegisterView.NAME)
 public class RegisterView extends VerticalLayout implements View {
+
     public static final String NAME = "register";
     @Autowired
-    UserService repo;
+    UserRepository repo;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -150,7 +144,7 @@ public class RegisterView extends VerticalLayout implements View {
                 String password = passwordField.getValue();
                 User u;
                 try {
-                    u = repo.createNewRegularUser(new EmailAddress(username), password);
+                    u = UserUtil.createNewRegularUser(repo, new EmailAddress(username), password);
                     // send registration emails
 //                    try {
 //                        EmailUtil.sendWelcomeEmail(username);

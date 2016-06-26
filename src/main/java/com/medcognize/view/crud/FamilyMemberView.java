@@ -4,6 +4,7 @@ import com.medcognize.domain.FamilyMember;
 import com.medcognize.domain.User;
 import com.medcognize.form.FamilyMemberForm;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class FamilyMemberView extends CrudView<FamilyMember> {
 			log.error("owner should not be null here");
 			return;
 		}
-		Collection<FamilyMember> members = owner.getRepo().getAll(owner, FamilyMember.class);
+		Collection<FamilyMember> members = UserUtil.getAll(owner, FamilyMember.class);
 		setData(members, owner);
 	}
 

@@ -2,6 +2,7 @@ package com.medcognize.domain.validator.vaadin;
 
 import com.medcognize.domain.Fsa;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.validator.AbstractValidator;
 
 import java.util.Collection;
@@ -31,7 +32,7 @@ public class ExistingFsaNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<Fsa> fsas = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), Fsa.class);
+        Collection<Fsa> fsas = UserUtil.getAll(DbUtil.getLoggedInUser(), Fsa.class);
         for (Fsa f : fsas) {
             if (value.equals(f.getFsaName())) {
                 return false;

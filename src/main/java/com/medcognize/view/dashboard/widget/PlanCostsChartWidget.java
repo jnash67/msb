@@ -5,6 +5,7 @@ import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.User;
 import com.medcognize.util.DChartsUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.Property;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
@@ -23,13 +24,7 @@ import org.dussan.vaadin.dcharts.metadata.renderers.AxisRenderers;
 import org.dussan.vaadin.dcharts.metadata.renderers.LabelRenderers;
 import org.dussan.vaadin.dcharts.metadata.renderers.SeriesRenderers;
 import org.dussan.vaadin.dcharts.metadata.renderers.TickRenderers;
-import org.dussan.vaadin.dcharts.options.Axes;
-import org.dussan.vaadin.dcharts.options.AxesDefaults;
-import org.dussan.vaadin.dcharts.options.Highlighter;
-import org.dussan.vaadin.dcharts.options.Legend;
-import org.dussan.vaadin.dcharts.options.Options;
-import org.dussan.vaadin.dcharts.options.Series;
-import org.dussan.vaadin.dcharts.options.SeriesDefaults;
+import org.dussan.vaadin.dcharts.options.*;
 import org.dussan.vaadin.dcharts.renderers.label.CanvasAxisLabelRenderer;
 import org.dussan.vaadin.dcharts.renderers.tick.AxisTickRenderer;
 import org.dussan.vaadin.dcharts.renderers.tick.CanvasAxisTickRenderer;
@@ -60,11 +55,11 @@ public class PlanCostsChartWidget extends ContentWidget {
     public PlanCostsChartWidget(final User u, final String caption, final VerticalLayout root, final CssLayout dashboardPanels) {
         super(root, dashboardPanels);
         this.caption = caption;
-        this.planToChart = u.getRepo().getActivePlan(u);
+        this.planToChart = UserUtil.getActivePlan(u);
         this.user = u;
-        this.plans = u.getRepo().getAll(u, Plan.class);
-        expensesForPlan = u.getRepo().getMedicalExpensesForPlan(u, this.planToChart);
-        familyMembers = u.getRepo().getFamilyMembersWithPlanExpenses(u, this.planToChart);
+        this.plans = UserUtil.getAll(u, Plan.class);
+        expensesForPlan = UserUtil.getMedicalExpensesForPlan(u, this.planToChart);
+        familyMembers = UserUtil.getFamilyMembersWithPlanExpenses(u, this.planToChart);
 
         if (0 == this.plans.size()) {
             planSelect = new ComboBox("");
@@ -81,8 +76,8 @@ public class PlanCostsChartWidget extends ContentWidget {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
                     PlanCostsChartWidget.this.planToChart = (Plan) planSelect.getValue();
-                    expensesForPlan = u.getRepo().getMedicalExpensesForPlan(u, PlanCostsChartWidget.this.planToChart);
-                    familyMembers = u.getRepo().getFamilyMembersWithPlanExpenses(u, PlanCostsChartWidget.this.planToChart);
+                    expensesForPlan = UserUtil.getMedicalExpensesForPlan(u, PlanCostsChartWidget.this.planToChart);
+                    familyMembers = UserUtil.getFamilyMembersWithPlanExpenses(u, PlanCostsChartWidget.this.planToChart);
                     createLayout();
                 }
             });

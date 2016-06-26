@@ -2,11 +2,10 @@ package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.Fsa;
-import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.User;
 import com.medcognize.form.FsaForm;
-import com.medcognize.form.MedicalExpenseForm;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
@@ -37,7 +36,7 @@ public class FsaView extends CrudView<Fsa> {
             log.error("owner should not be null here");
             return;
         }
-        Collection<Fsa> fsas = owner.getRepo().getAll(owner, Fsa.class);
+        Collection<Fsa> fsas = UserUtil.getAll(owner, Fsa.class);
         setData(fsas, owner);
     }
 

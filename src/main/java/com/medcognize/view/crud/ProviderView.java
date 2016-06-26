@@ -1,14 +1,16 @@
 package com.medcognize.view.crud;
 
-import com.medcognize.UserService;
+import com.medcognize.UserDetailsServiceImpl;
 import com.medcognize.domain.Provider;
 import com.medcognize.domain.User;
 import com.medcognize.form.ProviderForm;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,7 +18,7 @@ import java.util.Collection;
 @SpringView(name = ProviderView.NAME)
 public class ProviderView extends CrudView<Provider> {
 	public static final String NAME = "provider";
-	private final UserService repo;
+	private final UserDetailsServiceImpl repo;
 	static final ArrayList<String> pids = new ArrayList<String>() {
 		{
 			add("providerName");
@@ -26,7 +28,7 @@ public class ProviderView extends CrudView<Provider> {
 	};
 
 	@Autowired
-	public ProviderView(UserService repo) {
+	public ProviderView(UserDetailsServiceImpl repo) {
 		super(Provider.class, "Providers", new ProviderTable(ProviderForm.class, pids));
 		this.repo = repo;
 		User owner = DbUtil.getLoggedInUser();
@@ -34,7 +36,7 @@ public class ProviderView extends CrudView<Provider> {
 			log.error("owner should not be null here");
 			return;
 		}
-		Collection<Provider> providers = repo.getAll(owner, Provider.class);
+		Collection<Provider> providers = UserUtil.getAll(owner, Provider.class);
 		setData(providers, owner);
 	}
 

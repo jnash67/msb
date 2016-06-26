@@ -2,13 +2,10 @@ package com.medcognize.view.admin;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.collect.Sets;
-import com.medcognize.UserService;
-import com.medcognize.domain.FamilyMember;
-import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Plan;
-import com.medcognize.domain.Provider;
-import com.medcognize.domain.User;
+import com.medcognize.UserRepository;
+import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
+import com.medcognize.util.UserUtil;
 import com.medcognize.util.export.CsvUtil;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -16,17 +13,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ManualCsvUploadTab extends VerticalLayout {
 
@@ -55,7 +38,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 	User selectedUser = null;
 
 	@Autowired
-	UserService repo;
+	UserRepository repo;
 
 	public ManualCsvUploadTab() {
 		super();
@@ -255,7 +238,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 				}
 				return false;
 			}
-			if (selectedUser.getRepo().getAll(selectedUser, Plan.class).contains(p)) {
+			if (UserUtil.getAll(selectedUser, Plan.class).contains(p)) {
 				return true;
 			}
 			LOGGER.warn("This should never happen.  The only way a non-null Plan can show up is from the User.");
@@ -283,7 +266,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 				return true;
 			}
 		}
-		selectedUser = repo.getUserByUsername(emailField.getValue());
+		selectedUser = repo.findByUsername(emailField.getValue());
 		if (null == selectedUser) {
 			if (showNotifications) {
 				Notification.show("No User found for the specified email address");
@@ -293,7 +276,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 		// load planField just in case
 		planField.removeAllItems();
 		Plan first = null;
-		for (final Iterator<Plan> i = selectedUser.getRepo().getAll(selectedUser, Plan.class).iterator(); i.hasNext(); ) {
+		for (final Iterator<Plan> i = UserUtil.getAll(selectedUser, Plan.class).iterator(); i.hasNext(); ) {
 			if (null == first) {
 				first = i.next();
 				planField.addItem(first);

@@ -1,16 +1,15 @@
 package com.medcognize.form.field;
 
-import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.FamilyMember;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.Provider;
+import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.util.DbUtil;
-import com.medcognize.util.Password;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.validator.DoubleRangeValidator;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,20 +56,14 @@ public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFact
                 return (T) field;
             }
         }
-        if (Password.class.isAssignableFrom(dataType)) {
-            PasswordField field = new PasswordField();
-            field.setConverter(new Password.PasswordConverter());
-            field.setImmediate(true);
-            return (T) field;
-        }
         if (DisplayFriendly.class.isAssignableFrom(dataType)) {
             NativeSelect field;
             if (Provider.class.isAssignableFrom(dataType)) {
-                field = new NativeSelect("", DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), Provider.class));
+                field = new NativeSelect("", UserUtil.getAll(DbUtil.getLoggedInUser(), Provider.class));
             } else if (FamilyMember.class.isAssignableFrom(dataType)) {
-                field = new NativeSelect("", DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), FamilyMember.class));
+                field = new NativeSelect("", UserUtil.getAll(DbUtil.getLoggedInUser(), FamilyMember.class));
             } else if (Plan.class.isAssignableFrom(dataType)) {
-                field = new NativeSelect("", DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(),Plan.class));
+                field = new NativeSelect("", UserUtil.getAll(DbUtil.getLoggedInUser(), Plan.class));
             } else {
                 field = new NativeSelect();
             }

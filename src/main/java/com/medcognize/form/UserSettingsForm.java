@@ -1,9 +1,10 @@
 package com.medcognize.form;
 
+import com.medcognize.domain.Plan;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.domain.Plan;
 import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Field;
@@ -35,8 +36,8 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
             if (DisplayFriendly.class.isAssignableFrom(dataType)) {
                 if (Plan.class.isAssignableFrom(dataType)) {
                     // v. important we use the plans of the user we're editing
-                    NativeSelect field = new NativeSelect("", u.getRepo().getAll(u, Plan.class));
-                    Plan ap = u.getRepo().getActivePlan(u);
+                    NativeSelect field = new NativeSelect("", UserUtil.getAll(u, Plan.class));
+                    Plan ap = UserUtil.getActivePlan(u);
                     if (null != ap) {
                         field.setValue(ap);
                     }

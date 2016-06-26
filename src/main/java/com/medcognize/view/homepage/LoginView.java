@@ -1,7 +1,7 @@
 package com.medcognize.view.homepage;
 
 import com.medcognize.MedcognizeUI;
-import com.medcognize.UserService;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
@@ -13,30 +13,32 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
+import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @SuppressWarnings("serial")
 @SpringView(name = LoginView.NAME)
 public class LoginView extends VerticalLayout implements View {
     public static final String NAME = "login";
 
-    private UserService repo;
+    private AuthenticationManager authenticationManager;
+    private UserRepository repo;
 
     @Autowired
-    public LoginView(UserService repo) {
+    public LoginView(AuthenticationManager am, UserRepository repo) {
+        this.authenticationManager = am;
         this.repo = repo;
     }
 
@@ -140,13 +142,23 @@ public class LoginView extends VerticalLayout implements View {
             @Override
             public void buttonClick(final ClickEvent event) {
                 String username = usernameField.getValue();
-                boolean e = repo.existsByUsername(username);
-                if(e) {
-                    String passwordHash = repo.findPasswordForUsername(username);
-                    if (User.validateUserPassword(passwordHash, passwordField.getValue())) {
-                        User u = repo.getUserByUsername(username);
-                        MedcognizeEventBus.post(new MedcognizeEvent.UserLoginEvent(u));
-                    }
+                String password = passwordField.getValue();
+                try {
+                    Authentication token = authenticationManager
+                            .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+                    // Reinitialize the session to protect against session fixation attacks. This does not work
+                    // with websocket communication.
+                    VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
+                    SecurityContextHolder.getContext().setAuthentication(token);
+                    // Now when the session is reinitialized, we can enable websocket communication. Or we could have just
+                    // used WEBSOCKET_XHR and skipped this step completely.
+                    getUI().getPushConfiguration().setTransport(Transport.WEBSOCKET);
+                    getUI().getPushConfiguration().setPushMode(PushMode.AUTOMATIC);
+                    // Show the main UI
+                    User u = repo.findByUsername(username);
+                    MedcognizeEventBus.post(new MedcognizeEvent.UserLoginEvent(u));
+                } catch (AuthenticationException ex) {
+                    ex.printStackTrace();
                 }
             }
         });

@@ -2,6 +2,7 @@ package com.medcognize.domain.validator.vaadin;
 
 import com.medcognize.domain.Provider;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.validator.AbstractValidator;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class ExistingProviderNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<Provider> ps = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), Provider.class);
+        Collection<Provider> ps = UserUtil.getAll(DbUtil.getLoggedInUser(), Provider.class);
         for (Provider p : ps) {
             if (value.equals(p.getProviderName())) {
                 return false;

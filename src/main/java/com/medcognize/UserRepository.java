@@ -39,4 +39,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	// capitalization of U in 'User' matters
 	@Query("select u.password from User u where u.username = ?1")
 	String findPasswordForUsername(String username);
+
+	User findById(Long id);
 }

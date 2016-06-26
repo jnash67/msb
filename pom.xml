@@ -16,7 +16,7 @@
         <start-class>com.medcognize.MedcognizeApplication</start-class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <vaadin.version>7.6.2</vaadin.version>
+        <vaadin.version>7.6.6</vaadin.version>
         <lombok.version>1.16.8</lombok.version>
         <lutung.version>0.0.7</lutung.version>
         <guava.version>18.0</guava.version>
@@ -24,7 +24,7 @@
         <zip4j.version>1.3.2</zip4j.version>
         <libphonenumber.version>7.2.5</libphonenumber.version>
         <commons-lang3.version>3.1</commons-lang3.version>
-        <vaadin-spring-boot-starter.version>1.0.0</vaadin-spring-boot-starter.version> 
+        <vaadin-spring-boot-starter.version>1.0.0</vaadin-spring-boot-starter.version>
 
         <!-- Vaadin add-on version -->
         <!--<vaadin-charts.addon.version>2.1.3</vaadin-charts.addon.version>-->
@@ -42,7 +42,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.2.RELEASE</version>
+        <version>1.3.3.RELEASE</version>
     </parent>
 
     <!-- tag::bom[] -->
@@ -59,14 +59,14 @@
     </dependencyManagement>
     <!-- end::bom[] -->
 
-    <dependencies> 
-        <!--required to avoid codenvy java.lang.ClassNotFoundException: javax.servlet.jsp.JspFactory 				-->  
+    <dependencies>
+        <!--required to avoid codenvy java.lang.ClassNotFoundException: javax.servlet.jsp.JspFactory 				-->
         <dependency>
-        	   <groupId>javax.servlet.jsp</groupId>
-        	   <artifactId>jsp-api</artifactId>
-        	   <version>2.2</version>
-        </dependency>  
- 
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -82,6 +82,10 @@
             <artifactId>h2</artifactId>
             <!--<scope>runtime</scope>-->
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.flywaydb</groupId>-->
+        <!--<artifactId>flyway-core</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -91,15 +95,18 @@
         <!--<groupId>io.projectreactor</groupId>-->
         <!--<artifactId>reactor-bus</artifactId>-->
         <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.springframework.boot</groupId>-->
-        <!--<artifactId>spring-boot-starter-security</artifactId>-->
-        <!--</dependency>-->
-        <!-- tag::starter[] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-push</artifactId>
         </dependency>
         <!--
         Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
@@ -117,6 +124,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!--
@@ -146,7 +154,7 @@
             <groupId>org.peimari</groupId>
             <artifactId>dawn</artifactId>
             <version>11</version>
-        </dependency>      
+        </dependency>
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>wizards-for-vaadin</artifactId>
@@ -198,12 +206,12 @@
             <version>1.4.7</version>
         </dependency>
         <!-- Lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
-			<scope>provided</scope>
-		</dependency>        
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -213,7 +221,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            </dependency>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -258,14 +266,14 @@
                 <groupId>com.vaadin.wscdn</groupId>
                 <artifactId>wscdn-maven-plugin</artifactId>
                 <version>0.0.2</version>
-                  <executions>
-                      <execution>
-                          <phase>generate-sources</phase>
-                          <goals>
-                              <goal>generate</goal>
-                          </goals>
-                      </execution>
-                  </executions>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

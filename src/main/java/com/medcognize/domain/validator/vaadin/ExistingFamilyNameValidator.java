@@ -2,6 +2,7 @@ package com.medcognize.domain.validator.vaadin;
 
 import com.medcognize.domain.FamilyMember;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.data.validator.AbstractValidator;
 
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class ExistingFamilyNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<FamilyMember> fms = DbUtil.getLoggedInUser().getRepo().getAll(DbUtil.getLoggedInUser(), FamilyMember.class);
+        Collection<FamilyMember> fms = UserUtil.getAll(DbUtil.getLoggedInUser(), FamilyMember.class);
         for (FamilyMember fm : fms) {
             if (value.equals(fm.getFamilyMemberName())) {
                 return false;

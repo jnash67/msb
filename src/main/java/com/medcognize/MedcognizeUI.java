@@ -3,23 +3,20 @@ package com.medcognize;
 import com.google.common.eventbus.Subscribe;
 import com.medcognize.data.DataProvider;
 import com.medcognize.data.dummy.DummyDataProvider;
-import com.medcognize.domain.FamilyMember;
-import com.medcognize.domain.Fsa;
-import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.Plan;
-import com.medcognize.domain.PlanLimit;
-import com.medcognize.domain.Provider;
-import com.medcognize.domain.User;
+import com.medcognize.domain.*;
 import com.medcognize.domain.basic.Address;
 import com.medcognize.domain.basic.DisplayFriendly;
+import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEvent.BrowserResizeEvent;
 import com.medcognize.event.MedcognizeEvent.CloseOpenWindowsEvent;
 import com.medcognize.event.MedcognizeEvent.UserLoggedOutEvent;
 import com.medcognize.event.MedcognizeEvent.UserLoginEvent;
 import com.medcognize.event.MedcognizeEventBus;
-import com.medcognize.util.DbUtil;
 import com.medcognize.util.SpringUtil;
+import com.medcognize.view.AccessDeniedView;
 import com.medcognize.view.DashboardMenu;
+import com.medcognize.view.DashboardViewType;
+import com.medcognize.view.ErrorView;
 import com.medcognize.view.dashboard.DashboardView;
 import com.medcognize.view.homepage.HomepageView;
 import com.medcognize.view.homepage.LoginView;
@@ -27,36 +24,34 @@ import com.medcognize.view.homepage.RegisterView;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.annotations.Widgetset;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewDisplay;
-import com.vaadin.server.Page;
+import com.vaadin.server.*;
 import com.vaadin.server.Page.BrowserWindowResizeEvent;
 import com.vaadin.server.Page.BrowserWindowResizeListener;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.communication.PushMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
-import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import javax.annotation.PostConstruct;
+import org.springframework.security.authentication.AuthenticationManager;
+
 import java.util.Locale;
+
 // Don't need @Widgetset annotation if using vwscdn-maven-plugin
 // @Widgetset("com.medcognize.MedcognizeWidgetSet")
 @SpringUI
+// No @Push annotation, we are going to enable it programmatically when the user logs on
 @Theme("dashboard")
 @Title("Medcognize")
 @PreserveOnRefresh
 @Slf4j
 public class MedcognizeUI extends UI {
+
     public static final String US_DATE_FORMAT = "MM-dd-yyyy";
     public static final Locale LOCALE = Locale.US;
 
@@ -80,6 +75,15 @@ public class MedcognizeUI extends UI {
         DisplayFriendly.friendlyEnumMap.put(Plan.PlanType.class, "planTypeStringMap");
     }
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    SpringViewProvider viewProvider;
+
+    @Autowired
+    ErrorView errorView;
+
     // don't autowire the Guava-based eventbus. If we want to move to spring events,
     // use reactor.
     private final MedcognizeEventBus medcognizeEventbus = new MedcognizeEventBus();
@@ -88,8 +92,6 @@ public class MedcognizeUI extends UI {
         return ((MedcognizeUI) getCurrent()).medcognizeEventbus;
     }
 
-    private final UserService repo;
-    private final MedcognizeNavigator nav;
     private final DataProvider dataProvider = new DummyDataProvider();
     private User user = null;
     /*
@@ -99,29 +101,34 @@ public class MedcognizeUI extends UI {
     private CssLayout navigationComponent = new CssLayout();
     private AbstractOrderedLayout dashboardMenuPlusComponentToRight;
     private DashboardMenu dashboardMenu;
-    @Autowired
-    SpringViewProvider viewProvider;
-
-    // @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    public MedcognizeUI(UserService repo, MedcognizeNavigator nav) {
-        this.repo = repo;
-        this.nav = nav;
-    }
 
     @Override
     protected void init(final VaadinRequest request) {
+        VaadinSession.getCurrent().setErrorHandler(new ErrorHandler() {
+
+            @Override
+            public void error(com.vaadin.server.ErrorEvent event) {
+                System.out.println("-----------HELLO!!!!");
+                System.out.println(event.getThrowable().getMessage());
+            }
+        });
         if (SpringUtil.isDebugMode()) {
             log.warn("-------------RUNNING IN DEBUG MODE--------------");
         }
-        DbUtil.dbChecks(repo);
         setLocale(LOCALE);
         MedcognizeEventBus.register(this);
         Responsive.makeResponsive(MedcognizeUI.this);
+        // Some views need to be aware of browser resize events so a
+        // BrowserResizeEvent gets fired to the event bus on every occasion.
+        Page.getCurrent().addBrowserWindowResizeListener(new BrowserWindowResizeListener() {
+            @Override
+            public void browserWindowResized(final BrowserWindowResizeEvent event) {
+                MedcognizeEventBus.post(new BrowserResizeEvent());
+            }
+        });
         // the ViewDisplay of the navigator decides whether the view takes up the whole page or
         // just the part to the right of the menu.
-        // rootLayout.addStyleName("root");
-        nav.initAfterSpringCreation(this, new ViewDisplay() {
+        Navigator nav = new Navigator(this, new ViewDisplay() {
             @Override
             public void showView(View view) {
                 removeStyleName("loginview");
@@ -173,21 +180,48 @@ public class MedcognizeUI extends UI {
                     setContent(dashboardMenuPlusComponentToRight);
                     System.out.println("navigator state is --> " + getNavigator().getState());
                 }
-                // getNavigator().navigateTo(getNavigator().getState());
-                return;
+            }
+        });
+        nav.addViewChangeListener(new ViewChangeListener() {
+            @Override
+            public boolean beforeViewChange(ViewChangeEvent event) {
+                return true;
+            }
+
+            @Override
+            public void afterViewChange(ViewChangeEvent event) {
+                View currentView = event.getNewView();
+                DashboardViewType view = DashboardViewType.getByViewName(event.getViewName());
+                // Appropriate events get fired after the view is changed.
+                MedcognizeEventBus.post(new MedcognizeEvent.PostViewChangeEvent(view));
+                MedcognizeEventBus.post(new MedcognizeEvent.BrowserResizeEvent());
+                MedcognizeEventBus.post(new MedcognizeEvent.CloseOpenWindowsEvent());
             }
         });
         nav.addProvider(viewProvider);
-        nav.navigateTo(HomepageView.NAME);
-        // Some views need to be aware of browser resize events so a
-        // BrowserResizeEvent gets fired to the event bus on every occasion.
-        Page.getCurrent().addBrowserWindowResizeListener(new BrowserWindowResizeListener() {
-            @Override
-            public void browserWindowResized(final BrowserWindowResizeEvent event) {
-                MedcognizeEventBus.post(new BrowserResizeEvent());
-            }
-        });
+        nav.setErrorView(errorView);
+        viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
+        if (!SpringUtil.isLoggedIn()) {
+            showHomepage();
+        } else {
+            showDashboard();
+        }
     }
+
+    private void showHomepage() {
+//        nav.addView(HomepageView.NAME, HomepageView.class);
+//        nav.addView(LoginView.NAME, LoginView.class);
+//        nav.addView(RegisterView.NAME, RegisterView.class);
+        this.user = null;
+        dashboardMenu = null;
+        dashboardMenuPlusComponentToRight = null;
+        getNavigator().navigateTo(HomepageView.NAME);
+    }
+
+    private void showDashboard() {
+        getNavigator().navigateTo(DashboardView.NAME);
+    }
+
 
     /**
      * Updates the correct content for this UI based on the current user status.
@@ -230,7 +264,7 @@ public class MedcognizeUI extends UI {
         System.out.println("userLogin event received by subscriber");
         User u = event.getUser();
         this.user = u;
-        nav.navigateTo(DashboardView.NAME);
+        showDashboard();
     }
 
     @Subscribe
@@ -240,6 +274,9 @@ public class MedcognizeUI extends UI {
         // invalidate the current HttpSession.
         System.out.println("userLogout event received by subscriber");
         this.user = null;
+        // if we don't disable PushMode first, we get some annoying errors
+        // PushMode gets turned on when we login
+        getUI().getPushConfiguration().setPushMode(PushMode.DISABLED);
         VaadinSession.getCurrent().close();
         Page.getCurrent().reload();
     }
@@ -259,7 +296,14 @@ public class MedcognizeUI extends UI {
     }
 
     public boolean isLoggedIn() {
-        return null != this.user;
+        if (SpringUtil.isLoggedIn()) {
+            if (this.user == null) {
+                log.warn("Spring says we're logged in but the session User is null");
+            }
+            return true;
+        }
+        this.user = null;
+        return false;
     }
 
     public User getUser() {
