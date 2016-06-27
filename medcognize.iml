@@ -6,7 +6,8 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/wscdn" isTestSource="false" generated="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -137,6 +138,7 @@
     <orderEntry type="library" name="Maven: org.peimari:dawn:11" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:wizards-for-vaadin:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:stepper:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: at.downdrown.vaadinaddons:highchartsapi:2.2.1-QF" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:dcharts-widget:1.7.0" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
     <orderEntry type="library" name="Maven: com.mandrillapp.wrapper.lutung:lutung:0.0.7" level="project" />

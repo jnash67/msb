@@ -1,4 +1,4 @@
-package com.medcognize.component;
+package com.medcognize.view;
 
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;

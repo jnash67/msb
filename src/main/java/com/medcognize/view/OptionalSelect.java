@@ -1,4 +1,4 @@
-package com.medcognize.component;
+package com.medcognize.view;
 
 import com.vaadin.data.util.MethodProperty;
 import com.vaadin.ui.Alignment;

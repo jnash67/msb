@@ -2,7 +2,6 @@ package com.medcognize.view;
 
 import com.google.common.eventbus.Subscribe;
 import com.medcognize.MedcognizeUI;
-import com.medcognize.component.ProfilePreferencesWindow;
 import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
@@ -67,7 +66,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("Medcognize <strong>Dashboard</strong>",
+        Label logo = new Label("<strong>Medcognize</strong>",
                 ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
@@ -208,31 +207,10 @@ public final class DashboardMenu extends CustomComponent {
         return dashboardWrapper;
     }
 
-    @Override
-    public void attach() {
-        super.attach();
-        updateNotificationsCount(null);
-    }
-
     @Subscribe
     public void postViewChange(final MedcognizeEvent.PostViewChangeEvent event) {
         // After a successful view change the menu can be hidden in mobile 
         getCompositionRoot().removeStyleName(STYLE_VISIBLE);
-    }
-
-    @Subscribe
-    public void updateNotificationsCount(
-            final MedcognizeEvent.NotificationsCountUpdatedEvent event) {
-        int unreadNotificationsCount = MedcognizeUI.getDataProvider()
-                .getUnreadNotificationsCount();
-        notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
-        notificationsBadge.setVisible(unreadNotificationsCount > 0);
-    }
-
-    @Subscribe
-    public void updateReportsCount(final MedcognizeEvent.ReportsCountUpdatedEvent event) {
-        reportsBadge.setValue(String.valueOf(event.getCount()));
-        reportsBadge.setVisible(event.getCount() > 0);
     }
 
     @Subscribe

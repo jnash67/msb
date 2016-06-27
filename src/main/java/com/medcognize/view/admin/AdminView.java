@@ -25,11 +25,11 @@ public class AdminView extends TabSheet implements View {
             return;
         }
         // addTab(new TestTab(), "Test");
-        // addTab(new ChartTestTab(),"Chart");
+        addTab(new ChartTestTab(),"Chart");
+        addTab(new UserEditAdminView(repo), "User Admin");
         addTab(new AnyUserZipCsvUploadTab(repo), "Zip Upload");
         addTab(new ZipCsvDownloadTab(), "Zip Download");
         addTab(new ManualCsvUploadTab(), "Manual CSV Upload");
-        addTab(new UserEditAdminView(repo), "User Admin");
 //        final Layout layoutQuadrant = new QuadrantGridLayout();
 //        final Layout layoutQuadrantWithButtons = new QuadrantWithButtonsGridLayout();
 //        setSizeFull(); // Make the TabSheet fill all available space. By default the height is fixed.

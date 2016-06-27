@@ -1,8 +1,6 @@
 package com.medcognize;
 
 import com.google.common.eventbus.Subscribe;
-import com.medcognize.data.DataProvider;
-import com.medcognize.data.dummy.DummyDataProvider;
 import com.medcognize.domain.*;
 import com.medcognize.domain.basic.Address;
 import com.medcognize.domain.basic.DisplayFriendly;
@@ -98,7 +96,6 @@ public class MedcognizeUI extends UI {
         return ((MedcognizeUI) getCurrent()).medcognizeEventbus;
     }
 
-    private final DataProvider dataProvider = new DummyDataProvider();
     private User user = null;
     /*
     The navigation component is either the whole page in the case of the home page, registration and login or
@@ -244,13 +241,6 @@ public class MedcognizeUI extends UI {
         for (Window window : getWindows()) {
             window.close();
         }
-    }
-
-    /**
-     * @return An instance for accessing the (dummy) services layer.
-     */
-    public static DataProvider getDataProvider() {
-        return ((MedcognizeUI) getCurrent()).dataProvider;
     }
 
     public boolean isLoggedIn() {

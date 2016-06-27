@@ -176,6 +176,11 @@
             <version>${stepper.addon.version}</version>
         </dependency>
         <dependency>
+            <groupId>at.downdrown.vaadinaddons</groupId>
+            <artifactId>highchartsapi</artifactId>
+            <version>2.2.1-QF</version>
+        </dependency>
+        <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>dcharts-widget</artifactId>
             <version>${dcharts-widget.addon.version}</version>
