@@ -124,8 +124,8 @@ public class DummyDataProvider implements DataProvider {
                         fileWriter.write(json.toString());
                         fileWriter.close();
                     } catch (Exception e) {
-                        System.out.println(baseDirectory);
-                        System.out.println(baseDirectory);
+                        // System.out.println(baseDirectory);
+                        // System.out.println(baseDirectory);
                         URL url = DummyDataProvider.class.getResource("movies-fallback.txt");
                         //File f = new File(url.toURI());
                         json = readJsonFromUrl(url.toExternalForm());
@@ -133,7 +133,7 @@ public class DummyDataProvider implements DataProvider {
 //                            + "/movies-fallback.txt"));
                     }
                 } else {
-                    System.out.println(baseDirectory);
+                    //System.out.println(baseDirectory);
                     URL url = DummyDataProvider.class.getResource("movies-fallback.txt");
                     //File f = new File(url.toURI());
                     json = readJsonFromUrl(url.toExternalForm());

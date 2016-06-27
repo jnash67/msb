@@ -28,12 +28,9 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewDisplay;
-import com.vaadin.server.Page;
+import com.vaadin.server.*;
 import com.vaadin.server.Page.BrowserWindowResizeEvent;
 import com.vaadin.server.Page.BrowserWindowResizeListener;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
@@ -43,8 +40,13 @@ import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.websocket.OnError;
+import javax.websocket.Session;
 import java.util.Locale;
+import java.util.logging.Level;
 
 // Don't need @Widgetset annotation if using vwscdn-maven-plugin
 // @Widgetset("com.medcognize.MedcognizeWidgetSet")
@@ -108,13 +110,6 @@ public class MedcognizeUI extends UI {
 
     @Override
     protected void init(final VaadinRequest request) {
-//        VaadinSession.getCurrent().setErrorHandler(new ErrorHandler() {
-//
-//            @Override
-//            public void error(com.vaadin.server.ErrorEvent event) {
-//                System.out.println(event.getThrowable().getMessage());
-//            }
-//        });
         if (SpringUtil.isDebugMode()) {
             log.warn("-------------RUNNING IN DEBUG MODE--------------");
         }
@@ -212,9 +207,6 @@ public class MedcognizeUI extends UI {
     }
 
     private void showHomepage() {
-//        nav.addView(HomepageView.NAME, HomepageView.class);
-//        nav.addView(LoginView.NAME, LoginView.class);
-//        nav.addView(RegisterView.NAME, RegisterView.class);
         this.user = null;
         dashboardMenu = null;
         dashboardMenuPlusComponentToRight = null;
@@ -223,43 +215,6 @@ public class MedcognizeUI extends UI {
 
     private void showDashboard() {
         getNavigator().navigateTo(DashboardView.NAME);
-    }
-
-
-    /**
-     * Updates the correct content for this UI based on the current user status.
-
-     * If the user is logged in with appropriate privileges, main view is shown.
-
-     * Otherwise login view is shown.
-     */
-    private void updateContent() {
-//        User user = (User) VaadinSession.getCurrent().getAttribute(
-//                User.class.getName());
-//        if (user != null && "admin".equals(user.getRole())) {
-//            // Authenticated user
-//            Responsive.makeResponsive(this);
-//            addStyleName(ValoTheme.UI_WITH_MENU);
-//
-//            setContent(new MainView());
-//            setTheme("dashboard");
-//            removeStyleName("loginview");
-//            System.out.println("navigator state is --> " + getNavigator().getState());
-//            getNavigator().navigateTo(getNavigator().getState());
-//        } else {
-//            setTheme("homepage");
-//            //nav.addProvider(viewProvider);
-//            // nav.addView(HomepageView.NAME, HomepageView.class);
-//
-//            nav.addView(HomepageView.NAME, new HomepageView());
-//            nav.setErrorView(HomepageView.class);
-//            System.out.println("navigator state is --> " + getNavigator().getState());
-//            nav.navigateTo(HomepageView.NAME);
-//            System.out.println("navigator state is --> " + getNavigator().getState());
-//			setContent(new HomepageView());
-//			setContent(new LoginView());
-//			addStyleName("loginview");
-//        }
     }
 
     @Subscribe
@@ -279,7 +234,6 @@ public class MedcognizeUI extends UI {
         this.user = null;
         // if we don't disable PushMode first, we get some annoying errors
         // PushMode gets turned on when we login
-        getUI().getPushConfiguration().setTransport(Transport.LONG_POLLING);
         getUI().getPushConfiguration().setPushMode(PushMode.DISABLED);
         VaadinSession.getCurrent().close();
         Page.getCurrent().reload();

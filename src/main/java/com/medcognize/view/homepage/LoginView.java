@@ -21,6 +21,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @SuppressWarnings("serial")
 @SpringView(name = LoginView.NAME)
+@Slf4j
 public class LoginView extends VerticalLayout implements View {
     public static final String NAME = "login";
 
@@ -158,7 +160,7 @@ public class LoginView extends VerticalLayout implements View {
                     User u = repo.findByUsername(username);
                     MedcognizeEventBus.post(new MedcognizeEvent.UserLoginEvent(u));
                 } catch (AuthenticationException ex) {
-                    ex.printStackTrace();
+                    log.warn("AuthenticationException ---> " + ex);
                 }
             }
         });
