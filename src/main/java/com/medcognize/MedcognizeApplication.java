@@ -64,5 +64,12 @@ public class MedcognizeApplication {
                 e.printStackTrace();
             }
         }
+        String regUserName = "reg@reg.com";
+        String regPass = "Passwor4";
+
+        // let's make sure we have a non-admin user as well
+        if (!repo.existsByUsername("reg@reg.com")) {
+            UserUtil.createNewRegularUser(repo, new EmailAddress((regUserName)), regPass);
+        }
     }
 }

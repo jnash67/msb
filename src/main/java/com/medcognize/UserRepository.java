@@ -23,17 +23,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByUsername(String username);
 
+	@Query("SELECT COUNT(username) FROM User WHERE 'ROLE_ADMIN' MEMBER OF userRoles")
 	long countByAdminTrue();
 
 	// capitalization of U in 'User' matters
-	@Query("SELECT CASE WHEN COUNT(admin) > 0 THEN true ELSE false END FROM User WHERE admin = true")
+	@Query("SELECT CASE WHEN COUNT(u.username) > 0 THEN true ELSE false END FROM User u WHERE 'ROLE_ADMIN' MEMBER OF userRoles")
 	boolean existsByAdminTrue();
 
 	// capitalization of U in 'User' matters
 	@Query("SELECT CASE WHEN COUNT(u.username) > 0 THEN true ELSE false END FROM User u WHERE u.username = ?1")
 	boolean existsByUsername(String username);
 
-	User findByAdmin(boolean admin);
 	List<User> findByLastNameStartsWithIgnoreCase(String lastName);
 
 	// capitalization of U in 'User' matters
@@ -41,4 +41,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	String findPasswordForUsername(String username);
 
 	User findById(Long id);
+
+
 }

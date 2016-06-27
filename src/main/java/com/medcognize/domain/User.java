@@ -26,7 +26,7 @@ import java.util.List;
 @VaadinSessionScope
 @Slf4j
 public class User extends DisplayFriendlyAbstractEntity implements UserDetails {
-	private static final String captionString = "username:Username, password:Password, firstName:First Name, lastName:Last Name, admin:Admin";
+	private static final String captionString = "username:Username, password:Password, firstName:First Name, lastName:Last Name";
 	@SuppressWarnings("UnusedDeclaration")
 	public static final BiMap<String, String> captionMap = createBiMap(captionString);
 
@@ -36,13 +36,12 @@ public class User extends DisplayFriendlyAbstractEntity implements UserDetails {
 
 	// For UserDetails
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> userRoles;
+	private List<String> userRoles = new ArrayList<String>();
 	private boolean accountNonExpired = false;
 	private boolean accountNonLocked = false;
 	private boolean credentialsNonExpired = false;
 	private boolean enabled = false;
 
-	private boolean admin = false;
 	private String firstName = "";
 	private String lastName = "";
 	// the password is never stored in this field, only the hash

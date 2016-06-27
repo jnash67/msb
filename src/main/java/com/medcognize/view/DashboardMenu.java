@@ -7,24 +7,15 @@ import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.util.DbUtil;
+import com.medcognize.util.SpringUtil;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.Collection;
@@ -193,7 +184,8 @@ public final class DashboardMenu extends CustomComponent {
 //            }
 
             if (view == DashboardViewType.ADMIN) {
-                if (u.isAdmin()) {
+                if (SpringUtil.hasRole(SpringUtil.RoleType.ROLE_ADMIN)) {
+                    //if (u.isAdmin()) {
                     menuItemsLayout.addComponent(menuItemComponent);
                 }
             } else {

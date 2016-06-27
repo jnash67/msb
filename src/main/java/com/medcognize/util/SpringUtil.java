@@ -8,6 +8,10 @@ import java.io.Serializable;
 
 public final class SpringUtil implements Serializable {
 
+    public static enum RoleType {
+        ROLE_ADMIN, ROLE_USER
+    }
+
     public static boolean isDebugMode() {
         // in development run the VM with -Dspring.profiles.active=dev
         // (previously we used -Dmedcognize.debug.mode=true)
@@ -20,9 +24,9 @@ public final class SpringUtil implements Serializable {
         return authentication != null && authentication.isAuthenticated();
     }
 
-    public static boolean hasRole(String role) {
+    public static boolean hasRole(RoleType role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.getAuthorities().contains(new SimpleGrantedAuthority(role));
+        return authentication != null && authentication.getAuthorities().contains(new SimpleGrantedAuthority(role.name()));
     }
 
 }

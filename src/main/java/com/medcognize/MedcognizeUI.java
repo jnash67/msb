@@ -28,10 +28,14 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewDisplay;
-import com.vaadin.server.*;
+import com.vaadin.server.Page;
 import com.vaadin.server.Page.BrowserWindowResizeEvent;
 import com.vaadin.server.Page.BrowserWindowResizeListener;
+import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
@@ -104,14 +108,13 @@ public class MedcognizeUI extends UI {
 
     @Override
     protected void init(final VaadinRequest request) {
-        VaadinSession.getCurrent().setErrorHandler(new ErrorHandler() {
-
-            @Override
-            public void error(com.vaadin.server.ErrorEvent event) {
-                System.out.println("-----------HELLO!!!!");
-                System.out.println(event.getThrowable().getMessage());
-            }
-        });
+//        VaadinSession.getCurrent().setErrorHandler(new ErrorHandler() {
+//
+//            @Override
+//            public void error(com.vaadin.server.ErrorEvent event) {
+//                System.out.println(event.getThrowable().getMessage());
+//            }
+//        });
         if (SpringUtil.isDebugMode()) {
             log.warn("-------------RUNNING IN DEBUG MODE--------------");
         }
@@ -276,6 +279,7 @@ public class MedcognizeUI extends UI {
         this.user = null;
         // if we don't disable PushMode first, we get some annoying errors
         // PushMode gets turned on when we login
+        getUI().getPushConfiguration().setTransport(Transport.LONG_POLLING);
         getUI().getPushConfiguration().setPushMode(PushMode.DISABLED);
         VaadinSession.getCurrent().close();
         Page.getCurrent().reload();

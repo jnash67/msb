@@ -20,7 +20,10 @@ public class UserUtil implements Serializable {
         User u = new User();
         u.setUsername(emailAddress.toString());
         u.setPassword(new BCryptPasswordEncoder().encode(pwd));
-        u.setAdmin(admin);
+        u.getUserRoles().add(SpringUtil.RoleType.ROLE_USER.name());
+        if (admin) {
+            u.getUserRoles().add(SpringUtil.RoleType.ROLE_ADMIN.name());
+        }
         u.setCredentialsNonExpired(true);
         u.setAccountNonExpired(true);
         u.setAccountNonLocked(true);
