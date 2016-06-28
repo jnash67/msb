@@ -18,7 +18,7 @@ public class FamilyMemberTable extends CrudTable<FamilyMember> {
 
     @Override
     protected void deleteAction(Object target) {
-        BeanItem<FamilyMember> bi = getData().getItem(target);
+        BeanItem<FamilyMember> bi = getContainer().getItem(target);
         removeItem(target);
         collectionOwner.getFamilyMembers().remove(bi.getBean());
         refreshItems();

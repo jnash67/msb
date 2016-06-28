@@ -60,7 +60,7 @@ public class PlanView extends CrudView<Plan> {
 
         @Override
         protected void deleteItem(final Object target) {
-            BeanItem<Plan> bi = getData().getItem(target);
+            BeanItem<Plan> bi = getContainer().getItem(target);
             Plan p = bi.getBean();
             int count = UserUtil.getAll(collectionOwner, Plan.class).size();
             if (1 == count) {
@@ -104,7 +104,7 @@ public class PlanView extends CrudView<Plan> {
 
         @Override
         protected void deleteAction(final Object target) {
-            BeanItem<Plan> bi = getData().getItem(target);
+            BeanItem<Plan> bi = getContainer().getItem(target);
             Plan p = bi.getBean();
             User u = (User) collectionOwner;
             UserUtil.deleteMedicalExpensesForPlan(repo, u, p);
@@ -128,7 +128,7 @@ public class PlanView extends CrudView<Plan> {
                     if (null == target) {
                         return;
                     }
-                    BeanItem<Plan> bi = getData().getItem(target);
+                    BeanItem<Plan> bi = getContainer().getItem(target);
                     showLimitsReport(bi.getBean());
                 } else {
                     super.handleAction(action, sender, target);
@@ -287,7 +287,7 @@ public class PlanView extends CrudView<Plan> {
                             String confirmedUniqueNewName = Plan.ensureUniqueName(newName);
                             newPlan.setPlanName(confirmedUniqueNewName);
                             u.getPlans().add(newPlan);
-                            getTable().getData().addBean(newPlan);
+                            getTable().getContainer().addBean(newPlan);
                             window.close();
                         } catch (Validator.InvalidValueException ive) {
                         }

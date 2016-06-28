@@ -58,6 +58,8 @@ public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFact
         }
         if (DisplayFriendly.class.isAssignableFrom(dataType)) {
             NativeSelect field;
+            org.vaadin.viritin.fields.
+
             if (Provider.class.isAssignableFrom(dataType)) {
                 field = new NativeSelect("", UserUtil.getAll(DbUtil.getLoggedInUser(), Provider.class));
             } else if (FamilyMember.class.isAssignableFrom(dataType)) {

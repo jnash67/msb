@@ -1,45 +1,48 @@
 package com.medcognize.view.dashboard.widget;
 
-import com.medcognize.view.dashboard.Highcharts;
+import at.downdrown.vaadinaddons.highchartsapi.Colors;
+import at.downdrown.vaadinaddons.highchartsapi.HighChart;
+import at.downdrown.vaadinaddons.highchartsapi.HighChartFactory;
+import at.downdrown.vaadinaddons.highchartsapi.exceptions.HighChartsException;
+import at.downdrown.vaadinaddons.highchartsapi.model.ChartConfiguration;
+import at.downdrown.vaadinaddons.highchartsapi.model.ChartType;
+import at.downdrown.vaadinaddons.highchartsapi.model.data.PieChartData;
+import at.downdrown.vaadinaddons.highchartsapi.model.series.PieChartSeries;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.VerticalLayout;
 
-public class HighchartWidget extends ContentWidget {
+public class HighChartWidget extends ContentWidget {
 
-	Highcharts highchartsPie;
+	HighChart highchartsPie;
     final String caption;
 
-    public HighchartWidget(final String caption, VerticalLayout root, CssLayout dashboardPanels) {
+    public HighChartWidget(final String caption, VerticalLayout root, CssLayout dashboardPanels) {
         super(root, dashboardPanels);
         this.caption = caption;
 
-        String jsonData =
-                "{" +
-                        "chart : " +
-                        "{renderTo : 'chart',}, " +
-                        "series : " +
-                        "[ " +
-                        "{" +
-                        "type : 'pie', " +
-                        "data : " +
-                        "[ " +
-                        "[ 'Im average looking.', 2 ], " +
-                        "[ 'Im shy around girls.', 3 ], " +
-                        "[ 'Im level 80 Paladin.', 95 ] " +
-                        "] " +
-                        "} " +
-                        "] " +
-                        "}";
+        ChartConfiguration pieConfiguration = new ChartConfiguration();
+        pieConfiguration.setTitle("TestPie");
+        pieConfiguration.setChartType(ChartType.PIE);
+        pieConfiguration.setBackgroundColor(Colors.WHITE);
 
-	    highchartsPie = new Highcharts();
-	    highchartsPie.setData(jsonData);
-	    highchartsPie.setId("chart");
-	    highchartsPie.setCaption(caption);
+        PieChartSeries pieFruits  = new PieChartSeries("Fruits");
+        PieChartData bananas = new PieChartData("Bananas", 2);
+        PieChartData melons = new PieChartData("Melons", 3);
+        PieChartData apples = new PieChartData("Apples", 95);
 
-	    highchartsPie.setWidth("400px");
-        highchartsPie.setHeight("300px");
-      //  highchartsPie.addStyleName("plain");
-       // highchartsPie.addStyleName("borderless");
-        setContent(highchartsPie);
+        pieFruits.getData().add(bananas);
+        pieFruits.getData().add(melons);
+        pieFruits.getData().add(apples);
+
+        pieConfiguration.getSeriesList().add(pieFruits);
+        try {
+            highchartsPie = HighChartFactory.renderChart(pieConfiguration);
+            highchartsPie.setWidth("400px");
+            highchartsPie.setHeight("300px");
+            System.out.println("PieChart Script : " + pieConfiguration.getHighChartValue());
+            setContent(highchartsPie);
+        } catch (HighChartsException e) {
+            e.printStackTrace();
+        }
     }
 }

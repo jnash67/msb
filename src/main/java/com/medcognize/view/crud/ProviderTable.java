@@ -18,7 +18,7 @@ public class ProviderTable extends CrudTable<Provider> {
 
     @Override
     protected void deleteAction(Object target) {
-        BeanItem<Provider> bi = getData().getItem(target);
+        BeanItem<Provider> bi = getContainer().getItem(target);
         removeItem(target);
         collectionOwner.getProviders().remove(bi.getBean());
         refreshItems();

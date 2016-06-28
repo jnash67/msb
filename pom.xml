@@ -32,11 +32,12 @@
 
         <!-- Vaadin add-on version -->
         <!--<vaadin-charts.addon.version>2.1.3</vaadin-charts.addon.version>-->
-        <viritin.addon.version>1.44</viritin.addon.version>
+        <viritin.addon.version>1.53</viritin.addon.version>
         <wizards-for-vaadin.addon.version>1.1.0</wizards-for-vaadin.addon.version>
         <!--copied the source code into the project. This is my add-on-->
         <!--<daterangefield.addon.version>1.0.4</daterangefield.addon.version>-->
         <stepper.addon.version>2.3.0</stepper.addon.version>
+        <highchartsapi.addon.version>2.2.1-QF</highchartsapi.addon.version>
         <dcharts-widget.addon.version>1.7.0</dcharts-widget.addon.version>
 
         <!-- plugins -->
@@ -178,7 +179,7 @@
         <dependency>
             <groupId>at.downdrown.vaadinaddons</groupId>
             <artifactId>highchartsapi</artifactId>
-            <version>2.2.1-QF</version>
+            <version>${highchartsapi.addon.version}</version>
         </dependency>
         <dependency>
             <groupId>org.vaadin.addons</groupId>

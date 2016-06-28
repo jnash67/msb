@@ -4,7 +4,6 @@ import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
-import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
@@ -119,7 +118,7 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
     }
 
     protected Window getEditItemFormAndShow(Object itemId) {
-        BeanItem<T> bi = getData().getItem(itemId);
+        BeanItem<T> bi = getContainer().getItem(itemId);
         DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, bi, false);
         return showForm(form, false, "Edit " + DisplayFriendly.getFriendlyClassName(entityClazz));
     }
@@ -134,7 +133,7 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
                 Notification.show("Item successfully submitted");
                 saveItem(form.getBeanItem(), isNew);
                 if (isNew) {
-                    getData().addBean(form.getBeanItem().getBean());
+                    getContainer().addBean(form.getBeanItem().getBean());
                 }
             }
         };
@@ -142,8 +141,4 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
     }
 
     abstract protected void saveItem(final BeanItem<T> bi, final boolean isNew);
-
-    protected BeanContainer<Long, T> getContainer() {
-        return getData();
-    }
 }

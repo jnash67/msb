@@ -18,7 +18,7 @@ public class MedicalExpenseTable extends CrudTable<MedicalExpense> {
 
     @Override
     protected void deleteAction(Object target) {
-        BeanItem<MedicalExpense> bi = getData().getItem(target);
+        BeanItem<MedicalExpense> bi = getContainer().getItem(target);
         removeItem(target);
         collectionOwner.getMedicalExpenses().remove(bi.getBean());
         refreshItems();

@@ -18,7 +18,7 @@ public class FsaTable extends CrudTable<Fsa> {
 
     @Override
     protected void deleteAction(Object target) {
-        BeanItem<Fsa> bi = getData().getItem(target);
+        BeanItem<Fsa> bi = getContainer().getItem(target);
         removeItem(target);
         collectionOwner.getFsas().remove(bi.getBean());
         refreshItems();

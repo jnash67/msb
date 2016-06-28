@@ -5,7 +5,6 @@ import at.downdrown.vaadinaddons.highchartsapi.HighChartFactory;
 import at.downdrown.vaadinaddons.highchartsapi.exceptions.HighChartsException;
 import at.downdrown.vaadinaddons.highchartsapi.model.ChartConfiguration;
 import at.downdrown.vaadinaddons.highchartsapi.model.ChartType;
-import at.downdrown.vaadinaddons.highchartsapi.model.data.base.DoubleData;
 import at.downdrown.vaadinaddons.highchartsapi.model.series.AreaChartSeries;
 import com.medcognize.domain.User;
 import com.medcognize.util.DChartsUtil;
@@ -19,7 +18,6 @@ import org.dussan.vaadin.dcharts.base.elements.PointLabels;
 import org.dussan.vaadin.dcharts.base.elements.XYaxis;
 import org.dussan.vaadin.dcharts.data.DataSeries;
 import org.dussan.vaadin.dcharts.data.Ticks;
-import org.dussan.vaadin.dcharts.events.ChartData;
 import org.dussan.vaadin.dcharts.events.click.ChartDataClickEvent;
 import org.dussan.vaadin.dcharts.events.click.ChartDataClickHandler;
 import org.dussan.vaadin.dcharts.events.mouseenter.ChartDataMouseEnterEvent;
@@ -38,18 +36,11 @@ import org.dussan.vaadin.dcharts.metadata.renderers.LabelRenderers;
 import org.dussan.vaadin.dcharts.metadata.renderers.LegendRenderers;
 import org.dussan.vaadin.dcharts.metadata.renderers.SeriesRenderers;
 import org.dussan.vaadin.dcharts.metadata.ticks.TickFormatters;
-import org.dussan.vaadin.dcharts.options.Axes;
-import org.dussan.vaadin.dcharts.options.Grid;
-import org.dussan.vaadin.dcharts.options.Highlighter;
-import org.dussan.vaadin.dcharts.options.Legend;
-import org.dussan.vaadin.dcharts.options.Options;
-import org.dussan.vaadin.dcharts.options.SeriesDefaults;
-import org.dussan.vaadin.dcharts.options.Title;
+import org.dussan.vaadin.dcharts.options.*;
 import org.dussan.vaadin.dcharts.renderers.legend.EnhancedLegendRenderer;
 import org.dussan.vaadin.dcharts.renderers.series.BarRenderer;
 import org.dussan.vaadin.dcharts.renderers.tick.CanvasAxisTickRenderer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,7 +97,6 @@ public class ChartTestTab extends Panel {
         chart.setEnableChartDataMouseLeaveEvent(true);
         chart.setEnableChartDataClickEvent(true);
         chart.setEnableChartDataRightClickEvent(true);
-
 
         chart.addHandler(new ChartDataMouseEnterHandler() {
             @Override
