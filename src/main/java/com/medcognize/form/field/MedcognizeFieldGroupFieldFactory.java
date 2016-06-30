@@ -11,17 +11,15 @@ import com.vaadin.data.validator.DoubleRangeValidator;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.vaadin.risto.stepper.DateStepper;
 import org.vaadin.risto.stepper.IntStepper;
 
 import java.util.Date;
 import java.util.Locale;
 
+@Slf4j
 public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory {
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(MedcognizeFieldGroupFieldFactory.class);
 
     public MedcognizeFieldGroupFieldFactory() {
         super();
@@ -50,7 +48,7 @@ public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFact
                 field.setImmediate(true);
                 return (T) field;
             } else {
-                LOGGER.warn("We shouldn't have any non-DisplayFriendly Enums: " + dataType.getSimpleName());
+                log.warn("We shouldn't have any non-DisplayFriendly Enums: " + dataType.getSimpleName());
                 EnumOptionGroup field = new EnumOptionGroup(dataType);
                 field.setImmediate(true);
                 return (T) field;
@@ -58,8 +56,6 @@ public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFact
         }
         if (DisplayFriendly.class.isAssignableFrom(dataType)) {
             NativeSelect field;
-            org.vaadin.viritin.fields.
-
             if (Provider.class.isAssignableFrom(dataType)) {
                 field = new NativeSelect("", UserUtil.getAll(DbUtil.getLoggedInUser(), Provider.class));
             } else if (FamilyMember.class.isAssignableFrom(dataType)) {

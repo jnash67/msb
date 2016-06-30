@@ -1,10 +1,10 @@
 package com.medcognize.form;
 
-import com.medcognize.domain.basic.Address;
 import com.medcognize.domain.Provider;
+import com.medcognize.domain.basic.Address;
 import com.medcognize.domain.validator.vaadin.ExistingProviderNameValidator;
 import com.medcognize.form.field.AddressField;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
@@ -28,7 +28,7 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
     Field<?> website;
 
     public ProviderForm(BeanItem<Provider> bean, boolean isNew) {
-        super(bean, null, new MedcognizeFieldGroupFieldFactory(), isNew);
+        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
     }
 
     @SuppressWarnings("unchecked")

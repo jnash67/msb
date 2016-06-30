@@ -118,8 +118,9 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
     }
 
     protected Window getEditItemFormAndShow(Object itemId) {
-        BeanItem<T> bi = getContainer().getItem(itemId);
-        DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, bi, false);
+        int index = getContainer().indexOfId(itemId);
+        T item = getContainer().getIdByIndex(index);
+        DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, item, false);
         return showForm(form, false, "Edit " + DisplayFriendly.getFriendlyClassName(entityClazz));
     }
 
@@ -133,7 +134,7 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
                 Notification.show("Item successfully submitted");
                 saveItem(form.getBeanItem(), isNew);
                 if (isNew) {
-                    getContainer().addBean(form.getBeanItem().getBean());
+                    getContainer().addItem(form.getBeanItem().getBean());
                 }
             }
         };

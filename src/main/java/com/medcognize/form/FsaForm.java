@@ -3,7 +3,7 @@ package com.medcognize.form;
 import com.medcognize.domain.Fsa;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.validator.vaadin.ExistingFsaNameValidator;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
@@ -26,7 +26,7 @@ public class FsaForm extends DisplayFriendlyForm<Fsa> {
     Field<?> amountInFsa;
 
     public FsaForm(BeanItem<Fsa> bean, boolean isNew) {
-        super(bean, null, new MedcognizeFieldGroupFieldFactory(), isNew);
+        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
     }
 
     @Override

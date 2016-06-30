@@ -1,9 +1,9 @@
 package com.medcognize.form;
 
-import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.Plan;
+import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.ExistingPlanNameValidator;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.medcognize.form.field.errorful.ErrorfulGridLayout;
 import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -43,7 +43,7 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
     ErrorfulGridLayout outOfNetworkDeductiblesLayout;
 
     public PlanForm(BeanItem<Plan> bean, boolean isNew) {
-        super(bean, null, new MedcognizeFieldGroupFieldFactory(), isNew);
+        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
     }
 
     @Override

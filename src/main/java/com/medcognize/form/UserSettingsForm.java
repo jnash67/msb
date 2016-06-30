@@ -3,7 +3,7 @@ package com.medcognize.form;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.medcognize.util.UserUtil;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.util.BeanItem;
@@ -22,7 +22,7 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
     private Field<?> lastName;
     private Field<?> email;
 
-    static class UserFieldFactory extends MedcognizeFieldGroupFieldFactory {
+    static class UserFieldFactory extends ViritinFieldGroupFieldFactory {
         final User u;
 
         public UserFieldFactory(final User u) {

@@ -2,7 +2,7 @@ package com.medcognize.form;
 
 import com.medcognize.domain.FamilyMember;
 import com.medcognize.domain.validator.vaadin.ExistingFamilyNameValidator;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Field;
@@ -10,7 +10,7 @@ import com.vaadin.ui.Field;
 public class FamilyMemberForm extends DisplayFriendlyForm<FamilyMember> {
 
     public FamilyMemberForm(BeanItem<FamilyMember> bean, boolean isNew) {
-        super(bean, null, new MedcognizeFieldGroupFieldFactory(), isNew);
+        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
     }
 
     @Override

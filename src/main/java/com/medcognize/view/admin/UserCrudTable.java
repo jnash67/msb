@@ -32,10 +32,11 @@ public class UserCrudTable extends CrudTable<User> {
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
                             // Confirmed to continue
-                            BeanItem<User> bi = getContainer().getItem(target);
+                            int index = getContainer().indexOfId(target);
+                            User user = getContainer().getIdByIndex(index);
                             removeItem(target);
-                            repo.delete(bi.getBean());
-                            refreshItems();
+                            repo.delete(user);
+                            refreshRows();
                         }
                     }
                 }

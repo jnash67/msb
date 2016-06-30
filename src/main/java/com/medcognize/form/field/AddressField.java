@@ -7,11 +7,7 @@ import com.medcognize.view.ComponentWindow;
 import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 
 import java.util.Collection;
 
@@ -26,7 +22,7 @@ public abstract class AddressField extends CustomField<Address> {
         this.isNew = isNew;
         fieldGroup.setBuffered(true);
         fieldGroup.setItemDataSource(address);
-        this.fieldGroup.setFieldFactory(new MedcognizeFieldGroupFieldFactory());
+        this.fieldGroup.setFieldFactory(new ViritinFieldGroupFieldFactory());
         Collection<String> pids = DisplayFriendly.propertyIdList(Address.class);
         String caption;
         for (String pid : pids) {

@@ -79,6 +79,6 @@ public abstract class CrudView<T extends DisplayFriendly> extends VerticalLayout
 	}
 
 	protected BeanContainer<Long, T> getContainer() {
-		return table.getContainer();
+		return table.getContainerDataSource();
 	}
 }

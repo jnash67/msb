@@ -3,7 +3,7 @@ package com.medcognize.form;
 import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.medcognize.form.field.errorful.ErrorfulGridLayout;
 import com.medcognize.form.field.errorful.ErrorfulHorizontalLayout;
 import com.medcognize.util.CrudUtil;
@@ -42,7 +42,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
     public Field<?> commentsField;
 
     public MedicalExpenseForm(BeanItem<MedicalExpense> bean, boolean isNew) {
-        super(bean, null, new MedcognizeFieldGroupFieldFactory(), isNew);
+        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
     }
 
     @Override

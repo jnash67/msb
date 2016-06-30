@@ -2,7 +2,7 @@ package com.medcognize.form;
 
 
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.medcognize.form.field.errorful.ErrorfulVerticalLayout;
 import com.medcognize.util.ErrorfulUtil;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -25,7 +25,7 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Err
     protected final Set<String> pidsToIgnore = new HashSet<>();
     private final boolean isNew;
 
-    protected DisplayFriendlyForm(BeanItem<T> bi, Collection<String> pids, MedcognizeFieldGroupFieldFactory factory,
+    protected DisplayFriendlyForm(BeanItem<T> bi, Collection<String> pids, ViritinFieldGroupFieldFactory factory,
                                   boolean isNew) {
         super();
         this.isNew = isNew;
@@ -35,7 +35,7 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Err
             this.binder = new BeanFieldGroup<>(clazz);
             this.binder.setItemDataSource(bi);
             if (null == factory) {
-                this.binder.setFieldFactory(new MedcognizeFieldGroupFieldFactory());
+                this.binder.setFieldFactory(new ViritinFieldGroupFieldFactory());
             } else {
                 this.binder.setFieldFactory(factory);
             }

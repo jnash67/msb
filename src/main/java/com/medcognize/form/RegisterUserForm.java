@@ -2,7 +2,7 @@ package com.medcognize.form;
 
 import com.medcognize.domain.User;
 import com.medcognize.domain.validator.vaadin.PasswordRequirementsValidator;
-import com.medcognize.form.field.MedcognizeFieldGroupFieldFactory;
+import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
@@ -25,7 +25,7 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
 	};
 
 	public RegisterUserForm(BeanItem<User> bean, boolean isNew) {
-		super(bean, pids, new MedcognizeFieldGroupFieldFactory(), isNew);
+		super(bean, pids, new ViritinFieldGroupFieldFactory(), isNew);
 	}
 
     @Override
