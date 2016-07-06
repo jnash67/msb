@@ -4,11 +4,11 @@ import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.view.ComponentView;
-import com.vaadin.data.util.BeanContainer;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.viritin.FilterableListContainer;
 
 import java.util.Collection;
 
@@ -78,7 +78,7 @@ public abstract class CrudView<T extends DisplayFriendly> extends VerticalLayout
 		return table;
 	}
 
-	protected BeanContainer<Long, T> getContainer() {
-		return table.getContainerDataSource();
+	protected FilterableListContainer<T> getContainer() {
+		return (FilterableListContainer<T>) table.getContainerDataSource();
 	}
 }

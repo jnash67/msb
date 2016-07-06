@@ -3,13 +3,13 @@ package com.medcognize.form.wizard;
 import com.medcognize.domain.MedicalExpense;
 import com.medcognize.form.MedicalExpenseForm;
 import com.medcognize.form.WizardForm;
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.Component;
 import org.vaadin.teemu.wizards.Wizard;
 
 public class MedicalExpenseWizard extends WizardForm<MedicalExpense> {
 
-    public MedicalExpenseWizard(BeanItem<MedicalExpense> bean, boolean isNew) {
-        super(MedicalExpenseForm.class, bean, isNew);
+    public MedicalExpenseWizard(MedicalExpense me, boolean isNew) {
+        super(MedicalExpenseForm.class, me);
     }
 
     @Override
@@ -22,7 +22,10 @@ public class MedicalExpenseWizard extends WizardForm<MedicalExpense> {
     }
 
     @Override
-    public void setupForm() {
+    protected Component createContent() {
         // nop - form setup is being done in the shadow form
+        validate();
+        return null;
     }
+
 }

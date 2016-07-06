@@ -3,34 +3,34 @@ package com.medcognize.form;
 import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
-import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
-import com.medcognize.form.field.errorful.ErrorfulGridLayout;
-import com.medcognize.form.field.errorful.ErrorfulHorizontalLayout;
 import com.medcognize.util.CrudUtil;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.UserUtil;
 import com.medcognize.view.crud.CommitAction;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.daterangefield.DateUtil;
-import org.vaadin.risto.stepper.DateStepper;
+import org.vaadin.viritin.fields.MDateField;
+import org.vaadin.viritin.fields.TypedSelect;
+import org.vaadin.viritin.form.AbstractForm;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import java.util.List;
 
-public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
+public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MedicalExpenseForm.class);
 
-    public DateStepper dateField;
-    public NativeSelect planField;
-    public NativeSelect familyMemberField;
-    public NativeSelect providerField;
+    public DateField dateField = new MDateField(getCaption("dateField"));
+
+    public TypedSelect<Plan> planField = new TypedSelect<>(getCaption("planField"));
+    public TypedSelect<FamilyMember> familyMemberField = new TypedSelect<>(getCaption("familyMemberField"));
+    public TypedSelect<Provider> providerField = new TypedSelect<>(getCaption("providerField"));
     public Field<?> medicalExpenseInPlanField;
-    public ErrorfulGridLayout prescriptionTiersLayout;
+    public GridLayout prescriptionTiersLayout;
     public Field<?> prescriptionTierTypeField;
     public Field<?> medicalExpenseTypeField;
     public Field<?> outOfPocketAmountField;
@@ -41,20 +41,8 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
     public Field<?> paymentAmountField;
     public Field<?> commentsField;
 
-    public MedicalExpenseForm(BeanItem<MedicalExpense> bean, boolean isNew) {
-        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
-    }
-
     @Override
-    @SuppressWarnings("unchecked")
-    public void setupForm() {
-        setSizeUndefined();
-        setMargin(true);
-        setSpacing(true);
-
-        BeanFieldGroup<MedicalExpense> group = this.getFieldGroup();
-
-        dateField = (DateStepper) group.getField("date");
+    protected Component createContent() {
         dateField.setDescription("This is the date of service");
         planField = (NativeSelect) group.getField("plan");
         familyMemberField = (NativeSelect) group.getField("familyMember");
@@ -118,7 +106,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                 providerField.setValue(firstItem);
             }
         }
-        prescriptionTiersLayout = new ErrorfulGridLayout(1, 1);
+        prescriptionTiersLayout = new GridLayout(1, 1);
         prescriptionTiersLayout.setStyleName("borderstyle");
         prescriptionTiersLayout.setSizeUndefined();
         prescriptionTiersLayout.setSpacing(true);
@@ -133,7 +121,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
 
         Label costsLabel = new Label("Costs");
         costsLabel.addStyleName("formAreaHeader");
-        ErrorfulGridLayout costsLayout = new ErrorfulGridLayout(2, 3);
+        GridLayout costsLayout = new GridLayout(2, 3);
         costsLayout.setStyleName("borderstyle");
         costsLayout.setSizeUndefined();
         costsLayout.setSpacing(true);
@@ -143,7 +131,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         costsLayout.addComponent(deductibleAmountField, 1, 1);
         costsLayout.addComponent(copayAmountField, 0, 2);
         costsLayout.addComponent(paymentAmountField, 1, 2);
-        addComponent(costsLayout);
+        form.addComponent(costsLayout);
 
         Button addFamilyMemberButton = new NativeButton("<div style=\"text-align: center;\"><font " + "size=\"1\">Add<br>New</font></div>");
         addFamilyMemberButton.setDescription("Add new Family Member");
@@ -151,28 +139,27 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         addFamilyMemberButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                FamilyMember fm = new FamilyMember();
-                final BeanItem<FamilyMember> bi = new BeanItem(fm);
-                final DisplayFriendlyForm<FamilyMember> form = CrudUtil.createForm(FamilyMemberForm.class, bi, true);
+                final FamilyMember fm = new FamilyMember();
+                final DisplayFriendlyForm<FamilyMember> form = CrudUtil.createForm(FamilyMemberForm.class, fm);
                 final CommitAction ca = new CommitAction() {
 
                     @Override
                     public void run() {
                         User u = DbUtil.getLoggedInUser();
-                        u.getFamilyMembers().add(bi.getBean());
+                        u.getFamilyMembers().add(fm);
                         Container c = familyMemberField.getContainerDataSource();
                         c.removeAllItems();
                         List<FamilyMember> fms = UserUtil.getAll(u, FamilyMember.class);
                         for (FamilyMember fm : fms) {
                             c.addItem(fm);
                         }
-                        familyMemberField.select(bi.getBean());
+                        familyMemberField.select(fm);
                     }
                 };
                 CrudUtil.showForm(form, ca, "Add Family Member");
             }
         });
-        ErrorfulHorizontalLayout familyMemberPlusButtonLayout = new ErrorfulHorizontalLayout();
+        MHorizontalLayout familyMemberPlusButtonLayout = new MHorizontalLayout();
         familyMemberPlusButtonLayout.addComponent(familyMemberField);
         familyMemberPlusButtonLayout.addComponent(addFamilyMemberButton);
         addFamilyMemberButton.setWidth("35px");
@@ -186,28 +173,27 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         addProviderButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Provider pr = new Provider();
-                final BeanItem<Provider> bi = new BeanItem(pr);
-                DisplayFriendlyForm<Provider> form = CrudUtil.createForm(ProviderForm.class, bi, true);
+                final Provider pr = new Provider();
+                DisplayFriendlyForm<Provider> form = CrudUtil.createForm(ProviderForm.class, pr);
                 CommitAction ca = new CommitAction() {
 
                     @Override
                     public void run() {
                         User u = DbUtil.getLoggedInUser();
-                        u.getProviders().add(bi.getBean());
+                        u.getProviders().add(pr);
                         Container c = providerField.getContainerDataSource();
                         c.removeAllItems();
                         List<Provider> prs = UserUtil.getAll(u, Provider.class);
                         for (Provider pr : prs) {
                             c.addItem(pr);
                         }
-                        providerField.select(bi.getBean());
+                        providerField.select(pr);
                     }
                 };
                 CrudUtil.showForm(form, ca, "Add Medical Provider");
             }
         });
-        ErrorfulHorizontalLayout providerPlusButtonLayout = new ErrorfulHorizontalLayout();
+        MHorizontalLayout providerPlusButtonLayout = new MHorizontalLayout();
         providerPlusButtonLayout.addComponent(providerField);
         providerPlusButtonLayout.addComponent(addProviderButton);
         addProviderButton.setWidth("35px");
@@ -215,7 +201,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         providerPlusButtonLayout.setSpacing(true);
         providerPlusButtonLayout.setComponentAlignment(addProviderButton, Alignment.BOTTOM_LEFT);
 
-        ErrorfulGridLayout topLayout = new ErrorfulGridLayout(2, 4);
+        GridLayout topLayout = new GridLayout(2, 4);
         topLayout.setWidth("100%");
         topLayout.setSpacing(true);
         topLayout.addComponent(dateField, 0, 0);
@@ -226,24 +212,29 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         topLayout.addComponent(medicalExpenseTypeField, 0, 3);
         topLayout.addComponent(prescriptionTierTypeField, 1, 3);
 
-        addComponent(topLayout);
-        addComponent(costsLayout);
-        addComponent(commentsField);
+        form.addComponent(topLayout);
+        form.addComponent(costsLayout);
+        form.addComponent(commentsField);
         commentsField.setWidth("100%");
+
+        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
     }
 
     private void showOrHidePrescriptionTiersLayout(Object val) {
         if (null == val) {
             prescriptionTiersLayout.setVisible(false);
-            prescriptionTiersLayout.discardInvalidBufferedValues();
+            // prescriptionTiersLayout.discardInvalidBufferedValues();
         } else {
             if (val.toString().equals(DisplayFriendly.getEnumCaption(MedicalExpense.MedicalExpenseType.PRESCRIPTION))) {
                 prescriptionTiersLayout.setVisible(true);
-                prescriptionTiersLayout.discardInvalidBufferedValues();
+                // prescriptionTiersLayout.discardInvalidBufferedValues();
             } else {
                 prescriptionTiersLayout.setVisible(false);
             }
         }
     }
 
+    private String getCaption(String propName) {
+        return DisplayFriendly.getPropertyCaption(MedicalExpense.class, propName);
+    }
 }

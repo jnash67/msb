@@ -1,11 +1,7 @@
 package com.medcognize.event;
 
-
-import com.medcognize.domain.Transaction;
 import com.medcognize.domain.User;
 import com.medcognize.view.DashboardViewType;
-
-import java.util.Collection;
 
 /*
  * Event bus events used in the application are listed here as inner classes.

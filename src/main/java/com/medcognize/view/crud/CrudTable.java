@@ -3,6 +3,7 @@ package com.medcognize.view.crud;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.event.Action;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
@@ -15,7 +16,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.ArrayList;
 
-public abstract class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
+public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CrudTable.class);
     protected final Action ACTION_ADD = new Action("Add");
@@ -107,11 +108,21 @@ public abstract class CrudTable<T extends DisplayFriendly> extends EditTable<T> 
 
     // Am not making deleting generic because it depends on the collection we are removing.  Originally
     // did this via reflection but got too cumbersome.
-    abstract protected void deleteAction(final Object target);
+    protected void deleteAction(final Object target) {
+        T df = getItemFromTarget(target);
+        removeItem(target);
+        UserUtil.removeFromCollection(repo, collectionOwner, df);
+        refreshRows();
+    }
 
     protected Window getNewItemFormAndShow(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
         DisplayFriendlyForm<T> form = CrudUtil.getNewItemForm(entityClazz, formClazzToUse);
         return showForm(form, true, "Add " + DisplayFriendly.getFriendlyClassName(entityClazz));
+    }
+
+    protected T getItemFromTarget(Object target) {
+        int index = getContainer().indexOfId(target);
+        return getContainer().getIdByIndex(index);
     }
 
 }

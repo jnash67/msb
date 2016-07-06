@@ -1,23 +1,28 @@
 package com.medcognize.view.crud;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
-import com.vaadin.data.util.BeanItem;
+import com.medcognize.util.UserUtil;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Slf4j
 public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T> implements Action.Handler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EditTable.class);
+
+    @Autowired
+    protected UserRepository repo;
+
     protected final Action ACTION_EDIT = new Action("Edit");
 
     protected User collectionOwner;
@@ -108,19 +113,19 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
     }
 
     protected DisplayFriendlyForm<T> createForm(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse,
-                                                final BeanItem<T> bi, final boolean isNew) {
-        return CrudUtil.createForm(formClazzToUse, bi, isNew);
+                                                final T item) {
+        return CrudUtil.createForm(formClazzToUse, item);
     }
 
     protected DisplayFriendlyForm<T> getEditItemForm(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse,
-                                                     final BeanItem<T> bi, final boolean isNew) {
-        return createForm(formClazzToUse, bi, isNew);
+                                                     final T item) {
+        return createForm(formClazzToUse, item);
     }
 
     protected Window getEditItemFormAndShow(Object itemId) {
         int index = getContainer().indexOfId(itemId);
         T item = getContainer().getIdByIndex(index);
-        DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, item, false);
+        DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, item);
         return showForm(form, false, "Edit " + DisplayFriendly.getFriendlyClassName(entityClazz));
     }
 
@@ -132,14 +137,15 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
             @Override
             public void run() {
                 Notification.show("Item successfully submitted");
-                saveItem(form.getBeanItem(), isNew);
                 if (isNew) {
-                    getContainer().addItem(form.getBeanItem().getBean());
+                    // add the new item and save
+                    UserUtil.addToCollection(repo, collectionOwner, form.getEntity());
+                } else {
+                    // save the user with the changed item
+                    repo.save(collectionOwner);
                 }
             }
         };
         return CrudUtil.showForm(form, ca, title);
     }
-
-    abstract protected void saveItem(final BeanItem<T> bi, final boolean isNew);
 }

@@ -9,7 +9,6 @@ import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.NotEqualIntegerValidator;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.form.PlanForm;
-import com.medcognize.form.field.errorful.ErrorfulFormLayout;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.UserUtil;
 import com.medcognize.view.ComponentWindow;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addon.daterangefield.DateUtil;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.risto.stepper.IntStepper;
+import org.vaadin.viritin.layouts.MFormLayout;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -60,8 +60,7 @@ public class PlanView extends CrudView<Plan> {
 
         @Override
         protected void deleteItem(final Object target) {
-            BeanItem<Plan> bi = getContainer().getItem(target);
-            Plan p = bi.getBean();
+            Plan p = getItemFromTarget(target);
             int count = UserUtil.getAll(collectionOwner, Plan.class).size();
             if (1 == count) {
                 if (!p.isActivePlan()) {
@@ -103,20 +102,9 @@ public class PlanView extends CrudView<Plan> {
         }
 
         @Override
-        protected void deleteAction(final Object target) {
-            BeanItem<Plan> bi = getContainer().getItem(target);
-            Plan p = bi.getBean();
-            User u = (User) collectionOwner;
-            UserUtil.deleteMedicalExpensesForPlan(repo, u, p);
-            removeItem(target);
-            collectionOwner.getPlans().remove(p);
-            refreshItems();
-        }
-
-        @Override
         public Action[] getActions(Object target, Object sender) {
             if (contextMenuEnabled) {
-                return new Action[] {ACTION_ADD, ACTION_EDIT, ACTION_DELETE, ACTION_LIMITS};
+                return new Action[]{ACTION_ADD, ACTION_EDIT, ACTION_DELETE, ACTION_LIMITS};
             }
             return new Action[0];
         }
@@ -128,17 +116,12 @@ public class PlanView extends CrudView<Plan> {
                     if (null == target) {
                         return;
                     }
-                    BeanItem<Plan> bi = getContainer().getItem(target);
-                    showLimitsReport(bi.getBean());
+                    Plan p = getItemFromTarget(target);
+                    showLimitsReport(p);
                 } else {
                     super.handleAction(action, sender, target);
                 }
             }
-        }
-
-        @Override
-        protected void saveItem(BeanItem<Plan> bi, boolean isNew) {
-            collectionOwner.getPlans().add(bi.getBean());
         }
 
         public void showLimitsReport(Plan p) {
@@ -168,7 +151,8 @@ public class PlanView extends CrudView<Plan> {
         table.addGeneratedColumn("Active Plan", new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
-                Plan p = getContainer().getItem(itemId).getBean();
+                int index = getContainer().indexOfId(itemId);
+                Plan p = getContainer().getIdByIndex(index);
                 CheckBox cb;
                 if (UserUtil.getActivePlan(u).equals(p)) {
                     cb = new CheckBox("", true);
@@ -223,7 +207,7 @@ public class PlanView extends CrudView<Plan> {
                     return;
                 }
                 UserUtil.setActivePlan(repo, u, p);
-                table.refreshItems();
+                table.refreshRows();
             }
         });
         makeActivePlan.addStyleName("small");
@@ -246,7 +230,7 @@ public class PlanView extends CrudView<Plan> {
                 final Plan p = ((BeanItem<Plan>) table.getItem(s)).getBean();
                 final ComponentWindow window = new ComponentWindow("Copy Selected Plan for a Different Year", false, false);
                 final IntStepper newYearField = new IntStepper("New Year");
-                Component form = new ErrorfulFormLayout() {
+                Component form = new MFormLayout() {
                     {
                         setSizeUndefined();
                         setMargin(true);
@@ -287,7 +271,7 @@ public class PlanView extends CrudView<Plan> {
                             String confirmedUniqueNewName = Plan.ensureUniqueName(newName);
                             newPlan.setPlanName(confirmedUniqueNewName);
                             u.getPlans().add(newPlan);
-                            getTable().getContainer().addBean(newPlan);
+                            getContainer().addItem(newPlan);
                             window.close();
                         } catch (Validator.InvalidValueException ive) {
                         }

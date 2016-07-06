@@ -2,24 +2,22 @@ package com.medcognize.form.field;
 
 import com.medcognize.domain.basic.Address;
 import com.medcognize.domain.basic.DisplayFriendly;
-import com.medcognize.form.field.errorful.ErrorfulFormLayout;
 import com.medcognize.view.ComponentWindow;
 import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.ui.*;
+import org.vaadin.viritin.layouts.MFormLayout;
 
 import java.util.Collection;
 
 public abstract class AddressField extends CustomField<Address> {
 
-    private final boolean isNew;
     private final BeanFieldGroup<Address> fieldGroup = new BeanFieldGroup<>(Address.class);
     private Button editAddressButton = new Button("Edit Address");
 
-    public AddressField(final Address address, final boolean isNew) {
+    public AddressField(final Address address) {
         super();
-        this.isNew = isNew;
         fieldGroup.setBuffered(true);
         fieldGroup.setItemDataSource(address);
         this.fieldGroup.setFieldFactory(new ViritinFieldGroupFieldFactory());
@@ -46,23 +44,8 @@ public abstract class AddressField extends CustomField<Address> {
 
         VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
-        ErrorfulFormLayout fieldsLayout = new ErrorfulFormLayout();
-        fieldsLayout.addComponent(address1Field);
-        fieldsLayout.addComponent(address2Field);
-        fieldsLayout.addComponent(cityField);
-        fieldsLayout.addComponent(stateField);
-        fieldsLayout.addComponent(zipField);
-        fieldsLayout.addComponent(phoneNumberField);
+        MFormLayout fieldsLayout = new MFormLayout(address1Field, address2Field, cityField, stateField, zipField, phoneNumberField);
         layout.addComponent(fieldsLayout);
-
-        if (!isNew) {
-            Validator.InvalidValueException first = fieldsLayout.highlightInvalidFields();
-            if (null == first) {
-                editAddressButton.removeStyleName("errorstyle");
-            } else {
-                editAddressButton.addStyleName("errorstyle");
-            }
-        }
 
         final ComponentWindow window = new ComponentWindow("Edit Address", false, false);
         editAddressButton.addClickListener(new Button.ClickListener() {

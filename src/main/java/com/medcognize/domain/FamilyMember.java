@@ -5,9 +5,9 @@ import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.Entity;
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class FamilyMember extends DisplayFriendlyAbstractEntity {
     public static final BiMap<String, String> captionMap = createBiMap(captionString);
     // was previously "name" and Provider also had a "name" field which caused a conflict. So
     // changed it to be more specific.
-    @NotEmpty
+    @NotBlank(message = "The family member name cannot be blank")
     private String familyMemberName = "";
 
     @Override

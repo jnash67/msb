@@ -1,15 +1,15 @@
 package com.medcognize.form.wizard;
 
-import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.MedicalExpense;
+import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.MedicalExpenseForm;
 import com.medcognize.form.field.YesNoSelect;
-import com.medcognize.form.field.errorful.ErrorfulFormLayout;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import org.vaadin.teemu.wizards.WizardStep;
+import org.vaadin.viritin.layouts.MFormLayout;
 
 public class BasicDetailsStep implements WizardStep {
 
@@ -24,7 +24,7 @@ public class BasicDetailsStep implements WizardStep {
     }
 
     public Component getContent() {
-        ErrorfulFormLayout content = new ErrorfulFormLayout();
+        MFormLayout content = new MFormLayout();
         content.setSizeUndefined();
 
         shadowForm.dateField.setCaption("What is the date of the medical expense:");

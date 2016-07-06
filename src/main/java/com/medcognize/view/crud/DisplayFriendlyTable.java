@@ -3,17 +3,17 @@ package com.medcognize.view.crud;
 
 import com.medcognize.domain.basic.DisplayFriendly;
 import lombok.extern.slf4j.Slf4j;
-import org.vaadin.viritin.fields.MTable;
+import org.vaadin.viritin.fields.FilterableTable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Slf4j
-public class DisplayFriendlyTable<T extends DisplayFriendly> extends MTable<T> {
+public class DisplayFriendlyTable<T extends DisplayFriendly> extends FilterableTable<T> {
 
     protected final Class<T> entityClazz;
 
-    public DisplayFriendlyTable(final Class<T> entityClazz, ArrayList<String> orderedPidList )   {
+    public DisplayFriendlyTable(final Class<T> entityClazz, ArrayList<String> orderedPidList) {
         super(entityClazz);
         this.entityClazz = entityClazz;
 

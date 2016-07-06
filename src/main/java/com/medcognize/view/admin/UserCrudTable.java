@@ -4,7 +4,6 @@ import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.view.crud.CrudTable;
-import com.vaadin.data.util.BeanItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -41,26 +40,5 @@ public class UserCrudTable extends CrudTable<User> {
                     }
                 }
         );
-    }
-
-    @Override
-    protected void deleteAction(Object target) {
-        // not called. Handled by deleteItem.
-    }
-
-    @Override
-    protected void saveItem(final BeanItem<User> bi, final boolean isNew) {
-        if (isNew) {
-            // repo.save(bi.getBean());
-        } else {
-            // already exists. Overwrite(????)
-        }
-    }
-
-    @Override
-    protected DisplayFriendlyForm<User> createForm(Class<? extends DisplayFriendlyForm<User>> formClazzToUse,
-                                                   BeanItem<User> bi, boolean isNew) {
-        uf = super.createForm(formClazzToUse, bi, false);
-        return uf;
     }
 }

@@ -3,16 +3,12 @@ package com.medcognize.form.wizard;
 import com.medcognize.domain.validator.vaadin.LessThanOrEqualDoubleValidator;
 import com.medcognize.form.MedicalExpenseForm;
 import com.medcognize.form.field.YesNoSelect;
-import com.medcognize.form.field.errorful.ErrorfulFormLayout;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.vaadin.teemu.wizards.WizardStep;
+import org.vaadin.viritin.layouts.MFormLayout;
 
 public class CostsStep implements WizardStep {
 
@@ -32,7 +28,7 @@ public class CostsStep implements WizardStep {
     public Component getContent() {
         VerticalLayout vl = new VerticalLayout();
         vl.setSizeUndefined();
-        ErrorfulFormLayout content = new ErrorfulFormLayout();
+        MFormLayout content = new MFormLayout();
         content.setSizeUndefined();
 
         shadowForm.outOfPocketAmountField.setCaption("How much have you paid out of pocket so far?");

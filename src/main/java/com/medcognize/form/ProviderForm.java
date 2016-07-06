@@ -2,13 +2,11 @@ package com.medcognize.form;
 
 import com.medcognize.domain.Provider;
 import com.medcognize.domain.basic.Address;
-import com.medcognize.domain.validator.vaadin.ExistingProviderNameValidator;
 import com.medcognize.form.field.AddressField;
 import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
 ;
 
@@ -27,18 +25,13 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
     Field<String> phoneNumber;
     Field<?> website;
 
-    public ProviderForm(BeanItem<Provider> bean, boolean isNew) {
-        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
+    public ProviderForm(Provider pr) {
+        super(pr, null, new ViritinFieldGroupFieldFactory());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void setupForm() {
-        setSizeUndefined();
-        setMargin(true);
-        setSpacing(true);
-
-        BeanFieldGroup<Provider> group = this.getFieldGroup();
+    protected Component createContent() {
+        validate();
 
         providerName = group.getField("providerName");
         providerInPlan = group.getField("providerInPlan");
@@ -57,7 +50,7 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
         address.setCity(city.getValue());
         address.setState(state.getValue());
         address.setZip(zip.getValue());
-        addressField = new AddressField(address, isNew()) {
+        addressField = new AddressField(address) {
             @SuppressWarnings("unchecked")
             @Override
             public void successfulCommitAction() {
@@ -71,24 +64,13 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
             }
         };
         website = group.getField("website");
-        addComponent(providerName);
-        if (isNew()) {
-            providerName.addValidator(new ExistingProviderNameValidator(null));
-        } else {
-            providerName.addValidator(new ExistingProviderNameValidator((String) providerName.getValue()));
-        }
-        addComponent(providerInPlan);
-        addComponent(providerType);
-        addComponent(providerId);
-        addComponent(addressField);
-        addComponent(website);
+        form.addComponent(providerName);
+        form.addComponent(providerInPlan);
+        form.addComponent(providerType);
+        form.addComponent(providerId);
+        form.addComponent(addressField);
+        form.addComponent(website);
+
+        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
     }
-
-    @Override
-    public void commit() throws FieldGroup.CommitException {
-        super.commit();
-    }
-
-
-
 }

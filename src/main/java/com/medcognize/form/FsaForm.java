@@ -2,73 +2,47 @@ package com.medcognize.form;
 
 import com.medcognize.domain.Fsa;
 import com.medcognize.domain.Plan;
+import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.ExistingFsaNameValidator;
-import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.data.util.converter.StringToDoubleConverter;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.TextField;
 import org.vaadin.addon.daterangefield.DateRangeField;
-import org.vaadin.risto.stepper.DateStepper;
-import org.vaadin.risto.stepper.IntStepper;
+import org.vaadin.viritin.fields.IntegerField;
+import org.vaadin.viritin.fields.MTextField;
+import org.vaadin.viritin.form.AbstractForm;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
-public class FsaForm extends DisplayFriendlyForm<Fsa> {
+public class FsaForm extends AbstractForm<Fsa> {
 
-    Field<?> fsaNameField;
+    TextField fsaNameField = new MTextField(getCaption("fsaNameField"));
 
     // we will show the DateRangeField instead of the three other Fields
     DateRangeField dateRangeField;
-    IntStepper fsaYearField;
-    DateStepper fsaStartDateField;
-    DateStepper fsaEndDateField;
-
-    Field<?> amountInFsa;
-
-    public FsaForm(BeanItem<Fsa> bean, boolean isNew) {
-        super(bean, null, new ViritinFieldGroupFieldFactory(), isNew);
-    }
+    IntegerField fsaYearField = new IntegerField(getCaption("fsaYearField"));
+    DateField fsaStartDateField = new DateField(getCaption("fsaStartDateField"));
+    DateField fsaEndDateField = new DateField(getCaption("fsaEndDateField"));
+    TextField amountInFsa = new MTextField("amountInFsa");
 
     @Override
-    public void setupForm() {
-        setSizeUndefined();
-        setMargin(true);
-        setSpacing(true);
-
-        BeanFieldGroup<Fsa> group = this.getFieldGroup();
-
-        fsaNameField = group.getField("fsaName");
-        addComponent(fsaNameField);
-        if (isNew()) {
-            fsaNameField.addValidator(new ExistingFsaNameValidator(null));
-        } else {
-            fsaNameField.addValidator(new ExistingFsaNameValidator((String) fsaNameField.getValue()));
-        }
-        fsaYearField = (IntStepper) group.getField("fsaYear");
-        fsaStartDateField = (DateStepper) group.getField("fsaStartDate");
-        fsaEndDateField = (DateStepper) group.getField("fsaEndDate");
-        amountInFsa = group.getField("amountInFsa");
-
-        addComponent(fsaNameField);
-
-        //noinspection unchecked
+    protected Component createContent() {
+        amountInFsa.setConverter(new StringToDoubleConverter());
         dateRangeField = new DateRangeField(fsaStartDateField.getPropertyDataSource(), fsaEndDateField.getPropertyDataSource(), true,
                 fsaYearField.getPropertyDataSource(), true);
         dateRangeField.setErrorStyleName("steppererrorstyle");
-        addComponent(dateRangeField);
-        addExcludedField(dateRangeField);
         dateRangeField.setMinYear(Plan.MIN_YEAR);
         dateRangeField.setMaxYear(Plan.MAX_YEAR);
+        fsaNameField.addValidator(new ExistingFsaNameValidator((String) fsaNameField.getValue()));
 
-        HorizontalLayout dateLayout = new HorizontalLayout();
-        dateLayout.setSpacing(true);
-
-        addComponent(amountInFsa);
+        return new MVerticalLayout(
+                getToolbar(),
+                new FormLayout(fsaNameField, dateRangeField, amountInFsa));
     }
 
-    @Override
-    public void commit() throws FieldGroup.CommitException {
-        dateRangeField.commit();
-        super.commit();
+    private String getCaption(String propName) {
+        return DisplayFriendly.getPropertyCaption(Fsa.class, propName);
     }
+
 }

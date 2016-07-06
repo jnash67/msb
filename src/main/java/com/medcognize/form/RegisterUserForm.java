@@ -3,12 +3,13 @@ package com.medcognize.form;
 import com.medcognize.domain.User;
 import com.medcognize.domain.validator.vaadin.PasswordRequirementsValidator;
 import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import java.util.ArrayList;
 
@@ -24,33 +25,28 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
 		}
 	};
 
-	public RegisterUserForm(BeanItem<User> bean, boolean isNew) {
-		super(bean, pids, new ViritinFieldGroupFieldFactory(), isNew);
+	public RegisterUserForm(User u, boolean isNew) {
+		super(u, pids, new ViritinFieldGroupFieldFactory());
 	}
 
     @Override
-    public void setupForm() {
-        pidsToIgnore.add("firstName");
-        pidsToIgnore.add("lastName");
-        pidsToIgnore.add("encryptedData");
-        pidsToIgnore.add("encryptedDataFile");
-        pidsToIgnore.add("id");
-        pidsToIgnore.add("activePlan");
-        pidsToIgnore.add("admin");
+    protected Component createContent() {
+        validate();
 
-        this.setSpacing(true);
-        this.setMargin(true);
+        Field<?> admin = group.getField("admin");
+        form.addComponent(admin);
 
-        BeanFieldGroup<User> group = this.getFieldGroup();
         userField = (TextField) group.getField("username");
         passwordField = new PasswordField("password");
 
         setupUserField(userField);
         userField.focus();
-        this.addComponent(userField);
+        form.addComponent(userField);
 
         setupPasswordField(passwordField);
-        this.addComponent(passwordField);
+        form.addComponent(passwordField);
+
+        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
     }
 
     public static void setupUserField(final TextField userField) {

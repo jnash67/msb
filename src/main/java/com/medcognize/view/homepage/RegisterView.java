@@ -7,7 +7,6 @@ import com.medcognize.domain.validator.vaadin.ExistingUsernameValidator;
 import com.medcognize.domain.validator.vaadin.PasswordRequirementsValidator;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
-import com.medcognize.form.field.errorful.ErrorfulHorizontalLayout;
 import com.medcognize.util.SpringUtil;
 import com.medcognize.util.UserUtil;
 import com.vaadin.data.Validator;
@@ -25,6 +24,9 @@ import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.viritin.fields.MPasswordField;
+import org.vaadin.viritin.fields.MTextField;
+import org.vaadin.viritin.layouts.MFormLayout;
 
 @SuppressWarnings("serial")
 @Slf4j
@@ -57,10 +59,9 @@ public class RegisterView extends VerticalLayout implements View {
     }
 
     private Component buildFields() {
-        ErrorfulHorizontalLayout fields = new ErrorfulHorizontalLayout();
-        fields.setSpacing(true);
+        MFormLayout fields = new MFormLayout();
         fields.addStyleName("fields");
-        final TextField usernameField = new TextField("Username");
+        final TextField usernameField = new MTextField("Username");
         usernameField.setIcon(FontAwesome.USER);
         usernameField.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         usernameField.setRequired(true);
@@ -69,7 +70,7 @@ public class RegisterView extends VerticalLayout implements View {
         usernameField.addValidator(new ExistingUsernameValidator(repo, null));
         usernameField.setInvalidAllowed(true);
         // couldn't get Vaadin CapsLockWarning to work with Spring
-        final PasswordField passwordField = new PasswordField("Password");
+        final PasswordField passwordField = new MPasswordField("Password");
         passwordField.setIcon(FontAwesome.LOCK);
         passwordField.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         passwordField.setRequired(true);

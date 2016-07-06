@@ -1,25 +1,25 @@
 package com.medcognize.form;
 
 import com.medcognize.domain.User;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 
 /**
  * Created by jnash on 5/16/2014.
  */
 public class AdminUserSettingsForm extends UserSettingsForm {
-    public AdminUserSettingsForm(BeanItem<User> bean, boolean isNew) {
-        super(bean, isNew);
+    public AdminUserSettingsForm(User u) {
+        super(u);
     }
 
     @Override
-    public void setupForm() {
-        super.setupForm();
+    protected Component createContent() {
+        validate();
 
-        BeanFieldGroup<User> group = this.getFieldGroup();
+        Component c = super.createContent();
         Field<?> admin = group.getField("admin");
-        addComponent(admin);
+        form.addComponent(admin);
+        return c;
     }
 
 }

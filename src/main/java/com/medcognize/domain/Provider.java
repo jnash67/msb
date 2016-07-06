@@ -8,8 +8,9 @@ import com.medcognize.domain.validator.jsr303.ZipCodeOrBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
+
 import javax.persistence.Entity;
 import java.io.Serializable;
 
@@ -34,7 +35,7 @@ public class Provider extends DisplayFriendlyAbstractEntity implements Serializa
 	public static final BiMap<String, String> providerTypeStringMap = createBiMap(providerTypeCaptionString);
 	// was previously "name" and FamilyMember also had a "name" field which caused a conflict with JPA. So
 	// changed it to be more specific. Not an issue with Objectify.
-	@NotEmpty
+	@NotBlank(message = "The provider name cannot be blank")
 	private String providerName = "";
 	private boolean providerInPlan;
 	private ProviderType providerType = defaultProviderType;

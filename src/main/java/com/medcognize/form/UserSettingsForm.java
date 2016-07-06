@@ -5,14 +5,10 @@ import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.medcognize.util.UserUtil;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
 public class UserSettingsForm extends DisplayFriendlyForm<User> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFieldFactory.class);
@@ -54,8 +50,8 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
     }
 
     // we ignore the passed in FieldFactory
-    public UserSettingsForm(BeanItem<User> bean, boolean isNew) {
-        super(bean, null, new UserFieldFactory(bean.getBean()), isNew);
+    public UserSettingsForm(User u) {
+        super(u, null, new UserFieldFactory(u));
     }
 
     public PasswordField getPasswordField() {
@@ -63,7 +59,7 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
     }
 
     @Override
-    public void setupForm() {
+    protected void validate() {
         // these are variables in User that are never Fields.  Admin is not a Field in this form
         // but it is a Field in another, and it is listed in the entity caption string.
         // So we don't need to specify to ignore Admin.
@@ -71,29 +67,31 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
         pidsToIgnore.add("encryptedDataFile");
         pidsToIgnore.add("id");
         pidsToIgnore.add("activePlan");
+        super.validate();
+    }
 
-        setSizeUndefined();
-        setMargin(true);
-        setSpacing(true);
-
-        BeanFieldGroup<User> group = this.getFieldGroup();
+    @Override
+    protected Component createContent() {
+        validate();
 
         firstName = group.getField("firstName");
         lastName = group.getField("lastName");
         email = group.getField("username");
         passwordField = (PasswordField) group.getField("password");
-        addComponent(email);
+        form.addComponent(email);
         if ((null == email.getValue() || "".equals(email.getValue()))) {
             // this is a new user
             RegisterUserForm.setupUserField((TextField) email);
             RegisterUserForm.setupPasswordField(passwordField);
-            addComponent(passwordField);
+            form.addComponent(passwordField);
         } else {
             // existing user so cannot change email or password (which isn't shown)
             email.setEnabled(false);
             ((TextField) email).setDescription("You cannot change your email address here");
         }
-        addComponent(firstName);
-        addComponent(lastName);
+        form.addComponent(firstName);
+        form.addComponent(lastName);
+
+        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
     }
 }

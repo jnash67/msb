@@ -6,7 +6,6 @@ import com.medcognize.form.WizardForm;
 import com.medcognize.view.ComponentWindow;
 import com.medcognize.view.crud.CommitAction;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
@@ -17,10 +16,10 @@ import java.lang.reflect.InvocationTargetException;
 public class CrudUtil implements Serializable {
 
     public static <T extends DisplayFriendly> DisplayFriendlyForm<T> createForm(final Class<? extends
-            DisplayFriendlyForm<T>> formClazz, final BeanItem<T> bi, final boolean isNew) {
+            DisplayFriendlyForm<T>> formClazz, T item) {
         DisplayFriendlyForm<T> form = null;
         try {
-            form = formClazz.getDeclaredConstructor(new Class[]{BeanItem.class, boolean.class}).newInstance(bi, isNew);
+            form = formClazz.getDeclaredConstructor(new Class[]{item.getClass()}).newInstance(item);
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException
                 e) {
             e.printStackTrace();
@@ -32,10 +31,10 @@ public class CrudUtil implements Serializable {
                                                                                     final Class<? extends
                                                                                             DisplayFriendlyForm<T>>
                                                                                             formClazzToUse) {
-        final BeanItem<T> target;
+        final T target;
         try {
-            target = new BeanItem<>(entityClazz.newInstance());
-            return createForm(formClazzToUse, target, true);
+            target = entityClazz.newInstance();
+            return createForm(formClazzToUse, target);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -57,7 +56,7 @@ public class CrudUtil implements Serializable {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
                     try {
-                        form.commit();
+                        form.getFieldGroup().commit();
                         action.run();
                         window.close();
                     } catch (FieldGroup.CommitException e) {
