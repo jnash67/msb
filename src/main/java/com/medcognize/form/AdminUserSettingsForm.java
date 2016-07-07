@@ -14,8 +14,6 @@ public class AdminUserSettingsForm extends UserSettingsForm {
 
     @Override
     protected Component createContent() {
-        validate();
-
         Component c = super.createContent();
         Field<?> admin = group.getField("admin");
         form.addComponent(admin);

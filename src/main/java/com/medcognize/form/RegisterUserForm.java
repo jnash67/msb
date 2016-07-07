@@ -2,7 +2,6 @@ package com.medcognize.form;
 
 import com.medcognize.domain.User;
 import com.medcognize.domain.validator.vaadin.PasswordRequirementsValidator;
-import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.ui.Component;
@@ -25,14 +24,12 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
 		}
 	};
 
-	public RegisterUserForm(User u, boolean isNew) {
-		super(u, pids, new ViritinFieldGroupFieldFactory());
+	public RegisterUserForm(User u) {
+		super(u, pids, null);
 	}
 
     @Override
     protected Component createContent() {
-        validate();
-
         Field<?> admin = group.getField("admin");
         form.addComponent(admin);
 

@@ -7,9 +7,9 @@ import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import org.vaadin.addon.daterangefield.DateRangeField;
-import org.vaadin.risto.stepper.DateStepper;
-import org.vaadin.risto.stepper.IntStepper;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+
+import java.util.Collection;
 
 public class PlanForm extends DisplayFriendlyForm<Plan> {
 
@@ -18,9 +18,9 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
 
     // we will show the DateRangeField instead of the three other Fields
     DateRangeField dateRangeField;
-    IntStepper planYearField;
-    DateStepper planStartDateField;
-    DateStepper planEndDateField;
+    Field<?> planYearField;
+    Field<?> planStartDateField;
+    Field<?> planEndDateField;
 
     Field<?> individualInNetworkDeductibleField;
     Field<?> familyInNetworkDeductibleField;
@@ -37,20 +37,21 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
     Field<?> notesField;
     GridLayout outOfNetworkDeductiblesLayout;
 
-    public PlanForm(Plan p) {
-        super(p, null, new ViritinFieldGroupFieldFactory());
+    public PlanForm(Plan item) {
+        super(item, null, new ViritinFieldGroupFieldFactory());
+    }
+
+    public PlanForm(Plan item, Collection<String> pids) {
+        super(item, pids, null);
     }
 
     @Override
     protected Component createContent() {
-        validate();
-
         planNameField = group.getField("planName");
-        planNameField.addValidator(new ExistingPlanNameValidator((String) planNameField.getValue()));
         planTypeField = group.getField("planType");
-        planYearField = (IntStepper) group.getField("planYear");
-        planStartDateField = (DateStepper) group.getField("planStartDate");
-        planEndDateField = (DateStepper) group.getField("planEndDate");
+        planYearField = group.getField("planYear");
+        planStartDateField = group.getField("planStartDate");
+        planEndDateField = group.getField("planEndDate");
         individualInNetworkDeductibleField = group.getField("individualInNetworkDeductible");
         familyInNetworkDeductibleField = group.getField("familyInNetworkDeductible");
         individualOutOfNetworkDeductibleField = group.getField("individualOutOfNetworkDeductible");
@@ -65,7 +66,8 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
         tier3PrescriptionCopayField = group.getField("tier3PrescriptionCopay");
         notesField = group.getField("notes");
 
-        ((TextField) planNameField).setDescription("e.g. Acme Insurance Company HMO");
+        planNameField.addValidator(new ExistingPlanNameValidator((String) planNameField.getValue()));
+        ((AbstractField) planNameField).setDescription("e.g. Acme Insurance Company HMO");
         //planName.addValidator(new MinStringLengthValidator("Plan name cannot be blank", 1));
         //planName.addValidator(new MaxStringLengthValidator("You have exceeded the maximum allowed length", 50));
         form.addComponent(planNameField);

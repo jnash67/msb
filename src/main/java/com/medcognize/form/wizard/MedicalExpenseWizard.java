@@ -24,7 +24,6 @@ public class MedicalExpenseWizard extends WizardForm<MedicalExpense> {
     @Override
     protected Component createContent() {
         // nop - form setup is being done in the shadow form
-        validate();
         return null;
     }
 

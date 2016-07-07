@@ -3,34 +3,29 @@ package com.medcognize.form;
 import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
-import com.medcognize.util.CrudUtil;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.UserUtil;
-import com.medcognize.view.crud.CommitAction;
-import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.daterangefield.DateUtil;
-import org.vaadin.viritin.fields.MDateField;
 import org.vaadin.viritin.fields.TypedSelect;
-import org.vaadin.viritin.form.AbstractForm;
+import org.vaadin.viritin.layouts.MFormLayout;
+import org.vaadin.viritin.layouts.MGridLayout;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
-import java.util.List;
+import java.util.Collection;
 
-public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
+public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MedicalExpenseForm.class);
 
-    public DateField dateField = new MDateField(getCaption("dateField"));
-
-    public TypedSelect<Plan> planField = new TypedSelect<>(getCaption("planField"));
-    public TypedSelect<FamilyMember> familyMemberField = new TypedSelect<>(getCaption("familyMemberField"));
-    public TypedSelect<Provider> providerField = new TypedSelect<>(getCaption("providerField"));
+    public Field<?> dateField;
+    public Field<?> planField;
+    public Field<?> familyMemberField;
+    public Field<?> providerField;
     public Field<?> medicalExpenseInPlanField;
-    public GridLayout prescriptionTiersLayout;
     public Field<?> prescriptionTierTypeField;
     public Field<?> medicalExpenseTypeField;
     public Field<?> outOfPocketAmountField;
@@ -41,46 +36,42 @@ public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
     public Field<?> paymentAmountField;
     public Field<?> commentsField;
 
+    public GridLayout prescriptionTiersLayout;
+
+    public MedicalExpenseForm(MedicalExpense item) {
+        super(item, null, null);
+    }
+
+    public MedicalExpenseForm(MedicalExpense item, Collection<String> pids) {
+        super(item, pids, null);
+    }
+
     @Override
     protected Component createContent() {
-        dateField.setDescription("This is the date of service");
-        planField = (NativeSelect) group.getField("plan");
-        familyMemberField = (NativeSelect) group.getField("familyMember");
-        providerField = (NativeSelect) group.getField("provider");
-        medicalExpenseInPlanField = group.getField("medicalExpenseInPlan");
-        medicalExpenseTypeField = group.getField("medicalExpenseType");
-        prescriptionTierTypeField = group.getField("prescriptionTierType");
-        outOfPocketAmountField = group.getField("outOfPocketAmount");
-        ((AbstractField) outOfPocketAmountField).setDescription("This is how much cash you've paid out of pocket");
-        costAccordingToProviderField = group.getField("costAccordingToProvider");
-        ((AbstractField) costAccordingToProviderField).setDescription("This is how much the provider is charging, " +
+        ((AbstractField)dateField).setDescription("This is the date of service");
+        ((AbstractField)outOfPocketAmountField).setDescription("This is how much cash you've paid out of pocket");
+        ((AbstractField)costAccordingToProviderField).setDescription("This is how much the provider is charging, " +
                 "" + "also called the 'Billed Amount'");
-        maximumAmountField = group.getField("maximumAmount");
-        ((AbstractField) maximumAmountField).setDescription("This is the most the insurance company will pay under the " + "plan");
-        deductibleAmountField = group.getField("deductibleAmount");
-        ((AbstractField) deductibleAmountField).setDescription("This is the amount you have to pay before the plan will " + "start to pay.");
-        copayAmountField = group.getField("copayAmount");
-        ((AbstractField) copayAmountField).setDescription("This is the minimum amount you have to pay before " + "the plan will start to pay.");
-        paymentAmountField = group.getField("paymentAmount");
-        ((AbstractField) paymentAmountField).setDescription("This is the amount the insurance company will pay");
-        commentsField = group.getField("comments");
-        ((TextField)commentsField).setNullRepresentation("");
+        ((AbstractField)maximumAmountField).setDescription("This is the most the insurance company will pay under the " + "plan");
+        ((AbstractField)deductibleAmountField).setDescription("This is the amount you have to pay before the plan will " + "start to pay.");
+        ((AbstractField)copayAmountField).setDescription("This is the minimum amount you have to pay before " + "the plan will start to pay.");
+        ((AbstractField)paymentAmountField).setDescription("This is the amount the insurance company will pay");
 
         //((DateField) date).setDateFormat("yyyy-MM-dd");
         if (null == dateField.getValue()) {
-            dateField.setValue(DateUtil.now());
+            ((DateField)dateField).setValue(DateUtil.now());
         }
         dateField.setInvalidAllowed(true);
         dateField.addValidator(new InPlanPeriodValidator("Date has to be within the plan period", planField));
 
         // must have a plan
-        planField.setNullSelectionAllowed(false);
+        ((TypedSelect) planField).setNullSelectionAllowed(false);
         if (null == planField.getValue()) {
             // set to active plan
             User u = DbUtil.getLoggedInUser();
             Plan ap = UserUtil.getActivePlan(u);
-            if (planField.getItemIds().size() > 0) {
-                planField.setValue(ap);
+            if (((TypedSelect) planField).getOptions().size() > 0) {
+                ((TypedSelect) planField).setValue(ap);
             } else {
                 LOGGER.warn("Should not happen. Unable to set MedicalExpense to ActivePlan (" + ap + "). The User's " +
                         "plans list is empty.");
@@ -92,21 +83,21 @@ public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
         }
         if (null == familyMemberField.getValue()) {
             // set to first family member in list
-            familyMemberField.setNullSelectionAllowed(true);
-            if (familyMemberField.getItemIds().size() > 0) {
-                Object firstItem = familyMemberField.getItemIds().toArray()[0];
-                familyMemberField.setValue(firstItem);
+            ((TypedSelect) familyMemberField).setNullSelectionAllowed(true);
+            if (((TypedSelect) familyMemberField).getOptions().size() > 0) {
+                Object firstItem = ((TypedSelect) familyMemberField).getOptions().toArray()[0];
+                ((TypedSelect) familyMemberField).setValue(firstItem);
             }
         }
         if (null == providerField.getValue()) {
-            providerField.setNullSelectionAllowed(true);
+            ((TypedSelect) providerField).setNullSelectionAllowed(true);
             // set to first provider in list
-            if (providerField.getItemIds().size() > 0) {
-                Object firstItem = providerField.getItemIds().toArray()[0];
-                providerField.setValue(firstItem);
+            if (((TypedSelect) providerField).getOptions().size() > 0) {
+                Object firstItem = ((TypedSelect) providerField).getOptions().toArray()[0];
+                ((TypedSelect) providerField).setValue(firstItem);
             }
         }
-        prescriptionTiersLayout = new GridLayout(1, 1);
+        prescriptionTiersLayout = new MGridLayout();
         prescriptionTiersLayout.setStyleName("borderstyle");
         prescriptionTiersLayout.setSizeUndefined();
         prescriptionTiersLayout.setSpacing(true);
@@ -131,6 +122,7 @@ public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
         costsLayout.addComponent(deductibleAmountField, 1, 1);
         costsLayout.addComponent(copayAmountField, 0, 2);
         costsLayout.addComponent(paymentAmountField, 1, 2);
+        MFormLayout form = new MFormLayout();
         form.addComponent(costsLayout);
 
         Button addFamilyMemberButton = new NativeButton("<div style=\"text-align: center;\"><font " + "size=\"1\">Add<br>New</font></div>");
@@ -140,23 +132,18 @@ public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final FamilyMember fm = new FamilyMember();
-                final DisplayFriendlyForm<FamilyMember> form = CrudUtil.createForm(FamilyMemberForm.class, fm);
-                final CommitAction ca = new CommitAction() {
-
+                final FamilyMemberForm form = new FamilyMemberForm(fm);
+                form.setSavedHandler(new SavedHandler<FamilyMember>() {
                     @Override
-                    public void run() {
+                    public void onSave(FamilyMember entity) {
                         User u = DbUtil.getLoggedInUser();
-                        u.getFamilyMembers().add(fm);
-                        Container c = familyMemberField.getContainerDataSource();
-                        c.removeAllItems();
-                        List<FamilyMember> fms = UserUtil.getAll(u, FamilyMember.class);
-                        for (FamilyMember fm : fms) {
-                            c.addItem(fm);
-                        }
-                        familyMemberField.select(fm);
+                        u.getFamilyMembers().add(entity);
+                        ((TypedSelect)familyMemberField).addOption(entity);
+                        // familyMemberField.select(fm);
                     }
-                };
-                CrudUtil.showForm(form, ca, "Add Family Member");
+                });
+                form.setModalWindowTitle("Add Family Member");
+                form.openInModalPopup();
             }
         });
         MHorizontalLayout familyMemberPlusButtonLayout = new MHorizontalLayout();
@@ -174,23 +161,18 @@ public class MedicalExpenseForm extends AbstractForm<MedicalExpense> {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final Provider pr = new Provider();
-                DisplayFriendlyForm<Provider> form = CrudUtil.createForm(ProviderForm.class, pr);
-                CommitAction ca = new CommitAction() {
-
+                ProviderForm form = new ProviderForm(pr);
+                form.setSavedHandler(new SavedHandler<Provider>() {
                     @Override
-                    public void run() {
+                    public void onSave(Provider entity) {
                         User u = DbUtil.getLoggedInUser();
-                        u.getProviders().add(pr);
-                        Container c = providerField.getContainerDataSource();
-                        c.removeAllItems();
-                        List<Provider> prs = UserUtil.getAll(u, Provider.class);
-                        for (Provider pr : prs) {
-                            c.addItem(pr);
-                        }
-                        providerField.select(pr);
+                        u.getProviders().add(entity);
+                        ((TypedSelect)providerField).addOption(entity);
+                        //providerField.select(entity);
                     }
-                };
-                CrudUtil.showForm(form, ca, "Add Medical Provider");
+                });
+                form.setModalWindowTitle("Add Medical Provider");
+                form.openInModalPopup();
             }
         });
         MHorizontalLayout providerPlusButtonLayout = new MHorizontalLayout();

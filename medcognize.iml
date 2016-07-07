@@ -135,6 +135,7 @@
     <orderEntry type="library" name="Maven: org.commonjava.googlecode.markdown4j:markdown4j:2.2-cj-1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />
     <orderEntry type="library" name="Maven: javax.el:javax.el-api:2.2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.vaadin.teemu:switch:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.peimari:dawn:11" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:wizards-for-vaadin:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:stepper:2.3.0" level="project" />

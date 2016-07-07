@@ -59,20 +59,7 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
     }
 
     @Override
-    protected void validate() {
-        // these are variables in User that are never Fields.  Admin is not a Field in this form
-        // but it is a Field in another, and it is listed in the entity caption string.
-        // So we don't need to specify to ignore Admin.
-        pidsToIgnore.add("encryptedData");
-        pidsToIgnore.add("encryptedDataFile");
-        pidsToIgnore.add("id");
-        pidsToIgnore.add("activePlan");
-        super.validate();
-    }
-
-    @Override
     protected Component createContent() {
-        validate();
 
         firstName = group.getField("firstName");
         lastName = group.getField("lastName");

@@ -89,6 +89,6 @@ public abstract class AddressField extends CustomField<Address> {
 //            address = new Address();
 //        }
 //        super.setInternalValue(address);
-//        fieldGroup.setItemDataSource(new BeanItem<>(address));
+//        group.setItemDataSource(new BeanItem<>(address));
 //    }
 }

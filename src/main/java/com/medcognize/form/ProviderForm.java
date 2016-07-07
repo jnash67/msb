@@ -3,10 +3,11 @@ package com.medcognize.form;
 import com.medcognize.domain.Provider;
 import com.medcognize.domain.basic.Address;
 import com.medcognize.form.field.AddressField;
-import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+
+import java.util.Collection;
 
 ;
 
@@ -25,14 +26,16 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
     Field<String> phoneNumber;
     Field<?> website;
 
-    public ProviderForm(Provider pr) {
-        super(pr, null, new ViritinFieldGroupFieldFactory());
+    public ProviderForm(Provider item) {
+        super(item, null, null);
+    }
+
+    public ProviderForm(Provider item, Collection<String> pids) {
+        super(item, pids, null);
     }
 
     @Override
     protected Component createContent() {
-        validate();
-
         providerName = group.getField("providerName");
         providerInPlan = group.getField("providerInPlan");
         providerType = group.getField("providerType");

@@ -3,13 +3,13 @@ package com.medcognize.form;
 
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
-import com.vaadin.ui.Field;
+import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.viritin.MBeanFieldGroup;
 import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.layouts.MFormLayout;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,33 +20,33 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Abs
     // Bean validators are automatically created when using a BeanFieldGroup.
     // https://vaadin.com/book/vaadin7/-/page/datamodel.itembinding.html
     protected final Set<String> pidsToIgnore = new HashSet<>();
-    protected ArrayList<Field<?>> fields = new ArrayList<>();
-    // protected final Collection<String> pidsToUse;
+    protected final Collection<String> pidsToUse;
     protected final MFormLayout form;
+    protected final MBeanFieldGroup<T> group;
 
-    protected DisplayFriendlyForm(T item, Collection<String> pids, ViritinFieldGroupFieldFactory factory) {
+    public DisplayFriendlyForm(T item, Collection<String> pids, FieldGroupFieldFactory factory) {
         setSizeUndefined();
-        setEntity(item);
+        group = setEntity(item);
         @SuppressWarnings("unchecked") Class<T> clazz = (Class<T>) item.getClass();
         if (null == factory) {
-            getFieldGroup().setFieldFactory(new ViritinFieldGroupFieldFactory());
+            group.setFieldFactory(new ViritinFieldGroupFieldFactory());
         } else {
-            getFieldGroup().setFieldFactory(factory);
+            group.setFieldFactory(factory);
         }
         form = new MFormLayout();
 
-//        String caption;
-//        if (null == pids) {
-//            pidsToUse = DisplayFriendly.propertyIdList(clazz);
-//        } else {
-//            pidsToUse = pids;
-//        }
-//        for (String pid : pidsToUse) {
-//            caption = DisplayFriendly.getPropertyCaption(clazz, pid);
-//            // Bean validators are automatically created when using a BeanFieldGroup.
-//            // https://vaadin.com/book/vaadin7/-/page/datamodel.itembinding.html
-//            fields.add(group.buildAndBind(caption, pid));
-//        }
+        String caption;
+        if (null == pids) {
+            pidsToUse = DisplayFriendly.propertyIdList(clazz);
+        } else {
+            pidsToUse = pids;
+        }
+        for (String pid : pidsToUse) {
+            caption = DisplayFriendly.getPropertyCaption(clazz, pid);
+            // Bean validators are automatically created when using a BeanFieldGroup.
+            // https://vaadin.com/book/vaadin7/-/page/datamodel.itembinding.html
+            group.buildAndBind(caption, pid);
+        }
 
         // copy pids before the ones we set here to ignore
 //        pidsToIgnore.add("id");
