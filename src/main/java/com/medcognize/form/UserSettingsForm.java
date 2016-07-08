@@ -60,7 +60,6 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
 
     @Override
     protected Component createContent() {
-
         firstName = group.getField("firstName");
         lastName = group.getField("lastName");
         email = group.getField("username");
@@ -76,9 +75,7 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
             email.setEnabled(false);
             ((TextField) email).setDescription("You cannot change your email address here");
         }
-        form.addComponent(firstName);
-        form.addComponent(lastName);
-
+        form.addComponents(firstName, lastName);
         return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
     }
 }

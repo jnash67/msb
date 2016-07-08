@@ -5,14 +5,12 @@ import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
-import com.medcognize.util.UserUtil;
 import com.vaadin.event.Action;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.viritin.form.AbstractForm.SavedHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,21 +66,22 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
     }
 
     protected void setActionHandler() {
-        addItemClickListener(new ItemClickEvent.ItemClickListener() {
+        addRowClickListener(new RowClickListener<T>() {
             @Override
-            @SuppressWarnings("unchecked")
-            public void itemClick(ItemClickEvent event) {
+            public void rowClick(RowClickEvent<T> event) {
                 if (event.isDoubleClick()) {
                     if (!isEditOnSingleClick()) {
-                        getEditItemFormAndShow(event.getItemId());
+                        edit(event.getRow());
                     }
-                } else {
+                }
+                else {
                     if (MouseEventDetails.MouseButton.LEFT == event.getButton()) {
                         if (isEditOnSingleClick()) {
-                            getEditItemFormAndShow(event.getItemId());
+                            edit(event.getRow());
                         }
                     }
                 }
+
             }
         });
         addActionHandler(this);
@@ -103,7 +102,8 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
                 if (null == target) {
                     return;
                 }
-                getEditItemFormAndShow(target);
+                T item = getEntityFromContainer(target);
+                edit(item);
             }
         }
     }
@@ -122,30 +122,23 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
         return createForm(formClazzToUse, item);
     }
 
-    protected Window getEditItemFormAndShow(Object itemId) {
-        int index = getContainer().indexOfId(itemId);
-        T item = getContainer().getIdByIndex(index);
-        DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, item);
-        return showForm(form, false, "Edit " + DisplayFriendly.getFriendlyClassName(entityClazz));
+    protected Window edit(T row) {
+        DisplayFriendlyForm<T> form = getEditItemForm(defaultFormClazz, row);
+        form.setModalWindowTitle( "Edit " + DisplayFriendly.getFriendlyClassName(entityClazz));
+        Window w = form.openInModalPopup();
+        form.setSavedHandler(new SavedHandler<T>() {
+            @Override
+            public void onSave(T entity) {
+                repo.save(collectionOwner);
+                refreshRows();
+                w.close();
+            }
+        });
+        return w;
     }
 
-    protected Window showForm(final DisplayFriendlyForm<T> form, final boolean isNew, String title) {
-        if (null == form) {
-            return null;
-        }
-        CommitAction ca = new CommitAction() {
-            @Override
-            public void run() {
-                Notification.show("Item successfully submitted");
-                if (isNew) {
-                    // add the new item and save
-                    UserUtil.addToCollection(repo, collectionOwner, form.getEntity());
-                } else {
-                    // save the user with the changed item
-                    repo.save(collectionOwner);
-                }
-            }
-        };
-        return CrudUtil.showForm(form, ca, title);
+    protected T getEntityFromContainer(Object target) {
+        int index = getContainer().indexOfId(target);
+        return getContainer().getIdByIndex(index);
     }
 }

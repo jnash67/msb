@@ -13,6 +13,7 @@ import com.vaadin.ui.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.viritin.form.AbstractForm;
 
 import java.util.ArrayList;
 
@@ -51,9 +52,9 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                 if (null == target) {
                     return;
                 }
-                deleteItem(target);
+                deleteActionWithConfirm(target);
             } else if (ACTION_ADD == action) {
-                getNewItemFormAndShow(defaultFormClazz);
+                addAction(defaultFormClazz);
             } else {
                 super.handleAction(action, sender, target);
             }
@@ -72,7 +73,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                 removeButton.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        deleteItem(itemId);
+                        deleteActionWithConfirm(itemId);
                     }
                 });
                 Button editButton = new Button();
@@ -82,7 +83,8 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                 editButton.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        getEditItemFormAndShow(itemId);
+                        T item = getEntityFromContainer(itemId);
+                        edit(item);
                     }
                 });
                 cell.setSpacing(true);
@@ -93,7 +95,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
         });
     }
 
-    protected void deleteItem(final Object target) {
+    protected void deleteActionWithConfirm(final Object target) {
         Window w = ConfirmDialog.show(this.getUI(), "Please Confirm:", "Area you really sure?", "YES", "No",
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
@@ -109,21 +111,24 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
     // Am not making deleting generic because it depends on the collection we are removing.  Originally
     // did this via reflection but got too cumbersome.
     protected void deleteAction(final Object target) {
-        T df = getItemFromTarget(target);
+        T df = getEntityFromContainer(target);
         removeItem(target);
         UserUtil.removeFromCollection(repo, collectionOwner, df);
         refreshRows();
     }
 
-    protected Window getNewItemFormAndShow(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
+    protected Window addAction(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
         DisplayFriendlyForm<T> form = CrudUtil.getNewItemForm(entityClazz, formClazzToUse);
         form.setModalWindowTitle("Add " + DisplayFriendly.getFriendlyClassName(entityClazz));
-        return form.openInModalPopup();
+        Window w = form.openInModalPopup();
+        form.setSavedHandler(new AbstractForm.SavedHandler<T>() {
+            @Override
+            public void onSave(T entity) {
+                UserUtil.addToCollection(repo, collectionOwner, entity);
+                addItem(entity);
+                refreshRows();
+            }
+        });
+        return w;
     }
-
-    protected T getItemFromTarget(Object target) {
-        int index = getContainer().indexOfId(target);
-        return getContainer().getIdByIndex(index);
-    }
-
 }

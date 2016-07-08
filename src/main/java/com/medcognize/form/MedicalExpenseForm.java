@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
@@ -9,16 +10,18 @@ import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addon.daterangefield.DateUtil;
 import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.layouts.MFormLayout;
-import org.vaadin.viritin.layouts.MGridLayout;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
-import java.util.Collection;
-
 public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
+
+    @Autowired
+    protected UserRepository repo;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MedicalExpenseForm.class);
 
     public Field<?> dateField;
@@ -39,27 +42,24 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
     public GridLayout prescriptionTiersLayout;
 
     public MedicalExpenseForm(MedicalExpense item) {
-        super(item, null, null);
-    }
-
-    public MedicalExpenseForm(MedicalExpense item, Collection<String> pids) {
-        super(item, pids, null);
+        setSizeUndefined();
+        setEntity(item);
     }
 
     @Override
     protected Component createContent() {
-        ((AbstractField)dateField).setDescription("This is the date of service");
-        ((AbstractField)outOfPocketAmountField).setDescription("This is how much cash you've paid out of pocket");
-        ((AbstractField)costAccordingToProviderField).setDescription("This is how much the provider is charging, " +
+        ((AbstractField) dateField).setDescription("This is the date of service");
+        ((AbstractField) outOfPocketAmountField).setDescription("This is how much cash you've paid out of pocket");
+        ((AbstractField) costAccordingToProviderField).setDescription("This is how much the provider is charging, " +
                 "" + "also called the 'Billed Amount'");
-        ((AbstractField)maximumAmountField).setDescription("This is the most the insurance company will pay under the " + "plan");
-        ((AbstractField)deductibleAmountField).setDescription("This is the amount you have to pay before the plan will " + "start to pay.");
-        ((AbstractField)copayAmountField).setDescription("This is the minimum amount you have to pay before " + "the plan will start to pay.");
-        ((AbstractField)paymentAmountField).setDescription("This is the amount the insurance company will pay");
+        ((AbstractField) maximumAmountField).setDescription("This is the most the insurance company will pay under the " + "plan");
+        ((AbstractField) deductibleAmountField).setDescription("This is the amount you have to pay before the plan will " + "start to pay.");
+        ((AbstractField) copayAmountField).setDescription("This is the minimum amount you have to pay before " + "the plan will start to pay.");
+        ((AbstractField) paymentAmountField).setDescription("This is the amount the insurance company will pay");
 
         //((DateField) date).setDateFormat("yyyy-MM-dd");
         if (null == dateField.getValue()) {
-            ((DateField)dateField).setValue(DateUtil.now());
+            ((DateField) dateField).setValue(DateUtil.now());
         }
         dateField.setInvalidAllowed(true);
         dateField.addValidator(new InPlanPeriodValidator("Date has to be within the plan period", planField));
@@ -97,7 +97,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                 ((TypedSelect) providerField).setValue(firstItem);
             }
         }
-        prescriptionTiersLayout = new MGridLayout();
+        prescriptionTiersLayout = new MMGridLayout(1, 1);
         prescriptionTiersLayout.setStyleName("borderstyle");
         prescriptionTiersLayout.setSizeUndefined();
         prescriptionTiersLayout.setSpacing(true);
@@ -112,7 +112,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
 
         Label costsLabel = new Label("Costs");
         costsLabel.addStyleName("formAreaHeader");
-        GridLayout costsLayout = new GridLayout(2, 3);
+        GridLayout costsLayout = new MMGridLayout(2, 3);
         costsLayout.setStyleName("borderstyle");
         costsLayout.setSizeUndefined();
         costsLayout.setSpacing(true);
@@ -137,8 +137,8 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                     @Override
                     public void onSave(FamilyMember entity) {
                         User u = DbUtil.getLoggedInUser();
-                        u.getFamilyMembers().add(entity);
-                        ((TypedSelect)familyMemberField).addOption(entity);
+                        UserUtil.addToCollection(repo, u, entity);
+                        ((TypedSelect) familyMemberField).addOption(entity);
                         // familyMemberField.select(fm);
                     }
                 });
@@ -166,8 +166,8 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                     @Override
                     public void onSave(Provider entity) {
                         User u = DbUtil.getLoggedInUser();
-                        u.getProviders().add(entity);
-                        ((TypedSelect)providerField).addOption(entity);
+                        UserUtil.addToCollection(repo, u, entity);
+                        ((TypedSelect) providerField).addOption(entity);
                         //providerField.select(entity);
                     }
                 });
@@ -183,7 +183,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         providerPlusButtonLayout.setSpacing(true);
         providerPlusButtonLayout.setComponentAlignment(addProviderButton, Alignment.BOTTOM_LEFT);
 
-        GridLayout topLayout = new GridLayout(2, 4);
+        GridLayout topLayout = new MMGridLayout(2, 4);
         topLayout.setWidth("100%");
         topLayout.setSpacing(true);
         topLayout.addComponent(dateField, 0, 0);

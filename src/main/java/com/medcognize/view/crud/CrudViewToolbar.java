@@ -50,7 +50,7 @@ public class CrudViewToolbar<T extends DisplayFriendly> extends HorizontalLayout
 		addNew.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-				view.getTable().getNewItemFormAndShow(view.getTable().getDefaultFormClazz());
+				view.getTable().addAction(view.getTable().getDefaultFormClazz());
 			}
 		});
 		addNew.addStyleName("small");

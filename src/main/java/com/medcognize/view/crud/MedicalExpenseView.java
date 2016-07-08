@@ -81,7 +81,7 @@ public class MedicalExpenseView extends CrudView<MedicalExpense> {
             ezAdd.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    Window w = getTable().getNewItemFormAndShow(MedicalExpenseWizard.class);
+                    Window w = getTable().addAction(MedicalExpenseWizard.class);
                     if (null != w) {
                         w.setSizeUndefined();
                     }

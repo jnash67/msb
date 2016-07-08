@@ -22,7 +22,7 @@ public class ViritinFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory
     @SuppressWarnings("unchecked")
     public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
         if (Integer.class.isAssignableFrom(dataType) || int.class.isAssignableFrom(dataType)) {
-            IntegerSliderField field = new IntegerSliderField();
+            IntegerField field = new IntegerField();
             field.setImmediate(true);
             return (T) field;
         }
@@ -41,9 +41,11 @@ public class ViritinFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory
         }
         if (Boolean.class.isAssignableFrom(dataType)
                 || boolean.class.isAssignableFrom(dataType)) {
+//            MCheckBox field = new MCheckBox("");
+//            return (T) field;
             return (T) new Switch();
         }
-        if (String.class.isAssignableFrom(fieldType)) {
+        if (String.class.isAssignableFrom(dataType)) {
             MTextField field = new MTextField();
             field.setNullRepresentation("");
             return (T) field;
@@ -59,3 +61,4 @@ public class ViritinFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory
         return field;
     }
 }
+

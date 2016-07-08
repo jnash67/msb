@@ -7,7 +7,7 @@ import com.vaadin.data.util.converter.StringToDoubleConverter;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
-import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.TextField;
 import org.vaadin.addon.daterangefield.DateRangeField;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -15,14 +15,11 @@ import java.util.Collection;
 
 public class FsaForm extends DisplayFriendlyForm<Fsa> {
 
-    Field<?> fsaNameField;
+    Field<?> fsaNameField = new TextField();
 
-    // we will show the DateRangeField instead of the three other Fields. Changes to DateRangeField
-    // will be propagated to the properties of the sub-fields.
-    DateRangeField dateRangeField;
-    Field<?>  fsaYearField;
-    Field<?>  fsaStartDateField;
-    Field<?>  fsaEndDateField;
+    Field<?> fsaYearField;
+    Field<?> fsaStartDateField;
+    Field<?> fsaEndDateField;
 
     Field<?> amountInFsaField;
 
@@ -34,25 +31,23 @@ public class FsaForm extends DisplayFriendlyForm<Fsa> {
         super(item, pids, null);
     }
 
-
     @Override
     protected Component createContent() {
         fsaNameField = group.getField("fsaName");
         fsaYearField = group.getField("fsaYear");
         fsaStartDateField = group.getField("fsaStartDate");
         fsaEndDateField = group.getField("fsaEndDate");
-        amountInFsaField = group.getField("amountInFsaField");
+        amountInFsaField = group.getField("amountInFsa");
 
-        ((AbstractField)amountInFsaField).setConverter(new StringToDoubleConverter());
+        ((AbstractField) amountInFsaField).setConverter(new StringToDoubleConverter());
         fsaNameField.addValidator(new ExistingFsaNameValidator((String) fsaNameField.getValue()));
-        dateRangeField = new DateRangeField(fsaStartDateField.getPropertyDataSource(), fsaEndDateField.getPropertyDataSource(), true,
+        DateRangeField dateRangeField = new DateRangeField(fsaStartDateField.getPropertyDataSource(), fsaEndDateField.getPropertyDataSource(), true,
                 fsaYearField.getPropertyDataSource(), true);
         dateRangeField.setMinYear(Plan.MIN_YEAR);
         dateRangeField.setMaxYear(Plan.MAX_YEAR);
 
-        return new MVerticalLayout(
-                getToolbar(),
-                new FormLayout(fsaNameField, dateRangeField, amountInFsaField));
+        form.addComponents(fsaNameField, fsaYearField, fsaStartDateField, fsaEndDateField, amountInFsaField);
+        return new MVerticalLayout(form, getToolbar());
     }
 
 }

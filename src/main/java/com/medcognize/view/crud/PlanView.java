@@ -59,8 +59,8 @@ public class PlanView extends CrudView<Plan> {
         protected final Action ACTION_LIMITS = new Action("See Limits Usage");
 
         @Override
-        protected void deleteItem(final Object target) {
-            Plan p = getItemFromTarget(target);
+        protected void deleteActionWithConfirm(final Object target) {
+            Plan p = getEntityFromContainer(target);
             int count = UserUtil.getAll(collectionOwner, Plan.class).size();
             if (1 == count) {
                 if (!p.isActivePlan()) {
@@ -116,7 +116,7 @@ public class PlanView extends CrudView<Plan> {
                     if (null == target) {
                         return;
                     }
-                    Plan p = getItemFromTarget(target);
+                    Plan p = getEntityFromContainer(target);
                     showLimitsReport(p);
                 } else {
                     super.handleAction(action, sender, target);

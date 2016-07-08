@@ -31,18 +31,16 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
     @Override
     protected Component createContent() {
         Field<?> admin = group.getField("admin");
-        form.addComponent(admin);
 
         userField = (TextField) group.getField("username");
         passwordField = new PasswordField("password");
 
         setupUserField(userField);
         userField.focus();
-        form.addComponent(userField);
 
         setupPasswordField(passwordField);
-        form.addComponent(passwordField);
 
+        form.addComponents(admin, userField, passwordField);
         return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
     }
 

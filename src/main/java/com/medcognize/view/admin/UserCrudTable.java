@@ -24,15 +24,14 @@ public class UserCrudTable extends CrudTable<User> {
     }
 
     @Override
-    protected void deleteItem(final Object target) {
+    protected void deleteActionWithConfirm(final Object target) {
         ConfirmDialog.show(this.getUI(), "Please Confirm:", "Area you really sure? All the plans, providers, " +
                         "" + "family members and expenses will also be deleted!", "YES", "No",
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
                             // Confirmed to continue
-                            int index = getContainer().indexOfId(target);
-                            User user = getContainer().getIdByIndex(index);
+                            User user = getEntityFromContainer(target);
                             removeItem(target);
                             repo.delete(user);
                             refreshRows();

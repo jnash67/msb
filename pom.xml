@@ -32,7 +32,7 @@
 
         <!-- Vaadin add-on version -->
         <!--<vaadin-charts.addon.version>2.1.3</vaadin-charts.addon.version>-->
-        <viritin.addon.version>1.53</viritin.addon.version>
+        <viritin.addon.version>1.54</viritin.addon.version>
         <switch.addon.version>2.0.3</switch.addon.version>
         <wizards-for-vaadin.addon.version>1.1.0</wizards-for-vaadin.addon.version>
         <!--copied the source code into the project. This is my add-on-->

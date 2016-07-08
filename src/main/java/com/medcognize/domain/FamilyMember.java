@@ -2,6 +2,7 @@ package com.medcognize.domain;
 
 import com.google.common.collect.BiMap;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
+import com.vaadin.data.fieldgroup.Caption;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class FamilyMember extends DisplayFriendlyAbstractEntity {
     // was previously "name" and Provider also had a "name" field which caused a conflict. So
     // changed it to be more specific.
     @NotBlank(message = "The family member name cannot be blank")
+    @Caption("Name")
     private String familyMemberName = "";
 
     @Override
