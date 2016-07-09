@@ -2,7 +2,6 @@ package com.medcognize;
 
 import com.google.common.eventbus.Subscribe;
 import com.medcognize.domain.*;
-import com.medcognize.domain.basic.Address;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEvent.BrowserResizeEvent;
@@ -26,11 +25,13 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewDisplay;
-import com.vaadin.server.*;
+import com.vaadin.server.Page;
 import com.vaadin.server.Page.BrowserWindowResizeEvent;
 import com.vaadin.server.Page.BrowserWindowResizeListener;
+import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
-import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
@@ -38,13 +39,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.OnError;
-import javax.websocket.Session;
 import java.util.Locale;
-import java.util.logging.Level;
 
 // Don't need @Widgetset annotation if using vwscdn-maven-plugin
 // @Widgetset("com.medcognize.MedcognizeWidgetSet")
@@ -61,14 +57,15 @@ public class MedcognizeUI extends UI {
 
     // initialization of Medcognize DisplayFriendly domain
     static {
-        DisplayFriendly.friendlyNameMap.put(User.class, "User");
-        DisplayFriendly.friendlyNameMap.put(Plan.class, "Plan");
-        DisplayFriendly.friendlyNameMap.put(Provider.class, "Provider");
-        DisplayFriendly.friendlyNameMap.put(FamilyMember.class, "Family Member");
-        DisplayFriendly.friendlyNameMap.put(MedicalExpense.class, "Medical Expense");
-        DisplayFriendly.friendlyNameMap.put(Fsa.class, "FSA");
-        DisplayFriendly.friendlyNameMap.put(Address.class, "Address");
-        DisplayFriendly.friendlyNameMap.put(PlanLimit.class, "Plan Limit");
+        DisplayFriendly.registerClass(FamilyMember.class);
+        DisplayFriendly.registerClass(User.class);
+        DisplayFriendly.registerClass(User.class);
+        DisplayFriendly.registerClass(Plan.class);
+        DisplayFriendly.registerClass(Provider.class);
+
+        DisplayFriendly.registerClass(MedicalExpense.class);
+        DisplayFriendly.registerClass(Fsa.class);
+        DisplayFriendly.registerClass(PlanLimit.class);
         DisplayFriendly.friendlyEnumParentMap.put(Provider.ProviderType.class, Provider.class);
         DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.MedicalExpenseType.class, MedicalExpense.class);
         DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.PrescriptionTierType.class, MedicalExpense.class);

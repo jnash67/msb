@@ -1,6 +1,7 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.Fsa;
 import com.medcognize.domain.User;
 import com.medcognize.form.FsaForm;
@@ -10,6 +11,7 @@ import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,8 +31,9 @@ public class FsaView extends CrudView<Fsa> {
         }
     };
 
-    public FsaView() {
-        super(Fsa.class, "Flexible Spending Account (FSA)", new FsaTable(FsaForm.class, pids));
+    @Autowired
+    public FsaView(UserRepository repo) {
+        super(Fsa.class, "Flexible Spending Account (FSA)", new CrudTable<Fsa>(repo, Fsa.class, FsaForm.class, pids));
         User owner = DbUtil.getLoggedInUser();
         if (null == owner) {
             log.error("owner should not be null here");

@@ -1,6 +1,7 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.MedcognizeUI;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.User;
 import com.medcognize.form.MedicalExpenseForm;
@@ -15,6 +16,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Window;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -38,8 +40,9 @@ public class MedicalExpenseView extends CrudView<MedicalExpense> {
         }
     };
 
-    public MedicalExpenseView() {
-        super(MedicalExpense.class, "Medical Expenses", new MedicalExpenseTable(MedicalExpenseForm.class, pids));
+    @Autowired
+    public MedicalExpenseView(UserRepository repo) {
+        super(MedicalExpense.class, "Medical Expenses", new CrudTable<MedicalExpense>(repo, MedicalExpense.class, MedicalExpenseForm.class, pids));
         User u = DbUtil.getLoggedInUser();
         if (null == u) {
             log.error("owner should not be null here");

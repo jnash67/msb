@@ -3,13 +3,17 @@ package com.medcognize.domain.basic;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.vaadin.data.util.BeanUtil;
+import com.vaadin.shared.util.SharedUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.PropertyAccessorFactory;
+
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
@@ -25,15 +29,68 @@ public abstract class DisplayFriendly implements Serializable {
         return sessionId;
     }
 
-    public static final HashBiMap<Class<? extends DisplayFriendly>, String> friendlyNameMap;
+    public static final List<Class<? extends DisplayFriendly>> domainList;
+    public static final HashBiMap<Class<? extends DisplayFriendly>, String> friendlyClassNameMap;
+    public static final Map<Class<? extends DisplayFriendly>, BiMap<String, String>> friendlyPropertyNameMap;
     public static final Map<Class<? extends Enum>, String> friendlyEnumMap;
     public static final Map<Class<? extends Enum>, Class<? extends DisplayFriendly>> friendlyEnumParentMap;
 
     static {
         // these need to be initialized with the actual domain of the application
-        friendlyNameMap = HashBiMap.create();
+        domainList = new ArrayList<>();
+        friendlyClassNameMap = HashBiMap.create();
+        friendlyPropertyNameMap = new HashMap<>();
         friendlyEnumMap = new HashMap<>();
         friendlyEnumParentMap = new HashMap<>();
+    }
+
+    public static void registerClass(Class<? extends DisplayFriendly> clazz) {
+        DisplayName dn;
+        domainList.add(clazz);
+        dn = clazz.getAnnotation(DisplayName.class);
+        if (null == dn) {
+            friendlyClassNameMap.put(clazz, clazz.getSimpleName());
+        } else {
+            friendlyClassNameMap.put(clazz, dn.value());
+        }
+        BiMap<String, String> friendlyPropertyNames = HashBiMap.create();
+        try {
+            List<PropertyDescriptor> properties = BeanUtil.getBeanPropertyDescriptor(clazz);
+            for (PropertyDescriptor pd : properties) {
+                String n = pd.getName();
+                if (!("class".equals(n) || "id".equals(n) || "uniqueSessionId".equals(n))) {
+                    // There's a getAuthorities method in User because it implements UserDetails
+                    if (!("authorities".equals(n) && clazz.getSimpleName().equals("User"))) {
+                        dn = (DisplayName) getAnnotation(clazz, n, DisplayName.class);
+                        if (null == dn) {
+                            friendlyPropertyNames.put(n, SharedUtil.propertyIdToHumanFriendly(n));
+                        } else {
+                            friendlyPropertyNames.put(n, dn.value());
+                        }
+                    }
+                }
+
+            }
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+        friendlyPropertyNameMap.put(clazz, friendlyPropertyNames);
+    }
+
+    public static Annotation getAnnotation(Class<?> clazz, String fieldName, Class<? extends Annotation> annotationToLookFor) {
+        try {
+            Field f = clazz.getDeclaredField(fieldName);
+            Annotation[] annotations = f.getAnnotations();
+            for (Annotation a : annotations) {
+                if (annotationToLookFor.isAssignableFrom(a.getClass())) {
+                    return a;
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            System.out.println("NoSuchFieldException " + fieldName + " in class " + clazz.getSimpleName());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static final Splitter.MapSplitter mp = Splitter.on(",").trimResults().withKeyValueSeparator(":");
@@ -88,30 +145,18 @@ public abstract class DisplayFriendly implements Serializable {
         return null;
     }
 
-    private static Map<String, String> getCaptionMap(Class<? extends DisplayFriendly> clazz) {
-        if (friendlyNameMap.keySet().contains(clazz)) {
-            try {
-                Field field = clazz.getDeclaredField("captionMap");
-                @SuppressWarnings("unchecked")
-                Map<String, String> captionMap = (Map<String, String>) field.get(null);
-                return captionMap;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                log.error("Failed to retrieve caption by reflection " + e);
-                return null;
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-                log.error("Failed to retrieve caption by reflection " + e);
-                return null;
-            }
+    private static Map<String, String> getFriendlyPropertyNameMap(Class<? extends DisplayFriendly> clazz) {
+        if (friendlyClassNameMap.keySet().contains(clazz)) {
+            Map<String, String> captionMap = friendlyPropertyNameMap.get(clazz);
+            return captionMap;
         } else {
             log.error("DisplayFriendly extending class not properly registered within the DisplayFriendly class!");
             return null;
         }
     }
 
-    public static String getPropertyCaption(Class<? extends DisplayFriendly> clazz, String propertyId) {
-        Map<String, String> captionMap = getCaptionMap(clazz);
+    public static String getFriendlyPropertyName(Class<? extends DisplayFriendly> clazz, String propertyId) {
+        Map<String, String> captionMap = getFriendlyPropertyNameMap(clazz);
         if (null == captionMap) {
             return null;
         }
@@ -119,7 +164,7 @@ public abstract class DisplayFriendly implements Serializable {
     }
 
     public static Collection<String> propertyIdList(Class<? extends DisplayFriendly> clazz) {
-        Map<String, String> captionMap = getCaptionMap(clazz);
+        Map<String, String> captionMap = getFriendlyPropertyNameMap(clazz);
         if (null == captionMap) {
             return null;
         }
@@ -128,15 +173,15 @@ public abstract class DisplayFriendly implements Serializable {
 
     @SuppressWarnings("unused")
     public static Class<? extends DisplayFriendly> getClazzFromFriendlyName(String friendlyName) {
-        if (!friendlyNameMap.containsValue(friendlyName)) {
+        if (!friendlyClassNameMap.containsValue(friendlyName)) {
             log.error("String (" + friendlyName + ") is not the friendly name of a DisplayFriendly class!");
             return null;
         }
-        return friendlyNameMap.inverse().get(friendlyName);
+        return friendlyClassNameMap.inverse().get(friendlyName);
     }
 
     public static String getFriendlyClassName(Class<? extends DisplayFriendly> clazz) {
-        if (!friendlyNameMap.containsKey(clazz)) {
+        if (!friendlyClassNameMap.containsKey(clazz)) {
             log.error("DisplayFriendly extending class not properly registered within the DisplayFriendly class!");
             if (null == clazz) {
                 return "";
@@ -144,7 +189,7 @@ public abstract class DisplayFriendly implements Serializable {
                 return clazz.getSimpleName();
             }
         }
-        return friendlyNameMap.get(clazz);
+        return friendlyClassNameMap.get(clazz);
     }
 
     /*

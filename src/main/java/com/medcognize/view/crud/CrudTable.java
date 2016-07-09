@@ -1,5 +1,6 @@
 package com.medcognize.view.crud;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
@@ -10,22 +11,21 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.form.AbstractForm;
 
 import java.util.ArrayList;
 
+@Slf4j
 public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CrudTable.class);
     protected final Action ACTION_ADD = new Action("Add");
     protected final Action ACTION_DELETE = new Action("Delete");
 
-    public CrudTable(Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
+    public CrudTable(UserRepository repo, Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
                      ArrayList<String> orderedPidList) {
-        super(entityClazz, formClazz, orderedPidList);
+        super(repo, entityClazz, formClazz, orderedPidList);
         setEditOnSingleClick(false);
         // for CrudTable, enabled by default
         setContextMenuEnabled(true);
@@ -127,6 +127,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                 UserUtil.addToCollection(repo, collectionOwner, entity);
                 addItem(entity);
                 refreshRows();
+                form.closePopup();
             }
         });
         return w;

@@ -3,6 +3,7 @@ package com.medcognize.domain;
 import com.google.common.collect.BiMap;
 import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
+import com.medcognize.domain.basic.DisplayName;
 import com.medcognize.domain.validator.jsr303.DateFieldInYear;
 import com.medcognize.domain.validator.jsr303.DateFieldOnOrAfter;
 import com.medcognize.util.DbUtil;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.csveed.annotations.CsvDate;
 import org.hibernate.validator.constraints.NotBlank;
 import org.vaadin.addon.daterangefield.DateUtil;
+
 import javax.persistence.Entity;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -35,13 +37,11 @@ public class Plan extends DisplayFriendlyAbstractEntity implements Serializable 
 
     public static final PlanType defaultPlanType = PlanType.HMO;
     private static final String planTypeCaptionString = PlanType.HMO.toString() + ":HMO, " + "" + PlanType.PPO.toString() + ":PPO";
-    private static final String captionString = "planName:Plan Name, activePlan:Is Active Plan, planType:Plan Type, planYear:Year, planStartDate:Period Start, planEndDate:Period End, individualInNetworkDeductible:Individual In Network,familyInNetworkDeductible:Family In Network, individualOutOfNetworkDeductible:Individual Out Of Network, familyOutOfNetworkDeductible:Family Out Of Network, individualOutOfPocketLimit:Individual Out Of Pocket, familyOutOfPocketLimit:Family Out Of Pocket, primaryCareCopay:Primary Care,specialistCopay:Specialist, emergencyRoomCopay:Emergency Room, tier1PrescriptionCopay:Tier 1,tier2PrescriptionCopay:Tier 2, tier3PrescriptionCopay:Tier 3, notes:Notes";
-    @SuppressWarnings("UnusedDeclaration")
-    public static final BiMap<String, String> captionMap = createBiMap(captionString);
     public static final BiMap<String, String> planTypeStringMap = createBiMap(planTypeCaptionString);
     @NotBlank(message = "The plan name cannot be blank")
     @javax.validation.constraints.Size(max = 50, message = "The plan name must be less than 50 characters long")
     private String planName = "";
+    @DisplayName("Is Active Plan")
     private boolean activePlan = false;
     @NotNull
     private PlanType planType = defaultPlanType;
@@ -56,30 +56,42 @@ public class Plan extends DisplayFriendlyAbstractEntity implements Serializable 
     private Date planEndDate = DateUtil.lastDayOfYear(DateUtil.currentYear());
     // annual deductibles
     @Min(0)
+    @DisplayName("Individual In Network")
     private double individualInNetworkDeductible = 0.0;
     @Min(0)
+    @DisplayName("Family In Network")
     private double familyInNetworkDeductible = 0.0;
     @Min(0)
+    @DisplayName("Individual Out Of Network")
     private double individualOutOfNetworkDeductible = 0.0;
     @Min(0)
+    @DisplayName("Family Out Of Network")
     private double familyOutOfNetworkDeductible = 0.0;
     // annual out of pocket limits
     @Min(0)
+    @DisplayName("Individual Out Of Pocket")
     private double individualOutOfPocketLimit = 0.0;
     @Min(0)
+    @DisplayName("Family Out Of Pocket")
     private double familyOutOfPocketLimit = 0.0;
     // copays
     @Min(0)
+    @DisplayName("Primary Care")
     private double primaryCareCopay = 0.0;
     @Min(0)
+    @DisplayName("Specialist")
     private double specialistCopay = 0.0;
     @Min(0)
+    @DisplayName("Emergency Room")
     private double emergencyRoomCopay = 0.0;
     @Min(0)
+    @DisplayName("Tier 1")
     private double tier1PrescriptionCopay = 0.0;
     @Min(0)
+    @DisplayName("Tier 2")
     private double tier2PrescriptionCopay = 0.0;
     @Min(0)
+    @DisplayName("Tier 3")
     private double tier3PrescriptionCopay = 0.0;
     private String notes = "";
 

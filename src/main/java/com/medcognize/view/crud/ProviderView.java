@@ -1,6 +1,6 @@
 package com.medcognize.view.crud;
 
-import com.medcognize.UserDetailsServiceImpl;
+import com.medcognize.UserRepository;
 import com.medcognize.domain.Provider;
 import com.medcognize.domain.User;
 import com.medcognize.form.ProviderForm;
@@ -18,7 +18,7 @@ import java.util.Collection;
 @SpringView(name = ProviderView.NAME)
 public class ProviderView extends CrudView<Provider> {
 	public static final String NAME = "provider";
-	private final UserDetailsServiceImpl repo;
+	private final UserRepository repo;
 	static final ArrayList<String> pids = new ArrayList<String>() {
 		{
 			add("providerName");
@@ -28,8 +28,8 @@ public class ProviderView extends CrudView<Provider> {
 	};
 
 	@Autowired
-	public ProviderView(UserDetailsServiceImpl repo) {
-		super(Provider.class, "Providers", new ProviderTable(ProviderForm.class, pids));
+	public ProviderView(UserRepository repo) {
+		super(Provider.class, "Providers", new CrudTable<Provider>(repo, Provider.class, ProviderForm.class, pids));
 		this.repo = repo;
 		User owner = DbUtil.getLoggedInUser();
 		if (null == owner) {

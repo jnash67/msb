@@ -9,7 +9,6 @@ import com.vaadin.event.Action;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Window;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.viritin.form.AbstractForm.SavedHandler;
 
 import java.util.ArrayList;
@@ -18,8 +17,7 @@ import java.util.Collection;
 @Slf4j
 public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T> implements Action.Handler {
 
-    @Autowired
-    protected UserRepository repo;
+    protected final UserRepository repo;
 
     protected final Action ACTION_EDIT = new Action("Edit");
 
@@ -48,9 +46,10 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
         return defaultFormClazz;
     }
 
-    public EditTable(Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
+    public EditTable(UserRepository repo, Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
                      ArrayList<String> orderedPidList) {
         super(entityClazz, orderedPidList);
+        this.repo = repo;
         this.defaultFormClazz = formClazz;
     }
 
@@ -131,7 +130,7 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
             public void onSave(T entity) {
                 repo.save(collectionOwner);
                 refreshRows();
-                w.close();
+                form.closePopup();
             }
         });
         return w;

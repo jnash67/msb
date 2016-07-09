@@ -9,17 +9,18 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
 
 public class FamilyMemberForm extends DisplayFriendlyForm<FamilyMember> {
 
-    Field<?> familyMemberNameField = createField("familyMemberName");
+    Field<?> familyMemberName = createField("familyMemberName");
 
     public FamilyMemberForm(FamilyMember item) {
+        super(FamilyMember.class, null);
         setSizeUndefined();
         setEntity(item);
     }
 
     @Override
     protected Component createContent() {
-        familyMemberNameField.addValidator(new ExistingFamilyNameValidator((String) familyMemberNameField.getValue()));
-        return new MVerticalLayout(new MFormLayout(familyMemberNameField), getToolbar());
+        familyMemberName.addValidator(new ExistingFamilyNameValidator((String) familyMemberName.getValue()));
+        return new MVerticalLayout(new MFormLayout(familyMemberName), getToolbar());
     }
 
 

@@ -1,11 +1,13 @@
 package com.medcognize.view.dashboard;
 
 import com.medcognize.MedcognizeUI;
+import com.medcognize.UserRepository;
+import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.User;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEventBus;
 import com.medcognize.form.MedicalExpenseForm;
-import com.medcognize.view.crud.MedicalExpenseTable;
+import com.medcognize.view.crud.CrudTable;
 import com.medcognize.view.dashboard.widget.HighChartWidget;
 import com.medcognize.view.dashboard.widget.NotesWidget;
 import com.medcognize.view.dashboard.widget.TableWidget;
@@ -21,6 +23,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
@@ -39,8 +42,11 @@ public final class DashboardView extends Panel implements View,
     private final VerticalLayout root;
     private Window notificationsWindow;
     ToDoWidget todo;
+    private final UserRepository repo;
 
-    public DashboardView() {
+    @Autowired
+    public DashboardView(UserRepository repo) {
+        this.repo = repo;
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         MedcognizeEventBus.register(this);
@@ -140,7 +146,7 @@ public final class DashboardView extends Panel implements View,
         };
         TableWidget expenseTableWidget = new TableWidget("Recent Expenses", root, dashboardPanels);
         // DisplayFriendlyTable<MedicalExpense> table = new DisplayFriendlyTable<>(MedicalExpense.class, pids);
-        MedicalExpenseTable met = new MedicalExpenseTable(MedicalExpenseForm.class, pids);
+        CrudTable<MedicalExpense> met = new CrudTable<MedicalExpense>(repo, MedicalExpense.class, MedicalExpenseForm.class, pids);
         expenseTableWidget.setTable(met);
         expenseTableWidget.addStyleName("top10-revenue");
         return expenseTableWidget;

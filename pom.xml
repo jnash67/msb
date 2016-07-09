@@ -28,6 +28,7 @@
         <zip4j.version>1.3.2</zip4j.version>
         <libphonenumber.version>7.2.5</libphonenumber.version>
         <commons-lang3.version>3.1</commons-lang3.version>
+        <!--<commons-beanutil.version>1.9.2</commons-beanutil.version>-->
         <vaadin-spring-boot-starter.version>1.0.0</vaadin-spring-boot-starter.version>
 
         <!-- Vaadin add-on version -->
@@ -243,6 +244,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>commons-beanutils</groupId>-->
+        <!--<artifactId>commons-beanutils</artifactId>-->
+        <!--<version>${commons-beanutils.version}</version>-->
+        <!--</dependency>-->
         <!-- csveed for csv to bean conversion -->
         <dependency>
             <groupId>org.csveed</groupId>

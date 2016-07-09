@@ -1,7 +1,7 @@
 package com.medcognize.domain;
 
-import com.google.common.collect.BiMap;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
+import com.medcognize.domain.basic.DisplayName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,12 +12,12 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 public class PlanLimit extends DisplayFriendlyAbstractEntity implements Serializable {
-    private static final String captionString = "limitName:Limit Type, annualLimit:Annual Limit, usage:Amount Used, balance:Remaining Balance";
-    @SuppressWarnings("UnusedDeclaration")
-    public static final BiMap<String, String> captionMap = createBiMap(captionString);
+
     String limitName = "";
     double annualLimit = 0.0;
+    @DisplayName("Amount Used")
     double usage = 0.0;
+    @DisplayName("Remaining Balance")
     double balance = 0.0;
 
     public PlanLimit(String limitName, double annualLimit, double usage) {

@@ -1,8 +1,7 @@
 package com.medcognize.domain;
 
-import com.google.common.collect.BiMap;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
-import com.vaadin.data.fieldgroup.Caption;
+import com.medcognize.domain.basic.DisplayName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,14 +14,11 @@ import javax.persistence.Entity;
 // two family members are equal if they have the same name
 @EqualsAndHashCode(callSuper = false, of = {"familyMemberName"})
 @Entity
+@DisplayName("Family Member")
 public class FamilyMember extends DisplayFriendlyAbstractEntity {
-    private static final String captionString = "familyMemberName:Name";
-    @SuppressWarnings("UnusedDeclaration")
-    public static final BiMap<String, String> captionMap = createBiMap(captionString);
-    // was previously "name" and Provider also had a "name" field which caused a conflict. So
-    // changed it to be more specific.
+
     @NotBlank(message = "The family member name cannot be blank")
-    @Caption("Name")
+    @DisplayName("Name")
     private String familyMemberName = "";
 
     @Override

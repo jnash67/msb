@@ -26,7 +26,7 @@ public class DisplayFriendlyTable<T extends DisplayFriendly> extends FilterableT
 
         ArrayList<String> headers = new ArrayList<>();
         for (String propertyId : propertyIds) {
-            headers.add(DisplayFriendly.getPropertyCaption(entityClazz, propertyId));
+            headers.add(DisplayFriendly.getFriendlyPropertyName(entityClazz, propertyId));
         }
 
         if (propertyIds.size() > 0) {

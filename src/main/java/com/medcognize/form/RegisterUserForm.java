@@ -8,40 +8,30 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
+import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-
-import java.util.ArrayList;
 
 public class RegisterUserForm extends DisplayFriendlyForm<User> {
 
-	private TextField userField;
-    private PasswordField passwordField;
-
-	static final ArrayList<String> pids = new ArrayList<String>() {
-		{
-			add("username");
-			add("password");
-		}
-	};
+    private Field<?> username = createField("username");
+    private Field<?> password = new PasswordField("password");
+    private Field<?> admin = createField("admin");
 
 	public RegisterUserForm(User u) {
-		super(u, pids, null);
-	}
+        super(User.class, null);
+        setSizeUndefined();
+        setEntity(u);
+    }
 
     @Override
     protected Component createContent() {
-        Field<?> admin = group.getField("admin");
+        getFieldGroup().bind(password, "password");
+        setupUserField((TextField) username);
+        username.focus();
+        setupPasswordField((PasswordField) password);
 
-        userField = (TextField) group.getField("username");
-        passwordField = new PasswordField("password");
-
-        setupUserField(userField);
-        userField.focus();
-
-        setupPasswordField(passwordField);
-
-        form.addComponents(admin, userField, passwordField);
-        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
+        ;
+        return new MVerticalLayout(new MFormLayout(admin, username, password).withWidth(""), getToolbar()).withWidth("");
     }
 
     public static void setupUserField(final TextField userField) {
@@ -61,20 +51,20 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
         passwordField.setInvalidAllowed(true);
     }
 
-	public TextField getUserField() {
-		return userField;
-	}
+    public TextField getUsername() {
+        return (TextField) username;
+    }
 
-	public PasswordField getPasswordField() {
-		return passwordField;
-	}
+    public PasswordField getPassword() {
+        return (PasswordField) password;
+    }
 
 	public void commit() throws FieldGroup.CommitException {
-		boolean uv = userField.isValid();
-		boolean pv = passwordField.isValid();
-		if (!uv || !pv) {
-			throw new FieldGroup.CommitException("Commit failed");
-		}
+        boolean uv = username.isValid();
+        boolean pv = password.isValid();
+        if (!uv || !pv) {
+            throw new FieldGroup.CommitException("Commit failed");
+        }
 	}
 
 

@@ -46,13 +46,13 @@ public class PlanView extends CrudView<Plan> {
         }
     };
 
-    private UserRepository repo;
+    private final UserRepository repo;
 
     static class PlanCrudTable extends CrudTable<Plan> {
         private UserRepository repo;
 
         public PlanCrudTable(UserRepository repo, Class<Plan> entityClazz, Class<? extends DisplayFriendlyForm<Plan>> formClazz, ArrayList<String> orderedPidList) {
-            super(entityClazz, formClazz, orderedPidList);
+            super(repo, entityClazz, formClazz, orderedPidList);
             this.repo = repo;
         }
 
@@ -141,6 +141,7 @@ public class PlanView extends CrudView<Plan> {
     @Autowired
     public PlanView(UserRepository repo) {
         super(Plan.class, "Plans", new PlanCrudTable(repo, Plan.class, PlanForm.class, pids));
+        this.repo = repo;
         u = DbUtil.getLoggedInUser();
         if (null == u) {
             log.error("owner should not be null here");

@@ -1,7 +1,7 @@
 package com.medcognize.domain;
 
-import com.google.common.collect.BiMap;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
+import com.medcognize.domain.basic.DisplayName;
 import com.vaadin.spring.annotation.VaadinSessionScope;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,12 +26,10 @@ import java.util.List;
 @VaadinSessionScope
 @Slf4j
 public class User extends DisplayFriendlyAbstractEntity implements UserDetails {
-	private static final String captionString = "username:Username, password:Password, firstName:First Name, lastName:Last Name";
-	@SuppressWarnings("UnusedDeclaration")
-	public static final BiMap<String, String> captionMap = createBiMap(captionString);
 
 	@Column(unique = true)
 	@Email
+	@DisplayName("Username")
 	private String username = "";
 
 	// For UserDetails
@@ -44,6 +42,7 @@ public class User extends DisplayFriendlyAbstractEntity implements UserDetails {
 
 	private String firstName = "";
 	private String lastName = "";
+
 	// the password is never stored in this field, only the hash
 	private String password = "";
 	/*

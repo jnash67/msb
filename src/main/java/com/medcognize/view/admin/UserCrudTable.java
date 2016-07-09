@@ -19,7 +19,7 @@ public class UserCrudTable extends CrudTable<User> {
     @Autowired
     public UserCrudTable(UserRepository repo, Class<User> entityClazz, Class<? extends DisplayFriendlyForm<User>> formClazz,
                          ArrayList<String> orderedPidList) {
-        super(entityClazz, formClazz, orderedPidList);
+        super(repo, entityClazz, formClazz, orderedPidList);
         this.repo = repo;
     }
 

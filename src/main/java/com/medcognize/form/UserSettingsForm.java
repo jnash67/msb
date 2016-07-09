@@ -8,15 +8,16 @@ import com.medcognize.util.UserUtil;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 public class UserSettingsForm extends DisplayFriendlyForm<User> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFieldFactory.class);
 
-    private PasswordField passwordField;
-    private Field<?> firstName;
-    private Field<?> lastName;
-    private Field<?> email;
+    private PasswordField password = new PasswordField();
+    private Field<?> firstName = createField("firstName");
+    private Field<?> lastName = createField("lastName");
+    private Field<?> email = createField("email");
 
     static class UserFieldFactory extends ViritinFieldGroupFieldFactory {
         final User u;
@@ -51,25 +52,24 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
 
     // we ignore the passed in FieldFactory
     public UserSettingsForm(User u) {
-        super(u, null, new UserFieldFactory(u));
+        super(User.class, new UserFieldFactory(u));
+        setEntity(u);
     }
 
-    public PasswordField getPasswordField() {
-        return passwordField;
+    public PasswordField getPassword() {
+        return password;
     }
 
     @Override
     protected Component createContent() {
-        firstName = group.getField("firstName");
-        lastName = group.getField("lastName");
-        email = group.getField("username");
-        passwordField = (PasswordField) group.getField("password");
+        MFormLayout form = new MFormLayout();
+        getFieldGroup().bind(password, "password");
         form.addComponent(email);
         if ((null == email.getValue() || "".equals(email.getValue()))) {
             // this is a new user
             RegisterUserForm.setupUserField((TextField) email);
-            RegisterUserForm.setupPasswordField(passwordField);
-            form.addComponent(passwordField);
+            RegisterUserForm.setupPasswordField(password);
+            form.addComponent(password);
         } else {
             // existing user so cannot change email or password (which isn't shown)
             email.setEnabled(false);

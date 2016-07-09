@@ -6,16 +6,13 @@ import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.view.ComponentView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.VerticalLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.vaadin.viritin.FilterableListContainer;
 
 import java.util.Collection;
 
+@Slf4j
 public abstract class CrudView<T extends DisplayFriendly> extends VerticalLayout implements ComponentView {
-
-	@SuppressWarnings("UnusedDeclaration")
-	private static final Logger LOGGER = LoggerFactory.getLogger(CrudView.class);
 
 	protected final CrudTable<T> table;
 	protected final Class<T> entityClazz;
