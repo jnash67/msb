@@ -16,7 +16,7 @@ public class FsaForm extends DisplayFriendlyForm<Fsa> {
 
     public FsaForm(Fsa item) {
         super(Fsa.class, null);
-        setSizeUndefined();
+        // setSizeUndefined();
         setEntity(item);
     }
 

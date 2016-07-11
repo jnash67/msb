@@ -130,6 +130,12 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
                 form.closePopup();
             }
         });
+        form.setResetHandler(new AbstractForm.ResetHandler<T>() {
+            @Override
+            public void onReset(T entity) {
+                form.closePopup();
+            }
+        });
         return w;
     }
 }

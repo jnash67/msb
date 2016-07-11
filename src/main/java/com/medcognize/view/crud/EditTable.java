@@ -9,6 +9,7 @@ import com.vaadin.event.Action;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Window;
 import lombok.extern.slf4j.Slf4j;
+import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.form.AbstractForm.SavedHandler;
 
 import java.util.ArrayList;
@@ -130,6 +131,12 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
             public void onSave(T entity) {
                 repo.save(collectionOwner);
                 refreshRows();
+                form.closePopup();
+            }
+        });
+        form.setResetHandler(new AbstractForm.ResetHandler<T>() {
+            @Override
+            public void onReset(T entity) {
                 form.closePopup();
             }
         });

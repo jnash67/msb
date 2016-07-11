@@ -4,20 +4,16 @@ import com.medcognize.domain.Provider;
 import com.medcognize.domain.basic.ContactInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
-import org.vaadin.viritin.fields.ElementCollectionTable;
+import org.vaadin.viritin.fields.ElementCollectionField;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
-import java.util.Collection;
-
-;
-
 public class ProviderForm extends DisplayFriendlyForm<Provider> {
 
     public static class ContactInfoRow {
-        MTextField address1 = new MTextField().withInputPrompt("Address1");
-        MTextField address2 = new MTextField().withInputPrompt("Address1");
+        MTextField address1 = new MTextField().withInputPrompt("address 1");
+        MTextField address2 = new MTextField().withInputPrompt("address 2");
         MTextField city = new MTextField().withInputPrompt("city");
         MTextField state = new MTextField().withInputPrompt("state");
         MTextField zip = new MTextField().withInputPrompt("zip");
@@ -26,11 +22,10 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
     }
 
     Field<?> providerName = createField("providerName");
-    Field<?> providerInPlan = createField("providerName");
-    Field<?> providerType = createField("providerName");
-    Field<?> providerId = createField("providerName");
-    Field<?> locations = new ElementCollectionTable<ContactInfo>(ContactInfo.class, ContactInfoRow.class);
-    Field<?> website = createField("providerName");
+    Field<?> providerInPlan = createField("providerInPlan");
+    Field<?> providerType = createField("providerType");
+    Field<?> providerId = createField("providerId");
+    Field<?> locations = new ElementCollectionField<ContactInfo>(ContactInfo.class, ContactInfoRow.class);
 
     public ProviderForm(Provider item) {
         super(Provider.class, null);
@@ -38,22 +33,8 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
         setEntity(item);
     }
 
-    public ProviderForm(Provider item, Collection<String> pids) {
-        super(Provider.class, null);
-        setSizeUndefined();
-        setEntity(item);
-    }
-
     @Override
     protected Component createContent() {
-        MFormLayout form = new MFormLayout();
-        form.addComponent(providerName);
-        form.addComponent(providerInPlan);
-        form.addComponent(providerType);
-        form.addComponent(providerId);
-        form.addComponent(locations);
-        form.addComponent(website);
-
-        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
+        return new MVerticalLayout(new MFormLayout(providerName, providerInPlan, providerType, providerId, locations).withWidth(""), getToolbar()).withWidth("");
     }
 }

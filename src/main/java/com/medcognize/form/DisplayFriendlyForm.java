@@ -44,7 +44,8 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Abs
             f.setCaption(fn);
             return f;
         } catch (IntrospectionException e) {
-            e.printStackTrace();
+            log.warn("Couldn't find field " + propertyId + " in class " + clazz.getSimpleName());
+            //e.printStackTrace();
         }
         return null;
     }

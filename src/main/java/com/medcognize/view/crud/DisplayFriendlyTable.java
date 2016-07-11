@@ -34,4 +34,8 @@ public class DisplayFriendlyTable<T extends DisplayFriendly> extends FilterableT
             withColumnHeaders(headers.toArray(new String[headers.size()]));
         }
     }
+
+    public void setData(Collection<T> items) {
+        addBeans(items);
+    }
 }

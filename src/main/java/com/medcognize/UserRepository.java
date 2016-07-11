@@ -4,6 +4,7 @@ import com.medcognize.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ and UserService is Autowired throughout (or otherwise passed).  So there should 
 references to UserRepository in the code, one here and one in UserService.
  */
 @Repository
+@Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	long countByUsername(String username);

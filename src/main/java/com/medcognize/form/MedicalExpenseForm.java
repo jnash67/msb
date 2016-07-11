@@ -139,6 +139,12 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                         form.closePopup();
                     }
                 });
+                form.setResetHandler(new ResetHandler<FamilyMember>() {
+                    @Override
+                    public void onReset(FamilyMember entity) {
+                        form.closePopup();
+                    }
+                });
                 form.setModalWindowTitle("Add Family Member");
                 form.openInModalPopup();
             }
@@ -166,6 +172,12 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                         UserUtil.addToCollection(repo, u, entity);
                         ((TypedSelect) provider).addOption(entity);
                         //providerField.select(entity);
+                        form.closePopup();
+                    }
+                });
+                form.setResetHandler(new ResetHandler<Provider>() {
+                    @Override
+                    public void onReset(Provider entity) {
                         form.closePopup();
                     }
                 });
