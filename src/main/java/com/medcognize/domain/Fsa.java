@@ -2,7 +2,7 @@ package com.medcognize.domain;
 
 import com.medcognize.MedcognizeUI;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
-import com.medcognize.domain.basic.DisplayName;
+import com.medcognize.domain.basic.DisplayFriendlyCaption;
 import com.medcognize.domain.validator.jsr303.DateFieldInYear;
 import com.medcognize.domain.validator.jsr303.DateFieldOnOrAfter;
 import lombok.Data;
@@ -27,27 +27,27 @@ import java.util.Date;
 @DateFieldInYear.List({@DateFieldInYear(dateField = "fsaStartDate", yearField = "fsaYear", message = "The start date is not in the year of the FSA"), @DateFieldInYear(dateField = "fsaEndDate", yearField = "fsaYear", message = "The end date is not in the year of the FSA")})
 @Entity
 @Slf4j
-@DisplayName("FSA")
+@DisplayFriendlyCaption("FSA")
 public class Fsa extends DisplayFriendlyAbstractEntity implements Serializable {
 
 	@NotBlank(message = "The FSA name cannot be blank")
 	private String fsaName = "";
 
 	@Min(0)
-	@DisplayName("Amount In FSA")
+	@DisplayFriendlyCaption("Amount In FSA")
 	private double amountInFsa = 0.0;
 
 	@Min(value = 2012, message = "Year cannot be before 2012")
 	@Max(value = 2020, message = "Year cannot be after 2020")
-	@DisplayName("Year")
+	@DisplayFriendlyCaption("Year")
 	private int fsaYear = DateUtil.currentYear();
 
 	@CsvDate(format = MedcognizeUI.US_DATE_FORMAT)
-	@DisplayName("Period Start")
+	@DisplayFriendlyCaption("Period Start")
 	private Date fsaStartDate = DateUtil.firstDayOfYear(DateUtil.currentYear());
 
 	@CsvDate(format = MedcognizeUI.US_DATE_FORMAT)
-	@DisplayName("Period End")
+	@DisplayFriendlyCaption("Period End")
 	private Date fsaEndDate = DateUtil.lastDayOfYear(DateUtil.currentYear());
 
 	@Override

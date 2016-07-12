@@ -5,17 +5,21 @@ import com.medcognize.domain.*;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.basic.EmailAddress;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 public class UserUtil implements Serializable {
 
-    private static User createNewUser(final UserRepository repo, final EmailAddress emailAddress, final String pwd, final boolean admin) {
+    private static User createNewUser(final UserRepository repo, final EmailAddress emailAddress, final String pwd,
+                                      final boolean admin) {
         Assert.isTrue(!existsByUsername(repo, emailAddress), "Email address cannot already exists in database");
         User u = new User();
         u.setUsername(emailAddress.toString());
@@ -36,15 +40,18 @@ public class UserUtil implements Serializable {
         return repo.existsByUsername(emailAddress.toString());
     }
 
-    private static User createNewUser(final UserRepository repo, final String emailAddress, final String pwd, final boolean admin) {
+    private static User createNewUser(final UserRepository repo, final String emailAddress, final String pwd, final
+    boolean admin) {
         return createNewUser(repo, new EmailAddress(emailAddress), pwd, admin);
     }
 
-    public static User createNewAdminUser(final UserRepository repo, final EmailAddress emailAddress, final String pwd) {
+    public static User createNewAdminUser(final UserRepository repo, final EmailAddress emailAddress, final String
+            pwd) {
         return createNewUser(repo, emailAddress, pwd, true);
     }
 
-    public static User createNewRegularUser(final UserRepository repo, final EmailAddress emailAddress, final String pwd) {
+    public static User createNewRegularUser(final UserRepository repo, final EmailAddress emailAddress, final String
+            pwd) {
         return createNewUser(repo, emailAddress, pwd, false);
     }
 
@@ -178,6 +185,33 @@ public class UserUtil implements Serializable {
         }
         log.error("Requested unowned class " + clazz);
         return null;
+    }
+
+    public static <T extends DisplayFriendly> String ensureUniqueName(String initialName,
+                                                                      Class<T> clazz, String stringPropertyName) {
+        Collection<? extends DisplayFriendly> dfs = UserUtil.getAll(DbUtil.getLoggedInUser(), clazz);
+        String name = initialName;
+        int v = 2;
+        while (!existsName(name, dfs, stringPropertyName)) {
+            name = initialName + "v" + String.valueOf(v);
+            v++;
+        }
+        return name;
+    }
+
+    public static boolean existsName(String name, Collection<? extends DisplayFriendly> dfs, String pid) {
+        for (DisplayFriendly df : dfs) {
+            String val;
+            try {
+                val = PropertyUtils.getProperty(df, pid).toString();
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                val = "";
+            }
+            if (name.equals(val)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // Create relevant defaults for the required user entities

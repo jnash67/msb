@@ -269,7 +269,7 @@ public class PlanView extends CrudView<Plan> {
                             } else {
                                 newName = oldName + " " + String.valueOf(newYear);
                             }
-                            String confirmedUniqueNewName = Plan.ensureUniqueName(newName);
+                            String confirmedUniqueNewName = UserUtil.ensureUniqueName(newName, Plan.class, "planName");
                             newPlan.setPlanName(confirmedUniqueNewName);
                             u.getPlans().add(newPlan);
                             getContainer().addItem(newPlan);

@@ -1,7 +1,6 @@
 package com.medcognize.form;
 
 import com.medcognize.domain.Plan;
-import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.domain.validator.vaadin.ExistingPlanNameValidator;
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
@@ -37,17 +36,16 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
         super(Plan.class, isNew, null);
         setSizeUndefined();
         setEntity(item);
-    }
-
-    @Override
-    protected Component createContent() {
-
-        MFormLayout form = new MFormLayout();
         if (addingNewItem()) {
             planName.addValidator(new ExistingPlanNameValidator((String) planName.getValue()));
         } else {
             planName.setEnabled(false);
         }
+    }
+
+    @Override
+    protected Component createContent() {
+        MFormLayout form = new MFormLayout();
         ((AbstractField) planName).setDescription("e.g. Acme Insurance Company HMO");
         //planName.addValidator(new MinStringLengthValidator("Plan name cannot be blank", 1));
         //planName.addValidator(new MaxStringLengthValidator("You have exceeded the maximum allowed length", 50));
@@ -129,7 +127,7 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
             outOfNetworkDeductiblesLayout.setVisible(false);
             //outOfNetworkDeductiblesLayout.discardInvalidBufferedValues();
         } else {
-            if (val.toString().equals(DisplayFriendly.getEnumCaption(Plan.PlanType.HMO))) {
+            if (val.equals(Plan.PlanType.HMO)) {
                 outOfNetworkDeductiblesLayout.setVisible(false);
                 //outOfNetworkDeductiblesLayout.discardInvalidBufferedValues();
             } else {

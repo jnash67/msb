@@ -1,7 +1,6 @@
 package com.medcognize.form.wizard;
 
 import com.medcognize.domain.MedicalExpense;
-import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.MedicalExpenseForm;
 import com.medcognize.form.field.YesNoSelect;
 import com.vaadin.data.Property;
@@ -41,8 +40,8 @@ public class BasicDetailsStep implements WizardStep {
         content.addComponent(shadow);
         content.addComponent(shadowForm.medicalExpenseType);
         content.addComponent(shadowForm.prescriptionTierType);
-        if (shadowForm.medicalExpenseType.getPropertyDataSource().getValue().toString().equals(DisplayFriendly.getEnumCaption(MedicalExpense
-                .MedicalExpenseType.PRESCRIPTION))) {
+        if (shadowForm.medicalExpenseType.getPropertyDataSource().getValue().toString().equals(MedicalExpense
+                .MedicalExpenseType.PRESCRIPTION)) {
             shadowForm.prescriptionTierType.setVisible(true);
         } else {
             shadowForm.prescriptionTierType.setVisible(false);
@@ -50,8 +49,8 @@ public class BasicDetailsStep implements WizardStep {
         shadowForm.medicalExpenseType.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                if (event.getProperty().getValue().toString().equals(DisplayFriendly.getEnumCaption(MedicalExpense
-                        .MedicalExpenseType.PRESCRIPTION))) {
+                if (event.getProperty().getValue().equals(MedicalExpense
+                        .MedicalExpenseType.PRESCRIPTION)) {
                     shadowForm.prescriptionTierType.setVisible(true);
                 } else {
                     shadowForm.prescriptionTierType.setVisible(false);

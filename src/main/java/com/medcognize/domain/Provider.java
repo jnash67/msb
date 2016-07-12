@@ -1,9 +1,8 @@
 package com.medcognize.domain;
 
-import com.google.common.collect.BiMap;
 import com.medcognize.domain.basic.ContactInfo;
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
-import com.medcognize.domain.basic.DisplayName;
+import com.medcognize.domain.basic.DisplayFriendlyCaption;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,16 +24,27 @@ import java.util.List;
 public class Provider extends DisplayFriendlyAbstractEntity implements Serializable {
 
 	public static enum ProviderType {
-		PRIMARY, SPECIALIST, PHARMACY, HOSPITAL, OTHER;
+		PRIMARY("Primary"), SPECIALIST("Specialist"), PHARMACY("Pharmacy"), HOSPITAL("Hospital"), OTHER("Other");
+		private String name;
+
+		ProviderType(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
 	public static final ProviderType defaultProviderType = ProviderType.PRIMARY;
-	private static final String providerTypeCaptionString = ProviderType.PRIMARY.toString() + ":Primary Care Doctor," + " " + "" + ProviderType.SPECIALIST.toString() + ":Specialist," + ProviderType.PHARMACY.toString() + ":Pharmacy, " + "" + ProviderType.HOSPITAL.toString() + ":Hospital," + ProviderType.OTHER.toString() + ":Other";
-	public static final BiMap<String, String> providerTypeStringMap = createBiMap(providerTypeCaptionString);
-
 	@NotBlank(message = "The provider name cannot be blank")
 	private String providerName = "";
-	@DisplayName("In Plan")
+	@DisplayFriendlyCaption("In Plan")
 	private boolean providerInPlan;
 	private ProviderType providerType = defaultProviderType;
 	private String providerId = "";

@@ -1,7 +1,7 @@
 package com.medcognize.domain;
 
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
-import com.medcognize.domain.basic.DisplayName;
+import com.medcognize.domain.basic.DisplayFriendlyCaption;
 import com.vaadin.spring.annotation.VaadinSessionScope;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +29,7 @@ public class User extends DisplayFriendlyAbstractEntity implements UserDetails {
 
 	@Column(unique = true)
 	@Email
-	@DisplayName("Username")
+	@DisplayFriendlyCaption("Username")
 	private String username = "";
 
 	// For UserDetails

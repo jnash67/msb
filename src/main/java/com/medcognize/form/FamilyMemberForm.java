@@ -15,15 +15,15 @@ public class FamilyMemberForm extends DisplayFriendlyForm<FamilyMember> {
         super(FamilyMember.class, isNew, null);
         setSizeUndefined();
         setEntity(item);
-    }
-
-    @Override
-    protected Component createContent() {
         if (addingNewItem()) {
             familyMemberName.addValidator(new ExistingFamilyNameValidator((String) familyMemberName.getValue()));
         } else {
             familyMemberName.setEnabled(false);
         }
+    }
+
+    @Override
+    protected Component createContent() {
         return new MVerticalLayout(new MFormLayout(familyMemberName), getToolbar());
     }
 

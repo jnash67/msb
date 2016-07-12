@@ -6,6 +6,7 @@ import com.google.common.collect.HashBiMap;
 import com.vaadin.data.util.BeanUtil;
 import com.vaadin.shared.util.SharedUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.Reflections;
 import org.springframework.beans.PropertyAccessorFactory;
 
 import java.beans.IntrospectionException;
@@ -32,22 +33,32 @@ public abstract class DisplayFriendly implements Serializable {
     public static final List<Class<? extends DisplayFriendly>> domainList;
     public static final HashBiMap<Class<? extends DisplayFriendly>, String> friendlyClassNameMap;
     public static final Map<Class<? extends DisplayFriendly>, BiMap<String, String>> friendlyPropertyNameMap;
-    public static final Map<Class<? extends Enum>, String> friendlyEnumMap;
-    public static final Map<Class<? extends Enum>, Class<? extends DisplayFriendly>> friendlyEnumParentMap;
+//    public static final Map<Class<? extends Enum>, String> friendlyEnumMap;
+//    public static final Map<Class<? extends Enum>, Class<? extends DisplayFriendly>> friendlyEnumParentMap;
 
     static {
         // these need to be initialized with the actual domain of the application
         domainList = new ArrayList<>();
         friendlyClassNameMap = HashBiMap.create();
         friendlyPropertyNameMap = new HashMap<>();
-        friendlyEnumMap = new HashMap<>();
-        friendlyEnumParentMap = new HashMap<>();
+//        friendlyEnumMap = new HashMap<>();
+//        friendlyEnumParentMap = new HashMap<>();
     }
 
-    public static void registerClass(Class<? extends DisplayFriendly> clazz) {
-        DisplayName dn;
+    public static void registerClasses(String topLevelPackageToScan) {
+        Reflections refl = new Reflections(topLevelPackageToScan);
+        Set<Class<? extends DisplayFriendly>> df_clazzes = refl.getSubTypesOf(DisplayFriendly.class);
+        for (Class<? extends DisplayFriendly> df_clazz : df_clazzes) {
+            if (!DisplayFriendlyAbstractEntity.class.equals(df_clazz)) {
+                registerClass(df_clazz);
+            }
+        }
+    }
+
+    private static void registerClass(Class<? extends DisplayFriendly> clazz)    {
+        DisplayFriendlyCaption dn;
         domainList.add(clazz);
-        dn = clazz.getAnnotation(DisplayName.class);
+        dn = clazz.getAnnotation(DisplayFriendlyCaption.class);
         if (null == dn) {
             friendlyClassNameMap.put(clazz, clazz.getSimpleName());
         } else {
@@ -61,7 +72,7 @@ public abstract class DisplayFriendly implements Serializable {
                 if (!("class".equals(n) || "id".equals(n) || "uniqueSessionId".equals(n))) {
                     // There's a getAuthorities method in User because it implements UserDetails
                     if (!("authorities".equals(n) && clazz.getSimpleName().equals("User"))) {
-                        dn = (DisplayName) getAnnotation(clazz, n, DisplayName.class);
+                        dn = (DisplayFriendlyCaption) getAnnotation(clazz, n, DisplayFriendlyCaption.class);
                         if (null == dn) {
                             friendlyPropertyNames.put(n, SharedUtil.propertyIdToHumanFriendly(n));
                         } else {
@@ -104,46 +115,46 @@ public abstract class DisplayFriendly implements Serializable {
         return biMap;
     }
 
-    public static <E extends Enum<E>> boolean isDisplayFriendlyEnum(Class<E> clazz) {
-        if (friendlyEnumMap.keySet().contains(clazz)) {
-            return true;
-        }
-        return false;
-    }
+//    public static <E extends Enum<E>> boolean isDisplayFriendlyEnum(Class<E> clazz) {
+//        if (friendlyEnumMap.keySet().contains(clazz)) {
+//            return true;
+//        }
+//        return false;
+//    }
 
-    public static String getEnumCaption(Enum e) {
-        if (isDisplayFriendlyEnum(e.getClass())) {
-            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(e.getClass());
-            String fieldMap = friendlyEnumMap.get(e.getClass());
-            try {
-                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
-                return stringMap.get(e.toString());
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (NoSuchFieldException e1) {
-                e1.printStackTrace();
-            }
-        }
-        return null;
-    }
+//    public static String getEnumCaption(Enum e) {
+//        if (isDisplayFriendlyEnum(e.getClass())) {
+//            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(e.getClass());
+//            String fieldMap = friendlyEnumMap.get(e.getClass());
+//            try {
+//                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
+//                return stringMap.get(e.toString());
+//            } catch (IllegalAccessException e1) {
+//                e1.printStackTrace();
+//            } catch (NoSuchFieldException e1) {
+//                e1.printStackTrace();
+//            }
+//        }
+//        return null;
+//    }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public static Enum getEnumFromCaption(Class<? extends Enum> enumClazz, String caption) {
-        if (isDisplayFriendlyEnum(enumClazz)) {
-            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(enumClazz);
-            String fieldMap = friendlyEnumMap.get(enumClazz);
-            try {
-                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
-                String enumStringVal = stringMap.inverse().get(caption);
-                return Enum.valueOf(enumClazz, enumStringVal);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (NoSuchFieldException e1) {
-                e1.printStackTrace();
-            }
-        }
-        return null;
-    }
+//    @SuppressWarnings("UnusedDeclaration")
+//    public static Enum getEnumFromCaption(Class<? extends Enum> enumClazz, String caption) {
+//        if (isDisplayFriendlyEnum(enumClazz)) {
+//            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(enumClazz);
+//            String fieldMap = friendlyEnumMap.get(enumClazz);
+//            try {
+//                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
+//                String enumStringVal = stringMap.inverse().get(caption);
+//                return Enum.valueOf(enumClazz, enumStringVal);
+//            } catch (IllegalAccessException e1) {
+//                e1.printStackTrace();
+//            } catch (NoSuchFieldException e1) {
+//                e1.printStackTrace();
+//            }
+//        }
+//        return null;
+//    }
 
     private static Map<String, String> getFriendlyPropertyNameMap(Class<? extends DisplayFriendly> clazz) {
         if (friendlyClassNameMap.keySet().contains(clazz)) {

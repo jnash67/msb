@@ -1,10 +1,6 @@
 package com.medcognize.domain.basic;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 /*
  * Copyright 2012 the original author or authors.

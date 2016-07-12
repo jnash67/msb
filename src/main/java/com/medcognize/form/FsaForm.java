@@ -19,15 +19,15 @@ public class FsaForm extends DisplayFriendlyForm<Fsa> {
         super(Fsa.class, isNew, null);
         // setSizeUndefined();
         setEntity(item);
-    }
-
-    @Override
-    protected Component createContent() {
         if (addingNewItem()) {
             fsaName.addValidator(new ExistingFsaNameValidator((String) fsaName.getValue()));
         } else {
             fsaName.setEnabled(false);
         }
+    }
+
+    @Override
+    protected Component createContent() {
         return new MVerticalLayout(new MFormLayout(fsaName, fsaYear, fsaStartDate, fsaEndDate, amountInFsa), getToolbar());
     }
 

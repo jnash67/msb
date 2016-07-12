@@ -1,7 +1,7 @@
 package com.medcognize.domain;
 
 import com.medcognize.domain.basic.DisplayFriendlyAbstractEntity;
-import com.medcognize.domain.basic.DisplayName;
+import com.medcognize.domain.basic.DisplayFriendlyCaption;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,9 +15,9 @@ public class PlanLimit extends DisplayFriendlyAbstractEntity implements Serializ
 
     String limitName = "";
     double annualLimit = 0.0;
-    @DisplayName("Amount Used")
+    @DisplayFriendlyCaption("Amount Used")
     double usage = 0.0;
-    @DisplayName("Remaining Balance")
+    @DisplayFriendlyCaption("Remaining Balance")
     double balance = 0.0;
 
     public PlanLimit(String limitName, double annualLimit, double usage) {

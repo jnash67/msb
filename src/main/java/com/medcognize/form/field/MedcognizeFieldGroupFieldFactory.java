@@ -43,16 +43,9 @@ public class MedcognizeFieldGroupFieldFactory extends DefaultFieldGroupFieldFact
             return (T) field;
         }
         if (Enum.class.isAssignableFrom(dataType)) {
-            if (DisplayFriendly.isDisplayFriendlyEnum((Class<Enum>) dataType)) {
-                DisplayFriendlyEnumOptionGroup field = new DisplayFriendlyEnumOptionGroup(dataType);
-                field.setImmediate(true);
-                return (T) field;
-            } else {
-                log.warn("We shouldn't have any non-DisplayFriendly Enums: " + dataType.getSimpleName());
-                EnumOptionGroup field = new EnumOptionGroup(dataType);
-                field.setImmediate(true);
-                return (T) field;
-            }
+            EnumOptionGroup field = new EnumOptionGroup(dataType);
+            field.setImmediate(true);
+            return (T) field;
         }
         if (DisplayFriendly.class.isAssignableFrom(dataType)) {
             NativeSelect field;

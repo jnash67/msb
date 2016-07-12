@@ -1,7 +1,7 @@
 package com.medcognize;
 
 import com.google.common.eventbus.Subscribe;
-import com.medcognize.domain.*;
+import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.event.MedcognizeEvent;
 import com.medcognize.event.MedcognizeEvent.BrowserResizeEvent;
@@ -58,23 +58,24 @@ public class MedcognizeUI extends UI {
 
     // initialization of Medcognize DisplayFriendly domain
     static {
-        DisplayFriendly.registerClass(FamilyMember.class);
-        DisplayFriendly.registerClass(User.class);
-        DisplayFriendly.registerClass(User.class);
-        DisplayFriendly.registerClass(Plan.class);
-        DisplayFriendly.registerClass(Provider.class);
-
-        DisplayFriendly.registerClass(MedicalExpense.class);
-        DisplayFriendly.registerClass(Fsa.class);
-        DisplayFriendly.registerClass(PlanLimit.class);
-        DisplayFriendly.friendlyEnumParentMap.put(Provider.ProviderType.class, Provider.class);
-        DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.MedicalExpenseType.class, MedicalExpense.class);
-        DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.PrescriptionTierType.class, MedicalExpense.class);
-        DisplayFriendly.friendlyEnumParentMap.put(Plan.PlanType.class, Plan.class);
-        DisplayFriendly.friendlyEnumMap.put(Provider.ProviderType.class, "providerTypeStringMap");
-        DisplayFriendly.friendlyEnumMap.put(MedicalExpense.MedicalExpenseType.class, "medicalExpenseTypeStringMap");
-        DisplayFriendly.friendlyEnumMap.put(MedicalExpense.PrescriptionTierType.class, "prescriptionTierStringMap");
-        DisplayFriendly.friendlyEnumMap.put(Plan.PlanType.class, "planTypeStringMap");
+        DisplayFriendly.registerClasses("com.medcognize.domain");
+//        DisplayFriendly.registerClass(FamilyMember.class);
+//        DisplayFriendly.registerClass(User.class);
+//        DisplayFriendly.registerClass(User.class);
+//        DisplayFriendly.registerClass(Plan.class);
+//        DisplayFriendly.registerClass(Provider.class);
+//
+//        DisplayFriendly.registerClass(MedicalExpense.class);
+//        DisplayFriendly.registerClass(Fsa.class);
+//        DisplayFriendly.registerClass(PlanLimit.class);
+//        DisplayFriendly.friendlyEnumParentMap.put(Provider.ProviderType.class, Provider.class);
+//        DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.MedicalExpenseType.class, MedicalExpense.class);
+//        DisplayFriendly.friendlyEnumParentMap.put(MedicalExpense.PrescriptionTierType.class, MedicalExpense.class);
+//        DisplayFriendly.friendlyEnumParentMap.put(Plan.PlanType.class, Plan.class);
+//        DisplayFriendly.friendlyEnumMap.put(Provider.ProviderType.class, "providerTypeStringMap");
+//        DisplayFriendly.friendlyEnumMap.put(MedicalExpense.MedicalExpenseType.class, "medicalExpenseTypeStringMap");
+//        DisplayFriendly.friendlyEnumMap.put(MedicalExpense.PrescriptionTierType.class, "prescriptionTierStringMap");
+//        DisplayFriendly.friendlyEnumMap.put(Plan.PlanType.class, "planTypeStringMap");
     }
 
     // don't autowire the Guava-based eventbus. If we want to move to spring events,
