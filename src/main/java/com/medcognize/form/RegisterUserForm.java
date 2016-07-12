@@ -18,7 +18,7 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
     private Field<?> admin = createField("admin");
 
 	public RegisterUserForm(User u) {
-        super(User.class, null);
+        super(User.class, true, null);
         setSizeUndefined();
         setEntity(u);
     }

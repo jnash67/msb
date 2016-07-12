@@ -39,6 +39,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
 
 import java.util.Locale;
 
@@ -76,23 +77,15 @@ public class MedcognizeUI extends UI {
         DisplayFriendly.friendlyEnumMap.put(Plan.PlanType.class, "planTypeStringMap");
     }
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    SpringViewProvider viewProvider;
-
-    @Autowired
-    ErrorView errorView;
-
     // don't autowire the Guava-based eventbus. If we want to move to spring events,
     // use reactor.
     private final MedcognizeEventBus medcognizeEventbus = new MedcognizeEventBus();
-
-    public static MedcognizeEventBus getMedcognizeEventbus() {
-        return ((MedcognizeUI) getCurrent()).medcognizeEventbus;
-    }
-
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    SpringViewProvider viewProvider;
+    @Autowired
+    ErrorView errorView;
     private User user = null;
     /*
     The navigation component is either the whole page in the case of the home page, registration and login or
@@ -101,6 +94,10 @@ public class MedcognizeUI extends UI {
     private CssLayout navigationComponent = new CssLayout();
     private AbstractOrderedLayout dashboardMenuPlusComponentToRight;
     private DashboardMenu dashboardMenu;
+
+    public static MedcognizeEventBus getMedcognizeEventbus() {
+        return ((MedcognizeUI) getCurrent()).medcognizeEventbus;
+    }
 
     @Override
     protected void init(final VaadinRequest request) {
@@ -138,7 +135,8 @@ public class MedcognizeUI extends UI {
                     return;
                 }
                 addStyleName(ValoTheme.UI_WITH_MENU);
-                if (LoginView.class.isAssignableFrom(view.getClass()) || (RegisterView.class.isAssignableFrom(view.getClass()))) {
+                if (LoginView.class.isAssignableFrom(view.getClass()) || (RegisterView.class.isAssignableFrom(view
+                        .getClass()))) {
                     setStyleName("whitebackground");
                     navigationComponent.removeAllComponents();
                     // navigationComponent = new CssLayout();
@@ -157,9 +155,8 @@ public class MedcognizeUI extends UI {
                         dashboardMenu = new DashboardMenu();
                     }
                     if (null == dashboardMenuPlusComponentToRight) {
-                        dashboardMenuPlusComponentToRight = new HorizontalLayout();
-                        dashboardMenuPlusComponentToRight.setSizeFull();
-                        dashboardMenuPlusComponentToRight.addStyleName("mainview");
+                        dashboardMenuPlusComponentToRight = new MHorizontalLayout().withFullWidth().withFullHeight()
+                                .withStyleName("mainview");
                     }
                     dashboardMenuPlusComponentToRight.removeAllComponents();
                     dashboardMenuPlusComponentToRight.addComponent(dashboardMenu);
@@ -170,13 +167,21 @@ public class MedcognizeUI extends UI {
                     dashboardMenuPlusComponentToRight.addComponent(navigationComponent);
                     dashboardMenuPlusComponentToRight.setExpandRatio(navigationComponent, 1.0F);
                     setContent(dashboardMenuPlusComponentToRight);
-                    System.out.println("navigator state is --> " + getNavigator().getState());
+                    // System.out.println("navigator state is --> " + getNavigator().getState());
                 }
             }
         });
         nav.addViewChangeListener(new ViewChangeListener() {
             @Override
             public boolean beforeViewChange(ViewChangeEvent event) {
+                View oldView = event.getOldView();
+                View newView = event.getNewView();
+                if ((null == oldView) || (null == newView)) {
+                    return true;
+                }
+                if (oldView.equals(newView)) {
+                    return false;
+                }
                 return true;
             }
 

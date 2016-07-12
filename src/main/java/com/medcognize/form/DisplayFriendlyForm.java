@@ -22,6 +22,8 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Abs
     protected UserRepository repo;
 
     protected final Class<T> clazz;
+    private final boolean isNew;
+
     // Bean validators are automatically created when using a BeanFieldGroup.
     // https://vaadin.com/book/vaadin7/-/page/datamodel.itembinding.html
 //    protected final Set<String> pidsToIgnore = new HashSet<>();
@@ -50,13 +52,18 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Abs
         return null;
     }
 
-    public DisplayFriendlyForm(Class<T> clazz, FieldGroupFieldFactory factory) {
+    public DisplayFriendlyForm(Class<T> clazz, boolean isNew, FieldGroupFieldFactory factory) {
         this.clazz = clazz;
+        this.isNew = isNew;
         if (null == factory) {
             f = new ViritinFieldGroupFieldFactory();
         } else {
             f = factory;
         }
+    }
+
+    public boolean addingNewItem() {
+        return isNew;
     }
 
 //    public DisplayFriendlyForm(T item, Collection<String> pids, FieldGroupFieldFactory factory) {

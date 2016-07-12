@@ -36,8 +36,8 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
 
     public GridLayout prescriptionTiersLayout;
 
-    public MedicalExpenseForm(MedicalExpense item) {
-        super(MedicalExpense.class, null);
+    public MedicalExpenseForm(MedicalExpense item, boolean isNew) {
+        super(MedicalExpense.class, isNew, null);
         setSizeUndefined();
         setEntity(item);
     }
@@ -48,9 +48,12 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         ((AbstractField) outOfPocketAmount).setDescription("This is how much cash you've paid out of pocket");
         ((AbstractField) costAccordingToProvider).setDescription("This is how much the provider is charging, " +
                 "" + "also called the 'Billed Amount'");
-        ((AbstractField) maximumAmount).setDescription("This is the most the insurance company will pay under the " + "plan");
-        ((AbstractField) deductibleAmount).setDescription("This is the amount you have to pay before the plan will " + "start to pay.");
-        ((AbstractField) copayAmount).setDescription("This is the minimum amount you have to pay before " + "the plan will start to pay.");
+        ((AbstractField) maximumAmount).setDescription("This is the most the insurance company will pay under the " +
+                "plan");
+        ((AbstractField) deductibleAmount).setDescription("This is the amount you have to pay before the plan will "
+                + "start to pay.");
+        ((AbstractField) copayAmount).setDescription("This is the minimum amount you have to pay before " + "the plan" +
+                " will start to pay.");
         ((AbstractField) paymentAmount).setDescription("This is the amount the insurance company will pay");
 
         //((DateField) date).setDateFormat("yyyy-MM-dd");
@@ -121,14 +124,15 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         MFormLayout form = new MFormLayout();
         form.addComponent(costsLayout);
 
-        Button addFamilyMemberButton = new NativeButton("<div style=\"text-align: center;\"><font " + "size=\"1\">Add<br>New</font></div>");
+        Button addFamilyMemberButton = new NativeButton("<div style=\"text-align: center;\"><font " +
+                "size=\"1\">Add<br>New</font></div>");
         addFamilyMemberButton.setDescription("Add new Family Member");
         addFamilyMemberButton.setHtmlContentAllowed(true);
         addFamilyMemberButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final FamilyMember fm = new FamilyMember();
-                final FamilyMemberForm form = new FamilyMemberForm(fm);
+                final FamilyMemberForm form = new FamilyMemberForm(fm, true);
                 form.setSavedHandler(new SavedHandler<FamilyMember>() {
                     @Override
                     public void onSave(FamilyMember entity) {
@@ -157,14 +161,15 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
         familyMemberPlusButtonLayout.setSpacing(true);
         familyMemberPlusButtonLayout.setComponentAlignment(addFamilyMemberButton, Alignment.BOTTOM_LEFT);
 
-        Button addProviderButton = new NativeButton("<div style=\"text-align: center;\"><font " + "size=\"1\">Add<br>New</font></div>");
+        Button addProviderButton = new NativeButton("<div style=\"text-align: center;\"><font " +
+                "size=\"1\">Add<br>New</font></div>");
         addProviderButton.setDescription("Add new Medical Provider");
         addProviderButton.setHtmlContentAllowed(true);
         addProviderButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final Provider pr = new Provider();
-                ProviderForm form = new ProviderForm(pr);
+                ProviderForm form = new ProviderForm(pr, true);
                 form.setSavedHandler(new SavedHandler<Provider>() {
                     @Override
                     public void onSave(Provider entity) {

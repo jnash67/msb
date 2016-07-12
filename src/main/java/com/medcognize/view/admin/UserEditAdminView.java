@@ -15,10 +15,9 @@ import java.util.Collection;
 public class UserEditAdminView extends CrudView<User> {
     static final ArrayList<String> pids = new ArrayList<String>() {
         {
-            add("email");
+            add("username");
             add("firstName");
             add("lastName");
-            add("admin");
         }
     };
 

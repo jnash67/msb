@@ -11,15 +11,19 @@ public class FamilyMemberForm extends DisplayFriendlyForm<FamilyMember> {
 
     Field<?> familyMemberName = createField("familyMemberName");
 
-    public FamilyMemberForm(FamilyMember item) {
-        super(FamilyMember.class, null);
+    public FamilyMemberForm(FamilyMember item, boolean isNew) {
+        super(FamilyMember.class, isNew, null);
         setSizeUndefined();
         setEntity(item);
     }
 
     @Override
     protected Component createContent() {
-        familyMemberName.addValidator(new ExistingFamilyNameValidator((String) familyMemberName.getValue()));
+        if (addingNewItem()) {
+            familyMemberName.addValidator(new ExistingFamilyNameValidator((String) familyMemberName.getValue()));
+        } else {
+            familyMemberName.setEnabled(false);
+        }
         return new MVerticalLayout(new MFormLayout(familyMemberName), getToolbar());
     }
 

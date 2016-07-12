@@ -51,8 +51,8 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
     }
 
     // we ignore the passed in FieldFactory
-    public UserSettingsForm(User u) {
-        super(User.class, new UserFieldFactory(u));
+    public UserSettingsForm(User u, boolean isNew) {
+        super(User.class, isNew, new UserFieldFactory(u));
         setEntity(u);
     }
 

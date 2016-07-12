@@ -8,6 +8,7 @@ import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.*;
+import org.vaadin.viritin.fields.MTextField;
 
 import java.util.Collection;
 
@@ -59,7 +60,7 @@ public class CrudViewToolbar<T extends DisplayFriendly> extends HorizontalLayout
 	}
 
 	protected void showFilter() {
-		final TextField filter = new TextField();
+		final TextField filter = new MTextField().withInputPrompt("filter...");
 		filter.addTextChangeListener(new FieldEvents.TextChangeListener() {
 			@Override
 			public void textChange(final FieldEvents.TextChangeEvent event) {

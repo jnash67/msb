@@ -9,7 +9,7 @@ import org.vaadin.teemu.wizards.Wizard;
 public class MedicalExpenseWizard extends WizardForm<MedicalExpense> {
 
     public MedicalExpenseWizard(MedicalExpense me, boolean isNew) {
-        super(MedicalExpenseForm.class, me);
+        super(MedicalExpenseForm.class, me, isNew);
     }
 
     @Override

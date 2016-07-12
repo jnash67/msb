@@ -1,6 +1,7 @@
 package com.medcognize.form;
 
 import com.medcognize.domain.Fsa;
+import com.medcognize.domain.validator.vaadin.ExistingFsaNameValidator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import org.vaadin.viritin.layouts.MFormLayout;
@@ -14,14 +15,19 @@ public class FsaForm extends DisplayFriendlyForm<Fsa> {
     Field<?> fsaEndDate = createField("fsaEndDate");
     Field<?> amountInFsa = createField("amountInFsa");
 
-    public FsaForm(Fsa item) {
-        super(Fsa.class, null);
+    public FsaForm(Fsa item, boolean isNew) {
+        super(Fsa.class, isNew, null);
         // setSizeUndefined();
         setEntity(item);
     }
 
     @Override
     protected Component createContent() {
+        if (addingNewItem()) {
+            fsaName.addValidator(new ExistingFsaNameValidator((String) fsaName.getValue()));
+        } else {
+            fsaName.setEnabled(false);
+        }
         return new MVerticalLayout(new MFormLayout(fsaName, fsaYear, fsaStartDate, fsaEndDate, amountInFsa), getToolbar());
     }
 

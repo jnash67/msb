@@ -13,6 +13,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 import lombok.extern.slf4j.Slf4j;
 import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.form.AbstractForm;
 
 import java.util.ArrayList;
@@ -66,20 +67,16 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
             @Override
             public Object generateCell(Table source, final Object itemId, Object columnId) {
                 HorizontalLayout cell = new HorizontalLayout();
-                Button removeButton = new Button();
-                removeButton.setIcon(FontAwesome.TIMES_CIRCLE);
+                Button removeButton = new MButton(FontAwesome.TIMES_CIRCLE).withDescription("Delete");
                 //removeButton.addStyleName("icon-cancel");
-                removeButton.setDescription("Delete");
                 removeButton.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
                         deleteActionWithConfirm(itemId);
                     }
                 });
-                Button editButton = new Button();
-                editButton.setIcon(FontAwesome.EDIT);
+                Button editButton = new MButton(FontAwesome.EDIT).withDescription("Edit");
                 // editButton.addStyleName("icon-edit");
-                editButton.setDescription("Edit");
                 editButton.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {

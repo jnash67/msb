@@ -24,9 +24,9 @@ public abstract class WizardForm<T extends DisplayFriendly> extends DisplayFrien
     protected final DisplayFriendlyForm<T> shadowForm;
     protected CommitAction ca = null;
 
-    protected WizardForm(Class<? extends DisplayFriendlyForm<T>> formClazz, T item) {
-        super((Class<T>) item.getClass(), null);
-        this.shadowForm = CrudUtil.createForm(formClazz, item);
+    protected WizardForm(Class<? extends DisplayFriendlyForm<T>> formClazz, T item, boolean isNew) {
+        super((Class<T>) item.getClass(), isNew, null);
+        this.shadowForm = CrudUtil.createForm(formClazz, item, isNew);
         // we don't use the shadowForm for display purposes
         this.wiz = createWizard();
         this.wiz.addListener(this);

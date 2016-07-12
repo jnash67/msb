@@ -23,7 +23,7 @@ import java.util.Collection;
  * A responsive menu component providing user information and the controls for
  * primary navigation between the views.
  */
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings({"serial", "unchecked"})
 public final class DashboardMenu extends CustomComponent {
 
     public static final String ID = "dashboard-menu";
@@ -221,37 +221,6 @@ public final class DashboardMenu extends CustomComponent {
         settingsItem.setText(f + " " + l);
     }
 
-    public final class ValoMenuItemButton extends Button {
-
-        private static final String STYLE_SELECTED = "selected";
-
-        private final DashboardViewType view;
-
-        public ValoMenuItemButton(final DashboardViewType view) {
-            this.view = view;
-            setPrimaryStyleName("valo-menu-item");
-            setIcon(view.getIcon());
-            setCaption(view.getViewName().substring(0, 1).toUpperCase()
-                    + view.getViewName().substring(1));
-            MedcognizeEventBus.register(this);
-            addClickListener(new ClickListener() {
-                @Override
-                public void buttonClick(final ClickEvent event) {
-                    UI.getCurrent().getNavigator()
-                            .navigateTo(view.getViewName());
-                }
-            });
-        }
-
-        @Subscribe
-        public void postViewChange(final MedcognizeEvent.PostViewChangeEvent event) {
-            removeStyleName(STYLE_SELECTED);
-            if (event.getView() == view) {
-                addStyleName(STYLE_SELECTED);
-            }
-        }
-    }
-
     public void showCalculator() {
         UI ui = MedcognizeUI.getCurrent();
         if (null == calculatorWindow) {
@@ -271,6 +240,36 @@ public final class DashboardMenu extends CustomComponent {
                 calculatorWindow.focus();
             } else {
                 calculatorWindow.close();
+            }
+        }
+    }
+
+    public final class ValoMenuItemButton extends Button {
+
+        private static final String STYLE_SELECTED = "selected";
+
+        private final DashboardViewType view;
+
+        public ValoMenuItemButton(final DashboardViewType view) {
+            this.view = view;
+            setPrimaryStyleName("valo-menu-item");
+            setIcon(view.getIcon());
+            setCaption(view.getViewName().substring(0, 1).toUpperCase()
+                    + view.getViewName().substring(1));
+            MedcognizeEventBus.register(this);
+            addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(final ClickEvent event) {
+                    UI.getCurrent().getNavigator().navigateTo(view.getViewName());
+                }
+            });
+        }
+
+        @Subscribe
+        public void postViewChange(final MedcognizeEvent.PostViewChangeEvent event) {
+            removeStyleName(STYLE_SELECTED);
+            if (event.getView() == view) {
+                addStyleName(STYLE_SELECTED);
             }
         }
     }

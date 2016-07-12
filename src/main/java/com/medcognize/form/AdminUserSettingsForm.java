@@ -8,8 +8,8 @@ import com.vaadin.ui.Field;
  * Created by jnash on 5/16/2014.
  */
 public class AdminUserSettingsForm extends UserSettingsForm {
-    public AdminUserSettingsForm(User u) {
-        super(u);
+    public AdminUserSettingsForm(User u, boolean isNew) {
+        super(u, isNew);
     }
 
     @Override

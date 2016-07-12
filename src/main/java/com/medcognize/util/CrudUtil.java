@@ -8,25 +8,24 @@ import java.lang.reflect.InvocationTargetException;
 
 public class CrudUtil implements Serializable {
 
-    public static <T extends DisplayFriendly> DisplayFriendlyForm<T> getNewItemForm(final Class<T> entityClazz,
-                                                                                    final Class<? extends
-                                                                                            DisplayFriendlyForm<T>>
-                                                                                            formClazzToUse) {
+    public static <T extends DisplayFriendly> DisplayFriendlyForm<T> getNewItemForm(
+            final Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
         final T target;
         try {
             target = entityClazz.newInstance();
-            return createForm(formClazzToUse, target);
+            return createForm(formClazzToUse, target, true);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static <T extends DisplayFriendly> DisplayFriendlyForm<T> createForm(final Class<? extends
-            DisplayFriendlyForm<T>> formClazz, T item) {
+    public static <T extends DisplayFriendly> DisplayFriendlyForm<T> createForm(
+            final Class<? extends DisplayFriendlyForm<T>> formClazz, T item, final boolean isNew) {
         DisplayFriendlyForm<T> form = null;
         try {
-            form = formClazz.getDeclaredConstructor(new Class[]{item.getClass()}).newInstance(item);
+            form = formClazz.getDeclaredConstructor(new Class[]{item.getClass(), boolean.class}).newInstance(item,
+                    isNew);
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException
                 e) {
             e.printStackTrace();

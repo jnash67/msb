@@ -33,8 +33,8 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
     Field<?> notes = createField("notes");
     GridLayout outOfNetworkDeductiblesLayout;
 
-    public PlanForm(Plan item) {
-        super(Plan.class, null);
+    public PlanForm(Plan item, boolean isNew) {
+        super(Plan.class, isNew, null);
         setSizeUndefined();
         setEntity(item);
     }
@@ -43,7 +43,11 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
     protected Component createContent() {
 
         MFormLayout form = new MFormLayout();
-        planName.addValidator(new ExistingPlanNameValidator((String) planName.getValue()));
+        if (addingNewItem()) {
+            planName.addValidator(new ExistingPlanNameValidator((String) planName.getValue()));
+        } else {
+            planName.setEnabled(false);
+        }
         ((AbstractField) planName).setDescription("e.g. Acme Insurance Company HMO");
         //planName.addValidator(new MinStringLengthValidator("Plan name cannot be blank", 1));
         //planName.addValidator(new MaxStringLengthValidator("You have exceeded the maximum allowed length", 50));
