@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.Provider;
 import com.medcognize.domain.basic.ContactInfo;
 import com.medcognize.domain.validator.vaadin.ExistingProviderNameValidator;
@@ -18,8 +19,8 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
     Field<?> providerId = createField("providerId");
     Field<?> locations = new ElementCollectionField<ContactInfo>(ContactInfo.class, ContactInfoRow.class);
 
-    public ProviderForm(Provider item, boolean isNew) {
-        super(Provider.class, isNew, null);
+    public ProviderForm(Provider item, boolean isNew, UserRepository repo) {
+        super(Provider.class, isNew, null, repo);
         setSizeUndefined();
         setEntity(item);
     }
@@ -32,7 +33,7 @@ public class ProviderForm extends DisplayFriendlyForm<Provider> {
             providerName.setEnabled(false);
         }
         return new MVerticalLayout(new MFormLayout(providerName, providerInPlan, providerType, providerId, locations)
-                .withWidth(""), getToolbar()).withWidth("");
+                .withMargin(false), getToolbar());
     }
 
     public static class ContactInfoRow {

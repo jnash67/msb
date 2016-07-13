@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
@@ -51,8 +52,8 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
     }
 
     // we ignore the passed in FieldFactory
-    public UserSettingsForm(User u, boolean isNew) {
-        super(User.class, isNew, new UserFieldFactory(u));
+    public UserSettingsForm(User u, boolean isNew, UserRepository repo) {
+        super(User.class, isNew, new UserFieldFactory(u), repo);
         setEntity(u);
     }
 

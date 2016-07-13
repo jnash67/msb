@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.medcognize.domain.validator.vaadin.PasswordRequirementsValidator;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -17,8 +18,8 @@ public class RegisterUserForm extends DisplayFriendlyForm<User> {
     private Field<?> password = new PasswordField("password");
     private Field<?> admin = createField("admin");
 
-	public RegisterUserForm(User u) {
-        super(User.class, true, null);
+    public RegisterUserForm(User u, UserRepository repo) {
+        super(User.class, true, null, repo);
         setSizeUndefined();
         setEntity(u);
     }

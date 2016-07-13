@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.User;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
@@ -8,8 +9,8 @@ import com.vaadin.ui.Field;
  * Created by jnash on 5/16/2014.
  */
 public class AdminUserSettingsForm extends UserSettingsForm {
-    public AdminUserSettingsForm(User u, boolean isNew) {
-        super(u, isNew);
+    public AdminUserSettingsForm(User u, boolean isNew, UserRepository repo) {
+        super(u, isNew, repo);
     }
 
     @Override

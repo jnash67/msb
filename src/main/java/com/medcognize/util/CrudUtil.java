@@ -1,5 +1,6 @@
 package com.medcognize.util;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 
@@ -9,11 +10,12 @@ import java.lang.reflect.InvocationTargetException;
 public class CrudUtil implements Serializable {
 
     public static <T extends DisplayFriendly> DisplayFriendlyForm<T> getNewItemForm(
-            final Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
+            final Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazzToUse, final
+    UserRepository repo) {
         final T target;
         try {
             target = entityClazz.newInstance();
-            return createForm(formClazzToUse, target, true);
+            return createForm(formClazzToUse, target, true, repo);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -21,11 +23,13 @@ public class CrudUtil implements Serializable {
     }
 
     public static <T extends DisplayFriendly> DisplayFriendlyForm<T> createForm(
-            final Class<? extends DisplayFriendlyForm<T>> formClazz, T item, final boolean isNew) {
+            final Class<? extends DisplayFriendlyForm<T>> formClazz, T item, final boolean isNew, final
+    UserRepository repo) {
         DisplayFriendlyForm<T> form = null;
         try {
-            form = formClazz.getDeclaredConstructor(new Class[]{item.getClass(), boolean.class}).newInstance(item,
-                    isNew);
+            form = formClazz.getDeclaredConstructor(new Class[]{item.getClass(), boolean.class, UserRepository
+                    .class}).newInstance(item,
+                    isNew, repo);
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException
                 e) {
             e.printStackTrace();

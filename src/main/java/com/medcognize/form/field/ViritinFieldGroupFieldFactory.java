@@ -7,7 +7,10 @@ import com.vaadin.data.validator.DoubleRangeValidator;
 import com.vaadin.ui.Field;
 import lombok.extern.slf4j.Slf4j;
 import org.vaadin.teemu.switchui.Switch;
-import org.vaadin.viritin.fields.*;
+import org.vaadin.viritin.fields.EnumSelect;
+import org.vaadin.viritin.fields.IntegerField;
+import org.vaadin.viritin.fields.MDateField;
+import org.vaadin.viritin.fields.MTextField;
 
 import java.util.Date;
 import java.util.Locale;
@@ -36,7 +39,7 @@ public class ViritinFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory
             return (T) field;
         }
         if (DisplayFriendly.class.isAssignableFrom(dataType)) {
-            TypedSelect field = new TypedSelect();
+            DisplayFriendlySelectAndButton field = new DisplayFriendlySelectAndButton(dataType);
             return (T) field;
         }
         if (Boolean.class.isAssignableFrom(dataType)

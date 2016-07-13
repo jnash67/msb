@@ -3,13 +3,12 @@ package com.medcognize.form.field;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.UserUtil;
-import org.vaadin.viritin.fields.TypedSelect;
 
-public class DisplayFriendlySelect<T extends DisplayFriendly> extends TypedSelect<T> {
+public class DisplayFriendlySelectAndButton<T extends DisplayFriendly> extends TypedSelectAndButton<T> {
 
     private Class<T> clazz;
 
-    public DisplayFriendlySelect(Class<T> clazz) {
+    public DisplayFriendlySelectAndButton(Class<T> clazz) {
         super(clazz);
         this.clazz = clazz;
         setSizeUndefined();

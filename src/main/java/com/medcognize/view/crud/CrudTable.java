@@ -115,7 +115,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
     }
 
     protected Window addAction(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse) {
-        DisplayFriendlyForm<T> form = CrudUtil.getNewItemForm(entityClazz, formClazzToUse);
+        DisplayFriendlyForm<T> form = CrudUtil.getNewItemForm(entityClazz, formClazzToUse, repo);
         form.setModalWindowTitle("Add " + DisplayFriendly.getFriendlyClassName(entityClazz));
         Window w = form.openInModalPopup();
         form.setSavedHandler(new AbstractForm.SavedHandler<T>() {

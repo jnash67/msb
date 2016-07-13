@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.FamilyMember;
 import com.medcognize.domain.validator.vaadin.ExistingFamilyNameValidator;
 import com.vaadin.ui.Component;
@@ -11,8 +12,8 @@ public class FamilyMemberForm extends DisplayFriendlyForm<FamilyMember> {
 
     Field<?> familyMemberName = createField("familyMemberName");
 
-    public FamilyMemberForm(FamilyMember item, boolean isNew) {
-        super(FamilyMember.class, isNew, null);
+    public FamilyMemberForm(FamilyMember item, boolean isNew, UserRepository repo) {
+        super(FamilyMember.class, isNew, null, repo);
         setSizeUndefined();
         setEntity(item);
         if (addingNewItem()) {
@@ -24,7 +25,7 @@ public class FamilyMemberForm extends DisplayFriendlyForm<FamilyMember> {
 
     @Override
     protected Component createContent() {
-        return new MVerticalLayout(new MFormLayout(familyMemberName), getToolbar());
+        return new MVerticalLayout(new MFormLayout(familyMemberName).withMargin(false), getToolbar());
     }
 
 

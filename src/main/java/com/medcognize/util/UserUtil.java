@@ -67,11 +67,8 @@ public class UserUtil implements Serializable {
         int index = items.indexOf(ownedItem);
         if (-1 == index) {
             items.add(ownedItem);
-        } else
-        // log.warn("Saved new " + ownedItem.getClass().getSimpleName() + " (" + ownedItem + ").");
-        {
-            DisplayFriendly ae = (DisplayFriendly) items.get(index);
-            DisplayFriendly.copyListedProperties(ownedItem, ae);
+        } else {
+            log.warn("Tried to add existing " + ownedItem.getClass().getSimpleName() + " (" + ownedItem + ").");
         }
         repo.save(user);
     }

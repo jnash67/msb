@@ -5,21 +5,17 @@ import com.medcognize.UserRepository;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.field.ViritinFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.ui.Field;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.viritin.form.AbstractForm;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
-@SpringComponent
 @Slf4j
 public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends AbstractForm<T> {
 
-    @Autowired
-    protected UserRepository repo;
+    protected final UserRepository repo;
 
     protected final Class<T> clazz;
     private final boolean isNew;
@@ -52,9 +48,10 @@ public abstract class DisplayFriendlyForm<T extends DisplayFriendly> extends Abs
         return null;
     }
 
-    public DisplayFriendlyForm(Class<T> clazz, boolean isNew, FieldGroupFieldFactory factory) {
+    public DisplayFriendlyForm(Class<T> clazz, boolean isNew, FieldGroupFieldFactory factory, UserRepository repo) {
         this.clazz = clazz;
         this.isNew = isNew;
+        this.repo = repo;
         if (null == factory) {
             f = new ViritinFieldGroupFieldFactory();
         } else {

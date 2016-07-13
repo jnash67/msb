@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.util.CrudUtil;
 import com.medcognize.view.crud.CommitAction;
@@ -24,9 +25,10 @@ public abstract class WizardForm<T extends DisplayFriendly> extends DisplayFrien
     protected final DisplayFriendlyForm<T> shadowForm;
     protected CommitAction ca = null;
 
-    protected WizardForm(Class<? extends DisplayFriendlyForm<T>> formClazz, T item, boolean isNew) {
-        super((Class<T>) item.getClass(), isNew, null);
-        this.shadowForm = CrudUtil.createForm(formClazz, item, isNew);
+    protected WizardForm(Class<? extends DisplayFriendlyForm<T>> formClazz, T item, boolean isNew, UserRepository
+            repo) {
+        super((Class<T>) item.getClass(), isNew, null, null);
+        this.shadowForm = CrudUtil.createForm(formClazz, item, isNew, repo);
         // we don't use the shadowForm for display purposes
         this.wiz = createWizard();
         this.wiz.addListener(this);

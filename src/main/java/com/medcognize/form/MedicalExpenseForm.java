@@ -1,12 +1,14 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.*;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
-import com.medcognize.form.field.DisplayFriendlySelect;
+import com.medcognize.form.field.DisplayFriendlySelectAndButton;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.UserUtil;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.daterangefield.DateUtil;
@@ -18,14 +20,15 @@ import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
+@Slf4j
 public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MedicalExpenseForm.class);
 
     public Field<?> date = createField("date");
-    public Field<?> plan = new DisplayFriendlySelect<Plan>(Plan.class);
-    public Field<?> familyMember = new DisplayFriendlySelect<FamilyMember>(FamilyMember.class);
-    public Field<?> provider = new DisplayFriendlySelect<Provider>(Provider.class);
+    public Field<?> plan = createField("plan");
+    public Field<?> familyMember = new DisplayFriendlySelectAndButton<FamilyMember>(FamilyMember.class);
+    public Field<?> provider = new DisplayFriendlySelectAndButton<Provider>(Provider.class);
     public Field<?> medicalExpenseInPlan = createField("medicalExpenseInPlan");
     public Field<?> prescriptionTierType = createField("prescriptionTierType");
     public Field<?> medicalExpenseType = createField("medicalExpenseType");
@@ -37,8 +40,8 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
     public Field<?> paymentAmount = createField("paymentAmount");
     public Field<?> comments = createField("comments");
 
-    public MedicalExpenseForm(MedicalExpense item, boolean isNew) {
-        super(MedicalExpense.class, isNew, null);
+    public MedicalExpenseForm(MedicalExpense item, boolean isNew, UserRepository repo) {
+        super(MedicalExpense.class, isNew, null, repo);
         setSizeUndefined();
         setEntity(item);
         setupFields();
@@ -106,41 +109,42 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
 
     @Override
     protected Component createContent() {
-        //Button addFamilyMemberButton = new MButton("Add New");
+
         Button addNewFamilyMemberButton = new MButton(FontAwesome.PLUS, this::addNewFamilyMember);
         addNewFamilyMemberButton.setDescription("Add new Family Member");
+        ((DisplayFriendlySelectAndButton) familyMember).setButton(addNewFamilyMemberButton);
 
-        // Button addProviderButton = new MButton("Add New");
-        Button addNewProviderButton =  new MButton(FontAwesome.PLUS, this::addNewProvider);
+        Button addNewProviderButton = new MButton(FontAwesome.PLUS, this::addNewProvider);
         addNewProviderButton.setDescription("Add new Medical Provider");
-        addNewProviderButton.setHtmlContentAllowed(true);
+        ((DisplayFriendlySelectAndButton) provider).setButton(addNewProviderButton);
 
-        MHorizontalLayout familyMemberPlusButton = new MHorizontalLayout(addNewFamilyMemberButton, familyMember);
-        familyMemberPlusButton.setComponentAlignment(addNewFamilyMemberButton, Alignment.BOTTOM_LEFT);
-
-        MHorizontalLayout providerPlusButton = new MHorizontalLayout(addNewProviderButton, provider);
-        providerPlusButton.setComponentAlignment(addNewProviderButton, Alignment.BOTTOM_LEFT);
-
+//        MHorizontalLayout fml = new MHorizontalLayout(familyMember).withMargin(false);
+//        MHorizontalLayout familyMemberPlusButton = new MHorizontalLayout(fml, addNewFamilyMemberButton)
+//                .withSizeUndefined();
+//        familyMemberPlusButton.setComponentAlignment(addNewFamilyMemberButton, Alignment.BOTTOM_LEFT);
+//
+//        MHorizontalLayout providerPlusButton = new MHorizontalLayout(provider, addNewProviderButton).withMargin
+//                (false).withSizeUndefined();
+//        providerPlusButton.setComponentAlignment(addNewProviderButton, Alignment.BOTTOM_LEFT);
 
         comments.setWidth("100%");
-        return new MVerticalLayout(new MVerticalLayout(new MHorizontalLayout(date, plan)
-                .withDefaultComponentAlignment(Alignment.MIDDLE_LEFT), familyMemberPlusButton, providerPlusButton,
+        return new MVerticalLayout(new MHorizontalLayout(date, plan), familyMember, provider,
                 medicalExpenseInPlan, new MHorizontalLayout(medicalExpenseType, prescriptionTierType), new
                 MHorizontalLayout(outOfPocketAmount,
                 costAccordingToProvider), new MHorizontalLayout(maximumAmount, deductibleAmount), new
                 MHorizontalLayout(copayAmount,
-                paymentAmount), comments), getToolbar());
+                paymentAmount), comments, getToolbar());
     }
 
     private void addNewFamilyMember(Button.ClickEvent e) {
         final FamilyMember fm = new FamilyMember();
-        final FamilyMemberForm form = new FamilyMemberForm(fm, true);
+        final FamilyMemberForm form = new FamilyMemberForm(fm, true, repo);
         form.setSavedHandler(new SavedHandler<FamilyMember>() {
             @Override
             public void onSave(FamilyMember entity) {
                 User u = DbUtil.getLoggedInUser();
                 UserUtil.addToCollection(repo, u, entity);
-                ((TypedSelect) familyMember).addOption(entity);
+                // ((TypedSelect) familyMember).addOption(entity);
                 // familyMemberField.select(fm);
                 form.closePopup();
             }
@@ -157,7 +161,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
 
     private void addNewProvider(Button.ClickEvent e) {
         final Provider pr = new Provider();
-        ProviderForm form = new ProviderForm(pr, true);
+        ProviderForm form = new ProviderForm(pr, true, repo);
         form.setSavedHandler(new SavedHandler<Provider>() {
             @Override
             public void onSave(Provider entity) {

@@ -1,5 +1,6 @@
 package com.medcognize.form.wizard;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.MedicalExpense;
 import com.medcognize.form.MedicalExpenseForm;
 import com.medcognize.form.WizardForm;
@@ -8,8 +9,8 @@ import org.vaadin.teemu.wizards.Wizard;
 
 public class MedicalExpenseWizard extends WizardForm<MedicalExpense> {
 
-    public MedicalExpenseWizard(MedicalExpense me, boolean isNew) {
-        super(MedicalExpenseForm.class, me, isNew);
+    public MedicalExpenseWizard(MedicalExpense me, boolean isNew, UserRepository repo) {
+        super(MedicalExpenseForm.class, me, isNew, repo);
     }
 
     @Override

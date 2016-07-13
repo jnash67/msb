@@ -1,5 +1,6 @@
 package com.medcognize.form;
 
+import com.medcognize.UserRepository;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.validator.vaadin.ExistingPlanNameValidator;
 import com.vaadin.data.Property;
@@ -32,8 +33,8 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
     Field<?> notes = createField("notes");
     GridLayout outOfNetworkDeductiblesLayout;
 
-    public PlanForm(Plan item, boolean isNew) {
-        super(Plan.class, isNew, null);
+    public PlanForm(Plan item, boolean isNew, UserRepository repo) {
+        super(Plan.class, isNew, null, repo);
         setSizeUndefined();
         setEntity(item);
         if (addingNewItem()) {
@@ -119,7 +120,7 @@ public class PlanForm extends DisplayFriendlyForm<Plan> {
                                         }
         );
 
-        return new MVerticalLayout(form.withWidth(""), getToolbar()).withWidth("");
+        return new MVerticalLayout(form.withWidth("").withMargin(false), getToolbar()).withWidth("");
     }
 
     private void showOrHideOutOfNetworkDeductibles(Object val) {

@@ -114,7 +114,7 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
 
     protected DisplayFriendlyForm<T> createForm(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse,
                                                 final T item) {
-        return CrudUtil.createForm(formClazzToUse, item, false);
+        return CrudUtil.createForm(formClazzToUse, item, false, repo);
     }
 
     protected DisplayFriendlyForm<T> getEditItemForm(final Class<? extends DisplayFriendlyForm<T>> formClazzToUse,
