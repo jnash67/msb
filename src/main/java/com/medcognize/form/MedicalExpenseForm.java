@@ -2,6 +2,7 @@ package com.medcognize.form;
 
 import com.medcognize.domain.*;
 import com.medcognize.domain.validator.vaadin.InPlanPeriodValidator;
+import com.medcognize.form.field.DisplayFriendlySelect;
 import com.medcognize.util.DbUtil;
 import com.medcognize.util.UserUtil;
 import com.vaadin.server.FontAwesome;
@@ -22,9 +23,9 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MedicalExpenseForm.class);
 
     public Field<?> date = createField("date");
-    public Field<?> plan = createField("plan");
-    public Field<?> familyMember = createField("familyMember");
-    public Field<?> provider = createField("provider");
+    public Field<?> plan = new DisplayFriendlySelect<Plan>(Plan.class);
+    public Field<?> familyMember = new DisplayFriendlySelect<FamilyMember>(FamilyMember.class);
+    public Field<?> provider = new DisplayFriendlySelect<Provider>(Provider.class);
     public Field<?> medicalExpenseInPlan = createField("medicalExpenseInPlan");
     public Field<?> prescriptionTierType = createField("prescriptionTierType");
     public Field<?> medicalExpenseType = createField("medicalExpenseType");
