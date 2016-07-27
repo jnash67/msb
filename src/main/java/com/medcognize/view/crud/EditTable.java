@@ -1,10 +1,12 @@
 package com.medcognize.view.crud;
 
 import com.medcognize.UserRepository;
+import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.User;
 import com.medcognize.domain.basic.DisplayFriendly;
 import com.medcognize.form.DisplayFriendlyForm;
 import com.medcognize.util.CrudUtil;
+import com.medcognize.util.UserUtil;
 import com.vaadin.event.Action;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Window;
@@ -14,6 +16,8 @@ import org.vaadin.viritin.form.AbstractForm.SavedHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T> implements Action.Handler {
@@ -54,8 +58,8 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
         this.defaultFormClazz = formClazz;
     }
 
-    public void setData(Collection<T> items, User collectionOwner) {
-        super.setData(items);
+    public void setData(User collectionOwner) {
+        super.setData(UserUtil.getAll(collectionOwner, entityClazz));
         this.collectionOwner = collectionOwner;
         // the view can only be editable if we have a collection and a formClazz
         // owner can be null.  if it has no owner, it's a top level entity and we persist
@@ -129,7 +133,8 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
         form.setSavedHandler(new SavedHandler<T>() {
             @Override
             public void onSave(T entity) {
-                repo.save(collectionOwner);
+                repo.saveAndFlush(collectionOwner);
+                List<MedicalExpense> mes = repo.findMedicalExpenses(collectionOwner.getUsername());
                 refreshRows();
                 form.closePopup();
             }

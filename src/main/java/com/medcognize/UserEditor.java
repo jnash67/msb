@@ -57,7 +57,7 @@ public class UserEditor extends VerticalLayout {
 
 		// wire action buttons to save, delete and reset
 		// have to rethink user creation and deletion through UserService
-	//	save.addClickListener(e -> repository.save(user));
+	//	save.addClickListener(e -> repository.saveAndFlush(user));
 	//	delete.addClickListener(e -> repository.delete(user));
 		cancel.addClickListener(new Button.ClickListener() {
 			@Override

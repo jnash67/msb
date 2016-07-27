@@ -10,14 +10,17 @@ import org.csveed.annotations.CsvDate;
 import org.vaadin.addon.daterangefield.DateUtil;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
-// two expenses are equal if all the fields are equal
-@EqualsAndHashCode(callSuper = false)
+// You can have more than one expense with all the same fields.  However,
+// if two expenses have the same unique DB id then they are the same
+@EqualsAndHashCode(callSuper = true, of = {"id"})
 @Entity
 public class MedicalExpense extends DisplayFriendlyAbstractEntity implements Serializable {
 
@@ -62,8 +65,14 @@ public class MedicalExpense extends DisplayFriendlyAbstractEntity implements Ser
 
 	@CsvDate(format = MedcognizeUI.US_DATE_FORMAT)
 	private Date date = DateUtil.now();
+	@ManyToOne
+	@JoinColumn(name = "plan_id")
 	private Plan plan;
+	@ManyToOne
+	@JoinColumn(name = "family_member_id")
 	private FamilyMember familyMember;
+	@ManyToOne
+	@JoinColumn(name = "provider_id")
 	private Provider provider;
 	@DisplayFriendlyCaption("In Plan")
 	private boolean medicalExpenseInPlan;

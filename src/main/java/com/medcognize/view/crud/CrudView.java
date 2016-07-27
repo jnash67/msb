@@ -67,8 +67,8 @@ public abstract class CrudView<T extends DisplayFriendly> extends VerticalLayout
 		table.setImmediate(true);
 	}
 
-	public void setData(Collection<T> items, User collectionOwner) {
-		table.setData(items, collectionOwner);
+	public void setData(User collectionOwner) {
+		table.setData(collectionOwner);
 	}
 
 	protected CrudTable<T> getTable() {

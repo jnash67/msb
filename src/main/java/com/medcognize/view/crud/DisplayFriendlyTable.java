@@ -36,6 +36,6 @@ public class DisplayFriendlyTable<T extends DisplayFriendly> extends FilterableT
     }
 
     public void setData(Collection<T> items) {
-        addBeans(items);
+        setBeans(items);
     }
 }

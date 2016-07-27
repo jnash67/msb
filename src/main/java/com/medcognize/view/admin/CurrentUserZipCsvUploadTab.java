@@ -49,7 +49,7 @@ public class CurrentUserZipCsvUploadTab extends VerticalLayout implements Upload
 		SerializableZipFile zf = ZipUtil.createInMemoryZipFile(filename, fos.toByteArray());
 		User u = MedcognizeExportFileFormat.createUserFromFile(zf);
 		if (null != u) {
-			// repo.save(u);
+			// repo.saveAndFlush(u);
 			log.warn("File successfully uploaded");
 		}
 	}

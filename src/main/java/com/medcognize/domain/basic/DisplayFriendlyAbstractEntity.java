@@ -25,6 +25,10 @@ public class DisplayFriendlyAbstractEntity extends DisplayFriendly {
     private Long id;
 
     // implements optimistic locking
+    // had problems getting optimistic locking to work with spring boot data and the
+    // User setup where the User contains all the other entities and when you edit
+    // an entity contained in the User and then resaved the User, it gave
+    // OptimisticLocking exceptions.
     @Version
     private Integer version;
 

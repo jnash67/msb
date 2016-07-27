@@ -36,8 +36,8 @@ public class ProviderView extends CrudView<Provider> {
 			log.error("owner should not be null here");
 			return;
 		}
-		Collection<Provider> providers = UserUtil.getAll(owner, Provider.class);
-		setData(providers, owner);
+		//Collection<Provider> providers = UserUtil.getAll(owner, Provider.class);
+		setData(owner);
 	}
 
 	@Override

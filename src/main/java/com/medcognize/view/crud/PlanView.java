@@ -39,6 +39,7 @@ public class PlanView extends CrudView<Plan> {
     public static final String NAME = "plan";
     static final ArrayList<String> pids = new ArrayList<String>() {
         {
+            add("id");
             add("planName");
             add("planType");
             add("planStartDate");
@@ -165,7 +166,7 @@ public class PlanView extends CrudView<Plan> {
                 return cb;
             }
         });
-        setData(plans, u);
+        setData(u);
     }
 
     @Override

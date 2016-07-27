@@ -1,12 +1,14 @@
 package com.medcognize;
 
-import com.medcognize.domain.User;
+import com.medcognize.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
 Here we define all the easy queries that come for free with Spring Boot.  UserService however
@@ -44,5 +46,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findById(Long id);
 
+	@Query("select u.medicalExpenses from User u where u.username = :username")
+	List<MedicalExpense> findMedicalExpenses(@Param("username") String username);
 
+	@Query("select u.fsas from User u where u.username = :username")
+	List<Fsa> findFsas(@Param("username") String username);
+
+	@Query("select u.providers from User u where u.username = :username")
+	List<Provider> findProviders(@Param("username") String username);
+
+	@Query("select u.plans from User u where u.username = :username")
+	List<Plan> findPlans(@Param("username") String username);
+
+	@Query("select u.familyMembers from User u where u.username = :username")
+	List<FamilyMember> findFamilyMembers(@Param("username") String username);
 }

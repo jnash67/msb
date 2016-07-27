@@ -109,8 +109,10 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
     // did this via reflection but got too cumbersome.
     protected void deleteAction(final Object target) {
         T df = getEntityFromContainer(target);
+        // Note, that beans are kept in original list that developer used to pass beans so original
+        // list will be modified.
         removeItem(target);
-        UserUtil.removeFromCollection(repo, collectionOwner, df);
+        repo.saveAndFlush(collectionOwner);
         refreshRows();
     }
 
@@ -121,8 +123,10 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
         form.setSavedHandler(new AbstractForm.SavedHandler<T>() {
             @Override
             public void onSave(T entity) {
-                UserUtil.addToCollection(repo, collectionOwner, entity);
+                // Note, that beans are kept in original list that developer used to pass beans so original
+                // list will be modified.
                 addItem(entity);
+                repo.saveAndFlush(collectionOwner);
                 refreshRows();
                 form.closePopup();
             }

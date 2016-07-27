@@ -26,8 +26,8 @@ public class FamilyMemberView extends CrudView<FamilyMember> {
 			log.error("owner should not be null here");
 			return;
 		}
-		Collection<FamilyMember> members = UserUtil.getAll(owner, FamilyMember.class);
-		setData(members, owner);
+		// Collection<FamilyMember> members = UserUtil.getAll(owner, FamilyMember.class);
+		setData(owner);
 	}
 
 	@Override

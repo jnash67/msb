@@ -48,8 +48,8 @@ public class MedicalExpenseView extends CrudView<MedicalExpense> {
             log.error("owner should not be null here");
             return;
         }
-        Collection<MedicalExpense> expenses = UserUtil.getAll(u, MedicalExpense.class);
-        setData(expenses, u);
+        // Collection<MedicalExpense> expenses = UserUtil.getAll(u, MedicalExpense.class);
+        setData(u);
     }
 
     @Override

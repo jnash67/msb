@@ -33,7 +33,7 @@ public class UserUtil implements Serializable {
         u.setAccountNonLocked(true);
         u.setEnabled(true);
         createDefaultInitialSettings(u);
-        return repo.save(u);
+        return repo.saveAndFlush(u);
     }
 
     public static boolean existsByUsername(final UserRepository repo, EmailAddress emailAddress) {
@@ -70,7 +70,7 @@ public class UserUtil implements Serializable {
         } else {
             log.warn("Tried to add existing " + ownedItem.getClass().getSimpleName() + " (" + ownedItem + ").");
         }
-        repo.save(user);
+        repo.saveAndFlush(user);
     }
 
     public static void removeFromCollection(final UserRepository repo, User user, DisplayFriendly ownedItem) {
@@ -82,7 +82,7 @@ public class UserUtil implements Serializable {
             return;
         }
         items.remove(ownedItem);
-        repo.save(user);
+        repo.saveAndFlush(user);
     }
 
     public static <T extends DisplayFriendly> List<T> getAll(User user, T df) {
@@ -100,7 +100,7 @@ public class UserUtil implements Serializable {
                 medicalExpenses.remove(me);
             }
         }
-        repo.save(user);
+        repo.saveAndFlush(user);
     }
 
     public static List<MedicalExpense> getMedicalExpensesForPlan(User user, Plan ap) {
@@ -152,7 +152,7 @@ public class UserUtil implements Serializable {
         if (!set) {
             log.error("Active plan (" + ap + ") not set. Not found in user plans list.");
         } else {
-            repo.save(user);
+            repo.saveAndFlush(user);
         }
     }
 

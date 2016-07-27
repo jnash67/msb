@@ -22,8 +22,8 @@ public abstract class DisplayFriendly implements Serializable {
 
     static final AtomicLong NEXT_ID = new AtomicLong(0);
     // each DisplayFriendly will have a unique ID for purposes of separating from others
-    // in a BeanContainer.  This ID is not persistent and will be different each time
-    // the application is run
+    // in a Container.  This ID is not persistent and will be different each time
+    // the application is run.
     final long sessionId = NEXT_ID.getAndIncrement();
 
     public long getUniqueSessionId() {
@@ -33,18 +33,16 @@ public abstract class DisplayFriendly implements Serializable {
     public static final List<Class<? extends DisplayFriendly>> domainList;
     public static final HashBiMap<Class<? extends DisplayFriendly>, String> friendlyClassNameMap;
     public static final Map<Class<? extends DisplayFriendly>, BiMap<String, String>> friendlyPropertyNameMap;
-//    public static final Map<Class<? extends Enum>, String> friendlyEnumMap;
-//    public static final Map<Class<? extends Enum>, Class<? extends DisplayFriendly>> friendlyEnumParentMap;
 
     static {
         // these need to be initialized with the actual domain of the application
         domainList = new ArrayList<>();
         friendlyClassNameMap = HashBiMap.create();
         friendlyPropertyNameMap = new HashMap<>();
-//        friendlyEnumMap = new HashMap<>();
-//        friendlyEnumParentMap = new HashMap<>();
     }
 
+    // The main UI class in its static block should call this
+    // e.g. DisplayFriendly.registerClasses("com.myapp.domain");
     public static void registerClasses(String topLevelPackageToScan) {
         Reflections refl = new Reflections(topLevelPackageToScan);
         Set<Class<? extends DisplayFriendly>> df_clazzes = refl.getSubTypesOf(DisplayFriendly.class);
@@ -53,6 +51,7 @@ public abstract class DisplayFriendly implements Serializable {
                 registerClass(df_clazz);
             }
         }
+        System.out.println(friendlyPropertyNameMap);
     }
 
     private static void registerClass(Class<? extends DisplayFriendly> clazz)    {
@@ -70,6 +69,7 @@ public abstract class DisplayFriendly implements Serializable {
             for (PropertyDescriptor pd : properties) {
                 String n = pd.getName();
                 if (!("class".equals(n) || "id".equals(n) || "uniqueSessionId".equals(n))) {
+                // if (!("class".equals(n))) {
                     // There's a getAuthorities method in User because it implements UserDetails
                     if (!("authorities".equals(n) && clazz.getSimpleName().equals("User"))) {
                         dn = (DisplayFriendlyCaption) getAnnotation(clazz, n, DisplayFriendlyCaption.class);
@@ -80,7 +80,6 @@ public abstract class DisplayFriendly implements Serializable {
                         }
                     }
                 }
-
             }
         } catch (IntrospectionException e) {
             e.printStackTrace();
@@ -114,47 +113,6 @@ public abstract class DisplayFriendly implements Serializable {
         }
         return biMap;
     }
-
-//    public static <E extends Enum<E>> boolean isDisplayFriendlyEnum(Class<E> clazz) {
-//        if (friendlyEnumMap.keySet().contains(clazz)) {
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    public static String getEnumCaption(Enum e) {
-//        if (isDisplayFriendlyEnum(e.getClass())) {
-//            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(e.getClass());
-//            String fieldMap = friendlyEnumMap.get(e.getClass());
-//            try {
-//                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
-//                return stringMap.get(e.toString());
-//            } catch (IllegalAccessException e1) {
-//                e1.printStackTrace();
-//            } catch (NoSuchFieldException e1) {
-//                e1.printStackTrace();
-//            }
-//        }
-//        return null;
-//    }
-
-//    @SuppressWarnings("UnusedDeclaration")
-//    public static Enum getEnumFromCaption(Class<? extends Enum> enumClazz, String caption) {
-//        if (isDisplayFriendlyEnum(enumClazz)) {
-//            Class<? extends DisplayFriendly> parentClass = friendlyEnumParentMap.get(enumClazz);
-//            String fieldMap = friendlyEnumMap.get(enumClazz);
-//            try {
-//                BiMap<String, String> stringMap = (BiMap<String, String>) parentClass.getField(fieldMap).get(null);
-//                String enumStringVal = stringMap.inverse().get(caption);
-//                return Enum.valueOf(enumClazz, enumStringVal);
-//            } catch (IllegalAccessException e1) {
-//                e1.printStackTrace();
-//            } catch (NoSuchFieldException e1) {
-//                e1.printStackTrace();
-//            }
-//        }
-//        return null;
-//    }
 
     private static Map<String, String> getFriendlyPropertyNameMap(Class<? extends DisplayFriendly> clazz) {
         if (friendlyClassNameMap.keySet().contains(clazz)) {
@@ -204,10 +162,7 @@ public abstract class DisplayFriendly implements Serializable {
     }
 
     /*
-    We only copy the properties listed in the captionString, which are the only properties
-    which show up in forms.  Therefore, for example the Password field of User wouldn't be
-    copied because it's not listed.  The point of this functionality is to reload previously
-    downloaded data, which also wouldn't have the not-listed fields.
+    We only copy the properties registered in registerClass
      */
     public static <T extends DisplayFriendly> void copyListedProperties(T copyFrom, T copyTo) {
         if ((null == copyFrom) || (null == copyTo)) {

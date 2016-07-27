@@ -183,7 +183,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 							if (User.class == csvClazz) {
 								List<User> users = CsvUtil.csvWithHeaderToDisplayFriendlyList(User.class, text, null);
 								// create new users through UserService to save them
-								// repo.save(users);
+								// repo.saveAndFlush(users);
 							} else {
 								List<? extends DisplayFriendly> dfs =
 										CsvUtil.csvWithHeaderToDisplayFriendlyList(csvClazz, text, selectedUser);

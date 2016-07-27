@@ -8,9 +8,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Entity;
 import java.io.Serializable;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
-@Entity
 public class PlanLimit extends DisplayFriendlyAbstractEntity implements Serializable {
 
     String limitName = "";

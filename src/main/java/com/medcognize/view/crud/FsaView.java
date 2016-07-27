@@ -39,8 +39,8 @@ public class FsaView extends CrudView<Fsa> {
             log.error("owner should not be null here");
             return;
         }
-        Collection<Fsa> fsas = UserUtil.getAll(owner, Fsa.class);
-        setData(fsas, owner);
+        // Collection<Fsa> fsas = UserUtil.getAll(owner, Fsa.class);
+        setData(owner);
     }
 
     @Override

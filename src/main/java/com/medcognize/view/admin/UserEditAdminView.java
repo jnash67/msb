@@ -29,7 +29,7 @@ public class UserEditAdminView extends CrudView<User> {
             return;
         }
         Collection<User> users = repo.findAll();
-        setData(users, null);
+        setData(users);
         // we extend a View here to get the functionality but we don't use it as a view
         // therefore enter won't be called automatically so we must do it manually
         enter(null);
