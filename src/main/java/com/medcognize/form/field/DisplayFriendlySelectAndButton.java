@@ -13,6 +13,6 @@ public class DisplayFriendlySelectAndButton<T extends DisplayFriendly> extends T
         this.clazz = clazz;
         setSizeUndefined();
         setNullSelectionAllowed(false);
-        setBeans(UserUtil.getAll(DbUtil.getLoggedInUser(), clazz));
+        setBeans(UserUtil.getAllFromUser(DbUtil.getLoggedInUser(), clazz));
     }
 }

@@ -60,7 +60,7 @@ public class UserUtil implements Serializable {
         if (null == ownedItem) {
             return;
         }
-        List items = getAll(user, ownedItem);
+        List items = getAllFromUser(user, ownedItem.getClass());
         if (null == items) {
             return;
         }
@@ -77,17 +77,12 @@ public class UserUtil implements Serializable {
         if (null == ownedItem) {
             return;
         }
-        List items = getAll(user, ownedItem);
+        List items = getAllFromUser(user, ownedItem.getClass());
         if (null == items) {
             return;
         }
         items.remove(ownedItem);
         repo.saveAndFlush(user);
-    }
-
-    public static <T extends DisplayFriendly> List<T> getAll(User user, T df) {
-        //noinspection unchecked
-        return (List<T>) getAll(user, df.getClass());
     }
 
     public static void deleteMedicalExpensesForPlan(final UserRepository repo, User user, Plan ap) {
@@ -157,7 +152,50 @@ public class UserUtil implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends DisplayFriendly> List<T> getAll(User user, Class<T> clazz) {
+    /*
+    This gets a DisplayFriendly collection from the repository and updates the User.  The repository should
+    always have the canonical version of the truth.  When we delete or add an item from a user collection, and then
+    save the user, the user's collections and the repository will stay in sync.  If we edit an item,
+    there's been issues with the user's collections and the repository not staying in sync.  With optimistic locking
+    especially, we were getting a lot of optimistic locking exceptions.
+     */
+    public static <T extends DisplayFriendly> List<T> getAll(final UserRepository repo, User user, Class<T> clazz) {
+        List<T> list = null;
+        if (null == clazz) {
+            return null;
+        }
+        if (clazz.isAssignableFrom(Plan.class)) {
+            list = (List<T>) repo.findPlans(user.getUsername());
+            user.setPlans((List<Plan>) list);
+        } else {
+            if (clazz.isAssignableFrom(Provider.class)) {
+                list = (List<T>) repo.findProviders(user.getUsername());
+                user.setProviders((List<Provider>) list);
+            } else {
+                if (clazz.isAssignableFrom(FamilyMember.class)) {
+                    list = (List<T>) repo.findFamilyMembers(user.getUsername());
+                    user.setFamilyMembers((List<FamilyMember>) list);
+                } else {
+                    if (clazz.isAssignableFrom(MedicalExpense.class)) {
+                        list = (List<T>) repo.findMedicalExpenses(user.getUsername());
+                        user.setMedicalExpenses((List<MedicalExpense>) list);
+                    } else {
+                        if (clazz.isAssignableFrom(Fsa.class)) {
+                            list = (List<T>) repo.findFsas(user.getUsername());
+                            user.setFsas((List<Fsa>) list);
+                        }
+                    }
+                }
+            }
+        }
+        if (null == list) {
+            log.error("Requested unowned class " + clazz);
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends DisplayFriendly> List<T> getAllFromUser(User user, Class<T> clazz) {
         if (null == clazz) {
             return null;
         }
@@ -186,7 +224,7 @@ public class UserUtil implements Serializable {
 
     public static <T extends DisplayFriendly> String ensureUniqueName(String initialName,
                                                                       Class<T> clazz, String stringPropertyName) {
-        Collection<? extends DisplayFriendly> dfs = UserUtil.getAll(DbUtil.getLoggedInUser(), clazz);
+        Collection<? extends DisplayFriendly> dfs = UserUtil.getAllFromUser(DbUtil.getLoggedInUser(), clazz);
         String name = initialName;
         int v = 2;
         while (!existsName(name, dfs, stringPropertyName)) {

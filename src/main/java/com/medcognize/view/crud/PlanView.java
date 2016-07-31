@@ -62,7 +62,7 @@ public class PlanView extends CrudView<Plan> {
         @Override
         protected void deleteActionWithConfirm(final Object target) {
             Plan p = getEntityFromContainer(target);
-            int count = UserUtil.getAll(collectionOwner, Plan.class).size();
+            int count = UserUtil.getAll(repo, collectionOwner, Plan.class).size();
             if (1 == count) {
                 if (!p.isActivePlan()) {
                     log.warn("This should not happen. The last plan left should always be the active plan");
@@ -148,7 +148,7 @@ public class PlanView extends CrudView<Plan> {
             log.error("owner should not be null here");
             return;
         }
-        Collection<Plan> plans = UserUtil.getAll(u, Plan.class);
+        Collection<Plan> plans = UserUtil.getAll(repo, u, Plan.class);
         // we want this added before the other column that gets generated when we call setData
         table.addGeneratedColumn("Active Plan", new Table.ColumnGenerator() {
             @Override

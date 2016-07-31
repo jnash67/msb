@@ -34,7 +34,7 @@ public class UserSettingsForm extends DisplayFriendlyForm<User> {
             if (DisplayFriendly.class.isAssignableFrom(dataType)) {
                 if (Plan.class.isAssignableFrom(dataType)) {
                     // v. important we use the plans of the user we're editing
-                    NativeSelect field = new NativeSelect("", UserUtil.getAll(u, Plan.class));
+                    NativeSelect field = new NativeSelect("", UserUtil.getAllFromUser(u, Plan.class));
                     Plan ap = UserUtil.getActivePlan(u);
                     if (null != ap) {
                         field.setValue(ap);

@@ -6,6 +6,7 @@ import com.medcognize.view.crud.DisplayFriendlyTable;
 import com.vaadin.data.util.converter.StringToDoubleConverter;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import org.vaadin.viritin.fields.MTable;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -149,7 +150,7 @@ public class PlanLimitsStatus implements Serializable {
                 add("balance");
             }
         };
-        DisplayFriendlyTable<PlanLimit> table = new DisplayFriendlyTable<>(PlanLimit.class, pids);
+        MTable<PlanLimit> table = new MTable<>(PlanLimit.class).withProperties(pids);
         if (familyLimits) {
             table.setData(this.getFamilyLimits());
         } else {

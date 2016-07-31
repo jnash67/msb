@@ -145,7 +145,7 @@ public class MedicalExpenseForm extends DisplayFriendlyForm<MedicalExpense> {
                 User u = DbUtil.getLoggedInUser();
                 UserUtil.addToCollection(repo, u, entity);
                 // ((TypedSelect) familyMember).addOption(entity);
-                // familyMemberField.select(fm);
+                ((TypedSelect) familyMember).setValue(entity);
                 form.closePopup();
             }
         });

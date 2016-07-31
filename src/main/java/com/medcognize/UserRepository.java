@@ -27,11 +27,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByUsername(String username);
 
-	@Query("SELECT COUNT(username) FROM User WHERE 'ROLE_ADMIN' MEMBER OF userRoles")
+	// was: @Query("SELECT COUNT(username) FROM User WHERE 'ROLE_ADMIN' MEMBER OF userRoles")
+	// @Query("SELECT COUNT(u.username) FROM User u WHERE 'ROLE_ADMIN' MEMBER OF u.userRoles")
+	@Query("SELECT COUNT(u.username) FROM User u inner join u.userRoles ur where ur = 'ROLE_ADMIN'")
 	long countByAdminTrue();
 
 	// capitalization of U in 'User' matters
-	@Query("SELECT CASE WHEN COUNT(u.username) > 0 THEN true ELSE false END FROM User u WHERE 'ROLE_ADMIN' MEMBER OF userRoles")
+	// was: @Query("SELECT CASE WHEN COUNT(u.username) > 0 THEN true ELSE false END FROM User u WHERE 'ROLE_ADMIN' MEMBER OF u.userRoles")
+	@Query("SELECT CASE WHEN COUNT(u.username) > 0 THEN true ELSE false END FROM User u " +
+			"inner join u.userRoles ur where ur = 'ROLE_ADMIN'")
 	boolean existsByAdminTrue();
 
 	// capitalization of U in 'User' matters

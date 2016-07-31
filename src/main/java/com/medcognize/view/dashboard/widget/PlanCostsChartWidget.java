@@ -57,7 +57,7 @@ public class PlanCostsChartWidget extends ContentWidget {
         this.caption = caption;
         this.planToChart = UserUtil.getActivePlan(u);
         this.user = u;
-        this.plans = UserUtil.getAll(u, Plan.class);
+        this.plans = UserUtil.getAllFromUser(u, Plan.class);
         expensesForPlan = UserUtil.getMedicalExpensesForPlan(u, this.planToChart);
         familyMembers = UserUtil.getFamilyMembersWithPlanExpenses(u, this.planToChart);
 

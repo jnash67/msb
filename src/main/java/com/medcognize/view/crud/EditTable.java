@@ -22,11 +22,9 @@ import java.util.Optional;
 @Slf4j
 public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriendlyTable<T> implements Action.Handler {
 
-    protected final UserRepository repo;
+    protected User collectionOwner;
 
     protected final Action ACTION_EDIT = new Action("Edit");
-
-    protected User collectionOwner;
     protected final Class<? extends DisplayFriendlyForm<T>> defaultFormClazz;
     protected boolean editOnSingleClick = true;
     protected boolean contextMenuEnabled = false;
@@ -53,13 +51,12 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
 
     public EditTable(UserRepository repo, Class<T> entityClazz, final Class<? extends DisplayFriendlyForm<T>> formClazz,
                      ArrayList<String> orderedPidList) {
-        super(entityClazz, orderedPidList);
-        this.repo = repo;
+        super(repo, entityClazz, orderedPidList);
         this.defaultFormClazz = formClazz;
     }
 
     public void setData(User collectionOwner) {
-        super.setData(UserUtil.getAll(collectionOwner, entityClazz));
+        super.setData(repo, collectionOwner);
         this.collectionOwner = collectionOwner;
         // the view can only be editable if we have a collection and a formClazz
         // owner can be null.  if it has no owner, it's a top level entity and we persist
@@ -134,7 +131,6 @@ public abstract class EditTable<T extends DisplayFriendly> extends DisplayFriend
             @Override
             public void onSave(T entity) {
                 repo.saveAndFlush(collectionOwner);
-                List<MedicalExpense> mes = repo.findMedicalExpenses(collectionOwner.getUsername());
                 refreshRows();
                 form.closePopup();
             }

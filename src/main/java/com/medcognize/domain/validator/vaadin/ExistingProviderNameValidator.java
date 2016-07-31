@@ -28,7 +28,7 @@ public class ExistingProviderNameValidator extends AbstractValidator<String> {
                 return true;
             }
         }
-        Collection<Provider> ps = UserUtil.getAll(DbUtil.getLoggedInUser(), Provider.class);
+        Collection<Provider> ps = UserUtil.getAllFromUser(DbUtil.getLoggedInUser(), Provider.class);
         for (Provider p : ps) {
             if (value.equals(p.getProviderName())) {
                 return false;

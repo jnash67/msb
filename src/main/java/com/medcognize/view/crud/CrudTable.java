@@ -111,8 +111,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
         T df = getEntityFromContainer(target);
         // Note, that beans are kept in original list that developer used to pass beans so original
         // list will be modified.
-        removeItem(target);
-        repo.saveAndFlush(collectionOwner);
+        UserUtil.removeFromCollection(repo, collectionOwner, df);
         refreshRows();
     }
 
@@ -125,8 +124,7 @@ public class CrudTable<T extends DisplayFriendly> extends EditTable<T> {
             public void onSave(T entity) {
                 // Note, that beans are kept in original list that developer used to pass beans so original
                 // list will be modified.
-                addItem(entity);
-                repo.saveAndFlush(collectionOwner);
+                UserUtil.addToCollection(repo, collectionOwner, entity);
                 refreshRows();
                 form.closePopup();
             }

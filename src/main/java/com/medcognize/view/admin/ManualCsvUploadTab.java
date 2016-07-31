@@ -238,7 +238,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 				}
 				return false;
 			}
-			if (UserUtil.getAll(selectedUser, Plan.class).contains(p)) {
+			if (UserUtil.getAll(repo, selectedUser, Plan.class).contains(p)) {
 				return true;
 			}
 			LOGGER.warn("This should never happen.  The only way a non-null Plan can show up is from the User.");
@@ -276,7 +276,7 @@ public class ManualCsvUploadTab extends VerticalLayout {
 		// load planField just in case
 		planField.removeAllItems();
 		Plan first = null;
-		for (final Iterator<Plan> i = UserUtil.getAll(selectedUser, Plan.class).iterator(); i.hasNext(); ) {
+		for (final Iterator<Plan> i = UserUtil.getAll(repo, selectedUser, Plan.class).iterator(); i.hasNext(); ) {
 			if (null == first) {
 				first = i.next();
 				planField.addItem(first);

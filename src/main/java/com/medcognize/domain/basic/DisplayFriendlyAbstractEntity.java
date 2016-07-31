@@ -29,8 +29,8 @@ public class DisplayFriendlyAbstractEntity extends DisplayFriendly {
     // User setup where the User contains all the other entities and when you edit
     // an entity contained in the User and then resaved the User, it gave
     // OptimisticLocking exceptions.
-    @Version
-    private Integer version;
+//    @Version
+//    private Integer version;
 
     /**
      * Returns the identifier of the entity.

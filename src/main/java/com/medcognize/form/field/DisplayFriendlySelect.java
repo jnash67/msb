@@ -14,6 +14,6 @@ public class DisplayFriendlySelect<T extends DisplayFriendly> extends TypedSelec
         this.clazz = clazz;
         setSizeUndefined();
         setNullSelectionAllowed(false);
-        setBeans(UserUtil.getAll(DbUtil.getLoggedInUser(), clazz));
+        setBeans(UserUtil.getAllFromUser(DbUtil.getLoggedInUser(), clazz));
     }
 }
