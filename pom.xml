@@ -85,18 +85,20 @@
         Previously, to enable the H2 db console, we needed the scope to be compile. see:
         https://springframework.guru/using-the-h2-database-console-in-spring-boot-with-spring-security/
         -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <!--<scope>runtime</scope>-->
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.h2database</groupId>-->
+            <!--<artifactId>h2</artifactId>-->
+            <!--&lt;!&ndash;<scope>runtime</scope>&ndash;&gt;-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!--<dependency>-->
@@ -303,6 +305,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.boxfuse.client</groupId>
+                <artifactId>boxfuse-maven-plugin</artifactId>
+                <version>1.21.8.1115</version>
+                <configuration>
+                    <user>def047107e034c8d950a4fd0cd9722a4</user>
+                    <secret>usA1S3ZMW0XSPTA7M9DHWERdgOlld76fylBvEvrDDpCySRVsNjX1SCojk2BrKyl7</secret>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -311,5 +322,15 @@
             <id>vaadin-addons</id>
             <url>http://maven.vaadin.com/vaadin-addons</url>
         </repository>
+        <repository>
+            <id>boxfuse-repo</id>
+            <url>http://files.boxfuse.com</url>
+        </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>boxfuse-repo</id>
+            <url>https://files.boxfuse.com</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
