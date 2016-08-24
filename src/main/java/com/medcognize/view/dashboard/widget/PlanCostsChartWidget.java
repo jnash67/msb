@@ -4,30 +4,12 @@ import com.medcognize.domain.FamilyMember;
 import com.medcognize.domain.MedicalExpense;
 import com.medcognize.domain.Plan;
 import com.medcognize.domain.User;
-import com.medcognize.util.DChartsUtil;
 import com.medcognize.util.UserUtil;
 import com.vaadin.data.Property;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-import org.dussan.vaadin.dcharts.DCharts;
-import org.dussan.vaadin.dcharts.base.elements.XYaxis;
-import org.dussan.vaadin.dcharts.base.elements.XYseries;
-import org.dussan.vaadin.dcharts.data.DataSeries;
-import org.dussan.vaadin.dcharts.data.Ticks;
-import org.dussan.vaadin.dcharts.metadata.TooltipAxes;
-import org.dussan.vaadin.dcharts.metadata.XYaxes;
-import org.dussan.vaadin.dcharts.metadata.locations.LegendLocations;
-import org.dussan.vaadin.dcharts.metadata.locations.TooltipLocations;
-import org.dussan.vaadin.dcharts.metadata.renderers.AxisRenderers;
-import org.dussan.vaadin.dcharts.metadata.renderers.LabelRenderers;
-import org.dussan.vaadin.dcharts.metadata.renderers.SeriesRenderers;
-import org.dussan.vaadin.dcharts.metadata.renderers.TickRenderers;
-import org.dussan.vaadin.dcharts.options.*;
-import org.dussan.vaadin.dcharts.renderers.label.CanvasAxisLabelRenderer;
-import org.dussan.vaadin.dcharts.renderers.tick.AxisTickRenderer;
-import org.dussan.vaadin.dcharts.renderers.tick.CanvasAxisTickRenderer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,7 +21,7 @@ for various Plans. The problem is that two Selects / NativeSelects / ComboBoxes 
  */
 public class PlanCostsChartWidget extends ContentWidget {
 
-    DCharts chart;
+    // DCharts chart;
     final String caption;
     Plan planToChart;
     User user;
@@ -91,52 +73,52 @@ public class PlanCostsChartWidget extends ContentWidget {
     }
 
     private void createChart() {
-        DataSeries dataSeries = new DataSeries();
-        for (FamilyMember fm : familyMembers) {
-            ArrayList<Double> familyMemberExpenses = DChartsUtil.getMedicalExpensesForFamilyMemberByMonth(fm,
-                    expensesForPlan);
-            // System.out.println("Series for " + fm.getFamilyMemberName() + ": " + familyMemberExpenses);
-            dataSeries.add(familyMemberExpenses.toArray());
-        }
-
-        SeriesDefaults seriesDefaults = new SeriesDefaults().setFillToZero(true).setRenderer(SeriesRenderers.BAR);
-        AxesDefaults axesDefaults = new AxesDefaults().setLabelRenderer(LabelRenderers.CANVAS);
-
-        Series series = new Series();
-        for (FamilyMember fm : familyMembers) {
-            series.addSeries(new XYseries().setLabel(fm.getFamilyMemberName()));
-        }
-
-        // Highlighting tooltips don't work with LegendPlacements.OUTSIDE_GRID
-        // Event handling doesn't work when you use EnhancedLegendRenderer
-        Legend legend = new Legend().setLocation(LegendLocations.NORTH_EAST).setShow(true);
-
-        XYaxis xAxis = new XYaxis(XYaxes.X).setRenderer(AxisRenderers.CATEGORY).setTicks(new Ticks().add(monthsAxis));
-        xAxis.setTickRenderer(TickRenderers.CANVAS).setTickOptions(new CanvasAxisTickRenderer().setAngle(-90));
-        xAxis.setLabel(String.valueOf(this.planToChart.getPlanYear()));
-        xAxis.setLabelOptions(new CanvasAxisLabelRenderer().setFontSize("10pt"));
-
-        XYaxis yAxis = new XYaxis(XYaxes.Y).setTickOptions(new AxisTickRenderer().setFormatString("$%d"));
-        yAxis.setMin(0);
-
-        Axes axes = new Axes().addAxis(xAxis).addAxis(yAxis);
-
-        Highlighter highlighter = new Highlighter().setShow(true).setShowTooltip(true).setTooltipAlwaysVisible(true)
-                .setKeepTooltipInsideChart(true).setTooltipLocation(TooltipLocations.NORTH).setTooltipAxes
-                        (TooltipAxes.XY_BAR);
-
-        Options options = new Options();
-        options.addOption(seriesDefaults);
-        options.addOption(axesDefaults);
-        options.addOption(series);
-        options.addOption(axes);
-        options.addOption(legend);
-        options.addOption(highlighter);
-
-        chart = new DCharts();
-        chart.setDataSeries(dataSeries).setOptions(options).show();
-        chart.setWidth("400px");
-        chart.setHeight("200px");
+//        DataSeries dataSeries = new DataSeries();
+//        for (FamilyMember fm : familyMembers) {
+//            ArrayList<Double> familyMemberExpenses = DChartsUtil.getMedicalExpensesForFamilyMemberByMonth(fm,
+//                    expensesForPlan);
+//            // System.out.println("Series for " + fm.getFamilyMemberName() + ": " + familyMemberExpenses);
+//            dataSeries.add(familyMemberExpenses.toArray());
+//        }
+//
+//        SeriesDefaults seriesDefaults = new SeriesDefaults().setFillToZero(true).setRenderer(SeriesRenderers.BAR);
+//        AxesDefaults axesDefaults = new AxesDefaults().setLabelRenderer(LabelRenderers.CANVAS);
+//
+//        Series series = new Series();
+//        for (FamilyMember fm : familyMembers) {
+//            series.addSeries(new XYseries().setLabel(fm.getFamilyMemberName()));
+//        }
+//
+//        // Highlighting tooltips don't work with LegendPlacements.OUTSIDE_GRID
+//        // Event handling doesn't work when you use EnhancedLegendRenderer
+//        Legend legend = new Legend().setLocation(LegendLocations.NORTH_EAST).setShow(true);
+//
+//        XYaxis xAxis = new XYaxis(XYaxes.X).setRenderer(AxisRenderers.CATEGORY).setTicks(new Ticks().add(monthsAxis));
+//        xAxis.setTickRenderer(TickRenderers.CANVAS).setTickOptions(new CanvasAxisTickRenderer().setAngle(-90));
+//        xAxis.setLabel(String.valueOf(this.planToChart.getPlanYear()));
+//        xAxis.setLabelOptions(new CanvasAxisLabelRenderer().setFontSize("10pt"));
+//
+//        XYaxis yAxis = new XYaxis(XYaxes.Y).setTickOptions(new AxisTickRenderer().setFormatString("$%d"));
+//        yAxis.setMin(0);
+//
+//        Axes axes = new Axes().addAxis(xAxis).addAxis(yAxis);
+//
+//        Highlighter highlighter = new Highlighter().setShow(true).setShowTooltip(true).setTooltipAlwaysVisible(true)
+//                .setKeepTooltipInsideChart(true).setTooltipLocation(TooltipLocations.NORTH).setTooltipAxes
+//                        (TooltipAxes.XY_BAR);
+//
+//        Options options = new Options();
+//        options.addOption(seriesDefaults);
+//        options.addOption(axesDefaults);
+//        options.addOption(series);
+//        options.addOption(axes);
+//        options.addOption(legend);
+//        options.addOption(highlighter);
+//
+//        chart = new DCharts();
+//        chart.setDataSeries(dataSeries).setOptions(options).show();
+//        chart.setWidth("400px");
+//        chart.setHeight("200px");
     }
 
     private void createLayout() {
@@ -148,12 +130,12 @@ public class PlanCostsChartWidget extends ContentWidget {
             Label l = new Label("Plan has no expenses by any family member");
             combined.addComponent(l);
         } else {
-            combined.addComponent(chart);
+            // combined.addComponent(chart);
         }
     }
 
-    public DCharts getChart() {
-        return chart;
-    }
+//    public DCharts getChart() {
+//        return chart;
+//    }
 
 }
